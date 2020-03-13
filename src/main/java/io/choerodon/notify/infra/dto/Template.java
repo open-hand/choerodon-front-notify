@@ -44,10 +44,6 @@ public class Template extends BaseDTO {
     private String content;
 
 
-
-    public Template() {
-    }
-
     public Long getId() {
         return id;
     }

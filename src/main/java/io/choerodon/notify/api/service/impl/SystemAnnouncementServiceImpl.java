@@ -48,7 +48,7 @@ public class SystemAnnouncementServiceImpl implements SystemAnnouncementService 
     @Override
     public SystemAnnouncementDTO create(SystemAnnouncementDTO dto) {
         //1.创建系统公告
-        logger.info("notify create system announcement,sendDate:" + dto.getSendDate());
+        logger.info("notify create system announcement,sendDate: {}", dto.getSendDate());
         SystemAnnouncement systemAnnouncement = modelMapper.map(dto, SystemAnnouncement.class);
         if (announcementMapper.insert(systemAnnouncement) != 1) {
             throw new CommonException("error.systemAnnouncement.create");
@@ -151,7 +151,7 @@ public class SystemAnnouncementServiceImpl implements SystemAnnouncementService 
             @JobParam(name = "systemNocificationId", description = "系统公告Id", type = Long.class)
     }, description = "平台层发送系统通知")
     public void systemNotification(Map<String, Object> map) {
-        Long systemNocificationId = Optional.ofNullable(new Long((Integer) map.get("systemNocificationId"))).orElseThrow(() -> new CommonException("error.systemNotification.id.empty"));
+        Long systemNocificationId = Optional.ofNullable((Long) map.get("systemNocificationId")).orElseThrow(() -> new CommonException("error.systemNotification.id.empty"));
         sendSystemNotification(ResourceLevel.SITE, 0L, systemNocificationId);
     }
 

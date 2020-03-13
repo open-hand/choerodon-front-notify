@@ -1,11 +1,11 @@
 package io.choerodon.notify.api.dto;
 
 import java.util.Date;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.modelmapper.PropertyMap;
 
 import io.choerodon.notify.infra.dto.SystemAnnouncement;
@@ -33,7 +33,7 @@ public class SystemAnnouncementDTO {
     @ApiModelProperty(value = "系统公告状态/非必填")
     private String status;
     @ApiModelProperty(value = "关联任务Id")
-    private Long ScheduleTaskId;
+    private Long scheduleTaskId;
     @ApiModelProperty(value = "是否顶部悬浮显示")
     private Boolean sticky;
     @ApiModelProperty(value = "悬浮显示结束时间")
@@ -132,11 +132,11 @@ public class SystemAnnouncementDTO {
     }
 
     public Long getScheduleTaskId() {
-        return ScheduleTaskId;
+        return scheduleTaskId;
     }
 
     public void setScheduleTaskId(Long scheduleTaskId) {
-        ScheduleTaskId = scheduleTaskId;
+        this.scheduleTaskId = scheduleTaskId;
     }
 
     public Boolean getSticky() {

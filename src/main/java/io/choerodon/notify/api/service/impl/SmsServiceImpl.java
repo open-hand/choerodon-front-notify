@@ -9,25 +9,18 @@ import io.choerodon.notify.api.dto.NoticeSendDTO;
 import io.choerodon.notify.api.service.SmsService;
 import io.choerodon.notify.domain.CrlandSmsResponse;
 import io.choerodon.notify.domain.SmsRecord;
-import io.choerodon.notify.infra.asserts.SendSettingAssertHelper;
 import io.choerodon.notify.infra.asserts.SmsConfigAssertHelper;
 import io.choerodon.notify.infra.asserts.TemplateAssertHelper;
-import io.choerodon.notify.infra.dto.SendSettingDTO;
 import io.choerodon.notify.infra.dto.SmsConfigDTO;
 import io.choerodon.notify.infra.dto.Template;
 import io.choerodon.notify.infra.enums.SendingTypeEnum;
 import io.choerodon.notify.infra.enums.SmsSendType;
-import io.choerodon.notify.infra.mapper.MailingRecordMapper;
 import io.choerodon.notify.infra.mapper.SmsConfigMapper;
 import io.choerodon.notify.infra.mapper.SmsRecordMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
@@ -36,12 +29,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,8 +50,6 @@ public class SmsServiceImpl implements SmsService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private final SendSettingAssertHelper sendSettingAssertHelper;
-
     private final TemplateAssertHelper templateAssertHelper;
 
     private final SmsConfigAssertHelper smsConfigAssertHelper;
@@ -72,12 +58,10 @@ public class SmsServiceImpl implements SmsService {
 
     private SmsRecordMapper smsRecordMapper;
 
-    public SmsServiceImpl(SendSettingAssertHelper sendSettingAssertHelper,
-                          TemplateAssertHelper templateAssertHelper,
+    public SmsServiceImpl(TemplateAssertHelper templateAssertHelper,
                           SmsConfigAssertHelper smsConfigAssertHelper,
                           SmsConfigMapper smsConfigMapper,
                           SmsRecordMapper smsRecordMapper) {
-        this.sendSettingAssertHelper = sendSettingAssertHelper;
         this.templateAssertHelper = templateAssertHelper;
         this.smsConfigAssertHelper = smsConfigAssertHelper;
         this.smsConfigMapper = smsConfigMapper;
@@ -94,7 +78,6 @@ public class SmsServiceImpl implements SmsService {
         if (code == null) {
             throw new FeignException("error.send.sms.code.null");
         }
-        SendSettingDTO sendSetting = sendSettingAssertHelper.sendSettingNotExisted(code);
 
         Template template = templateAssertHelper.templateNotExistedNotById(code, SendingTypeEnum.SMS.getValue());
         Long templateId = template.getId();
@@ -196,7 +179,6 @@ public class SmsServiceImpl implements SmsService {
         } catch (Exception e) {
             record.setReceiveAccount((String) variable.get("mobile"));
             record.setStatus(FAILED);
-//            record.setFailedReason("调用远程接口发短信异常");
             String message = ((HttpServerErrorException) e).getResponseBodyAsString();
             LOGGER.error("invoke single sms api failed, exception: {}", message);
             throw new FeignException("error.invoke.single.sms.api", message);
@@ -211,7 +193,6 @@ public class SmsServiceImpl implements SmsService {
             record.setStatus("COMPLETED");
         } else if (CrlandSmsResponse.SendStatus.isFail(crlandSmsResponse.getSendStatus())) {
             record.setStatus(FAILED);
-//            record.setFailedReason(crlandSmsResponse.getDescription());
         }
     }
 
@@ -283,7 +264,6 @@ public class SmsServiceImpl implements SmsService {
                 SmsRecord record = initRecord(template, variable,(HttpEntity<JsonNode>)map.get("entity"));
                 record.setReceiveAccount(m);
                 record.setStatus(FAILED);
-//                record.setFailedReason("调用远程接口发短信异常");
                 smsRecordMapper.insertSelective(record);
             });
         }

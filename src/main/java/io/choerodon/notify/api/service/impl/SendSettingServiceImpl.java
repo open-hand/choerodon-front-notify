@@ -1,25 +1,14 @@
 package io.choerodon.notify.api.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.core.notify.NotifyType;
-import io.choerodon.notify.api.service.MessageSettingService;
-import io.choerodon.notify.api.service.ReceiveSettingService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.notify.Level;
+import io.choerodon.core.notify.NotifyType;
 import io.choerodon.core.notify.ServiceNotifyType;
 import io.choerodon.notify.api.dto.*;
+import io.choerodon.notify.api.service.MessageSettingService;
 import io.choerodon.notify.api.service.SendSettingService;
 import io.choerodon.notify.api.validator.CommonValidator;
 import io.choerodon.notify.api.vo.WebHookVO;
@@ -28,6 +17,14 @@ import io.choerodon.notify.infra.enums.LevelType;
 import io.choerodon.notify.infra.mapper.*;
 import io.choerodon.swagger.notify.NotifyBusinessTypeScanData;
 import io.choerodon.web.util.PageableHelper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SendSettingServiceImpl implements SendSettingService {
@@ -41,17 +38,14 @@ public class SendSettingServiceImpl implements SendSettingService {
     private MessageSettingMapper messageSettingMapper;
     private MessageSettingTargetUserMapper messageSettingTargetUserMapper;
     private MessageSettingService messageSettingService;
-    private ReceiveSettingService receiveSettingService;
-    private final ModelMapper modelMapper = new ModelMapper();
 
-    public SendSettingServiceImpl(SendSettingMapper sendSettingMapper, SendSettingCategoryMapper sendSettingCategoryMapper, TemplateMapper templateMapper, MessageSettingMapper messageSettingMapper, MessageSettingTargetUserMapper messageSettingTargetUserMapper, MessageSettingService messageSettingService, ReceiveSettingService receiveSettingService) {
+    public SendSettingServiceImpl(SendSettingMapper sendSettingMapper, SendSettingCategoryMapper sendSettingCategoryMapper, TemplateMapper templateMapper, MessageSettingMapper messageSettingMapper, MessageSettingTargetUserMapper messageSettingTargetUserMapper, MessageSettingService messageSettingService) {
         this.sendSettingMapper = sendSettingMapper;
         this.sendSettingCategoryMapper = sendSettingCategoryMapper;
         this.templateMapper = templateMapper;
         this.messageSettingMapper = messageSettingMapper;
         this.messageSettingTargetUserMapper = messageSettingTargetUserMapper;
         this.messageSettingService = messageSettingService;
-        this.receiveSettingService = receiveSettingService;
     }
 
     @Override

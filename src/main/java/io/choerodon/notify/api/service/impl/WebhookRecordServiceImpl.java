@@ -46,9 +46,7 @@ public class WebhookRecordServiceImpl implements WebhookRecordService {
         List<WebhookRecordVO> list = pageInfo.getList();
         Set<Long> idSet = new HashSet<>();
         if (!CollectionUtils.isEmpty(list)) {
-            list.forEach(i -> {
-                idSet.add(i.getProjectId());
-            });
+            list.forEach(i -> idSet.add(i.getProjectId()));
         }
         List<ProjectDTO> projectDTOS = userFeignClient.listProjectsByIds(idSet).getBody();
         if (!CollectionUtils.isEmpty(projectDTOS)) {

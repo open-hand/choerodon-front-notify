@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class OnlineCountStorageUtils {
     private static final String ONLINE_COUNT = "OnlineCount";
     private static final String NUMBER_OF_VISITORS_TODAY = "NumberOfVisitorsToday";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH";
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineCountStorageUtils.class);
 
     @Autowired
@@ -37,7 +38,7 @@ public class OnlineCountStorageUtils {
     @Scheduled(cron = "0 0 * * * ?")
     public void hourlyStorageSchedule() {
         int onlineCount = Optional.ofNullable(redisTemplate.keys(ONLINE_COUNT + "*")).orElse(Collections.emptySet()).size();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         String date = dateFormat.format(new Date());
         redisTemplate.opsForValue().set(date, String.valueOf(onlineCount), 24, TimeUnit.HOURS);
         LOGGER.info("Record the number of people online at {}", date);
@@ -65,7 +66,7 @@ public class OnlineCountStorageUtils {
         Map<String, Object> visitorsInfo = new HashMap<>();
         visitorsInfo.put("CurrentOnliners", getOnlineCount());
         visitorsInfo.put("numberOfVisitorsToday", getNumberOfVisitorsToday());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         List<String> times = new ArrayList<>();
@@ -125,7 +126,7 @@ public class OnlineCountStorageUtils {
 
     public Map getCurrentCountPerHour() {
         Map<String, Integer> map = new HashMap<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         SimpleDateFormat outDateFormat = new SimpleDateFormat("HH:mm");
 
         Calendar startCalendar = Calendar.getInstance();
@@ -136,7 +137,7 @@ public class OnlineCountStorageUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
 
-        for (int i = 0; i <= calendar.get(calendar.HOUR_OF_DAY); i++) {
+        for (int i = 0; i <= calendar.get(Calendar.HOUR_OF_DAY); i++) {
             String time = dateFormat.format(startCalendar.getTime());
             String onlinersOnThatTime = redisTemplate.opsForValue().get(time);
             Integer onlineCount = onlinersOnThatTime == null ? 0 : Integer.parseInt(onlinersOnThatTime);

@@ -1,16 +1,13 @@
 package io.choerodon.notify.infra.dto;
 
 import io.choerodon.mybatis.entity.BaseDTO;
-
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.*;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * User: Mr.Wang
@@ -32,13 +29,17 @@ public class MessageSettingDTO extends BaseDTO {
     @ApiModelProperty("是否发送邮件")
     private Boolean emailEnable;
     @ApiModelProperty(value = "消息设置的分组")
-    private transient String category;
+    @Transient
+    private String category;
     @ApiModelProperty(value = "消息接收对象")
-    private transient List<TargetUserDTO> targetUserDTOS;
+    @Transient
+    private List<TargetUserDTO> targetUserDTOS;
     @ApiModelProperty(value = "消息设置的名字")
-    private transient String name;
+    @Transient
+    private String name;
     @ApiModelProperty(value = "分组的id")
-    private transient Long categoryId;
+    @Transient
+    private Long categoryId;
     @ApiModelProperty(value = "环境的id")
     private Long envId;
     @ApiModelProperty(value = "是否发送短信")

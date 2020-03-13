@@ -3,12 +3,12 @@ package io.choerodon.notify.api.dto;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
 public class ScheduleTaskDTO {
 
