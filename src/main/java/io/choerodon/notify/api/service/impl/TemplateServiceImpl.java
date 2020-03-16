@@ -5,7 +5,6 @@ import io.choerodon.core.exception.ext.NotExistedException;
 import io.choerodon.notify.api.service.TemplateService;
 import io.choerodon.notify.infra.dto.Template;
 import io.choerodon.notify.infra.enums.SendingTypeEnum;
-import io.choerodon.notify.infra.mapper.SendSettingMapper;
 import io.choerodon.notify.infra.mapper.TemplateMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -20,12 +19,9 @@ public class TemplateServiceImpl implements TemplateService {
 
     private TemplateMapper templateMapper;
 
-    private SendSettingMapper sendSettingMapper;
 
-
-    public TemplateServiceImpl(TemplateMapper templateMapper, SendSettingMapper sendSettingMapper) {
+    public TemplateServiceImpl(TemplateMapper templateMapper) {
         this.templateMapper = templateMapper;
-        this.sendSettingMapper = sendSettingMapper;
     }
 
     @Override

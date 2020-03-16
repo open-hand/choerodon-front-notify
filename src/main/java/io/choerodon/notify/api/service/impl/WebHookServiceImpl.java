@@ -251,12 +251,6 @@ public class WebHookServiceImpl implements WebHookService {
         }
     }
 
-    private List<WebHookDTO> selectWebHookByProjectId(Long projectId) {
-        WebHookDTO example = new WebHookDTO();
-        example.setProjectId(projectId);
-        return webHookMapper.select(example);
-    }
-
     @Override
     public PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long projectId, WebHookDTO filterDTO, String params) {
         return PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize(), PageableHelper.getSortSql(pageable.getSort()))

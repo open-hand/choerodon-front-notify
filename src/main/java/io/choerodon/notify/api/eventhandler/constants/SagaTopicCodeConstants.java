@@ -5,4 +5,8 @@ public class SagaTopicCodeConstants {
      * 删除环境
      */
     public static final String DEVOPS_DELETE_ENV = "devops-delete-env";
+
+    private SagaTopicCodeConstants() {
+        throw new IllegalStateException("Utility class");
+    }
 }

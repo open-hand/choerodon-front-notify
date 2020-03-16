@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class NotifySocketHandlerRegistration implements SocketHandlerRegistration {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotifySocketHandlerRegistration.class);
-
+    private static final String USERID_HEADERNAME = "X-WebSocket-UserID";
     private WebSocketHelper webSocketHelper;
     private RestTemplate restTemplate;
     private OnlineCountStorageUtils onlineCountStorageUtils;
@@ -55,7 +55,7 @@ public class NotifySocketHandlerRegistration implements SocketHandlerRegistratio
                 if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null){
                     JSONObject object = new JSONObject(responseEntity.getBody().toString());
                     serverHttpRequest.getHeaders().add("X-WebSocket-UserName", object.getJSONObject("principal").getString("username"));
-                    serverHttpRequest.getHeaders().add("X-WebSocket-UserID", object.getJSONObject("principal").getString("userId"));
+                    serverHttpRequest.getHeaders().add(USERID_HEADERNAME, object.getJSONObject("principal").getString("userId"));
                     return true;
                 } else {
                     LOGGER.warn("reject webSocket connect, redirect request to oauth-server not 2xx");
@@ -76,7 +76,7 @@ public class NotifySocketHandlerRegistration implements SocketHandlerRegistratio
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        String userId = session.getHandshakeHeaders().getFirst("X-WebSocket-UserID");
+        String userId = session.getHandshakeHeaders().getFirst(USERID_HEADERNAME);
         //今日访问人数+1，在线人数+1,发送在线信息
         LOGGER.info("Get sitMsg's subscription,sessionId: {}", session.getId());
         Integer originCount = onlineCountStorageUtils.getOnlineCount();
@@ -90,7 +90,7 @@ public class NotifySocketHandlerRegistration implements SocketHandlerRegistratio
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
-        String userId = session.getHandshakeHeaders().getFirst("X-WebSocket-UserID");
+        String userId = session.getHandshakeHeaders().getFirst(USERID_HEADERNAME);
         Integer originCount = onlineCountStorageUtils.getOnlineCount();
         onlineCountStorageUtils.subOnlineCount(userId, session.getId());
         if (!originCount.equals(onlineCountStorageUtils.getOnlineCount())) {

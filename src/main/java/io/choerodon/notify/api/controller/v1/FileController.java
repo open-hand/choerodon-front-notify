@@ -1,6 +1,6 @@
 package io.choerodon.notify.api.controller.v1;
 
-import io.choerodon.core.annotation.Permission;;
+import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.notify.api.service.FileService;
 import io.swagger.annotations.Api;

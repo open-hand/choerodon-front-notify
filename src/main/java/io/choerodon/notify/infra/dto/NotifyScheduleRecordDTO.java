@@ -2,7 +2,6 @@ package io.choerodon.notify.infra.dto;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

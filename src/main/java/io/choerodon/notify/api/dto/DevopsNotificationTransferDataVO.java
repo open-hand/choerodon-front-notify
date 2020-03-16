@@ -1,7 +1,5 @@
 package io.choerodon.notify.api.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.List;
 
 /**

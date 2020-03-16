@@ -1,7 +1,7 @@
 package io.choerodon.notify.api.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 public class EmailConfigDTO {

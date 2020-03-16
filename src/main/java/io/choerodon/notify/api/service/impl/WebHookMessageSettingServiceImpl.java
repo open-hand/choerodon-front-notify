@@ -4,8 +4,6 @@ import io.choerodon.core.exception.ext.InsertException;
 import io.choerodon.notify.api.service.WebHookMessageSettingService;
 import io.choerodon.notify.infra.dto.WebHookMessageSettingDTO;
 import io.choerodon.notify.infra.mapper.WebHookMessageSettingMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -15,8 +13,6 @@ import java.util.Set;
 
 @Service
 public class WebHookMessageSettingServiceImpl implements WebHookMessageSettingService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebHookMessageSettingServiceImpl.class);
-
 
     private WebHookMessageSettingMapper webHookMessageSettingMapper;
 

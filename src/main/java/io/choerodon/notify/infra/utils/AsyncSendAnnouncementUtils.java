@@ -35,7 +35,7 @@ public class AsyncSendAnnouncementUtils {
      */
     @Async("notify-executor")
     public Future<String> sendNoticeToAll(Long fromUserId, List<Long> userIds, String code, Map<String, Object> params, Long sourceId) {
-        logger.debug("ready : send Notice:'{}' to " + userIds.size() + " users.", code);
+        logger.debug("ready : send Notice:'{}' to {} users.", code, userIds.size());
         if (userIds == null || userIds.isEmpty()) return new AsyncResult<>("userId is null");
         long beginTime = System.currentTimeMillis();
         NoticeSendDTO noticeSendDTO = new NoticeSendDTO();
@@ -52,9 +52,9 @@ public class AsyncSendAnnouncementUtils {
             users.add(user);
         });
         noticeSendDTO.setTargetUsers(users);
-        logger.debug("start : send Notice:'{}' to " + users.size() + " users.", code);
+        logger.debug("start : send Notice:'{}' to {} users.", code, users.size());
         noticesSendService.sendNotice(noticeSendDTO);
-        logger.debug("end : send Notice:'{}' to " + userIds.size() + " users.", code);
+        logger.debug("end : send Notice:'{}' to {} users.", code, userIds.size());
         return new AsyncResult<>((System.currentTimeMillis() - beginTime) / 1000 + "s");
     }
 }

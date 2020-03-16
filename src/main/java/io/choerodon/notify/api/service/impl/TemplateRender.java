@@ -13,6 +13,7 @@ import java.util.Map;
 @Component
 public class TemplateRender {
 
+    private static final String ERROR_TEMPLATERENDER_RENDERERROR = "error.templateRender.renderError";
     enum TemplateType {
         CONTENT("content"),
         TITLE("title");
@@ -49,7 +50,7 @@ public class TemplateRender {
                 } else if (SendingTypeEnum.WH.getValue().equals(messageType)) {
                     content = template.getTitle();
                 } else {
-                    throw new CommonException("error.templateRender.renderError");
+                    throw new CommonException(ERROR_TEMPLATERENDER_RENDERERROR);
                 }
                 break;
             case CONTENT:
@@ -62,7 +63,7 @@ public class TemplateRender {
                 } else if (SendingTypeEnum.SMS.getValue().equals(messageType)) {
                     content = template.getContent();
                 } else {
-                    throw new CommonException("error.templateRender.renderError");
+                    throw new CommonException(ERROR_TEMPLATERENDER_RENDERERROR);
                 }
                 break;
         }
@@ -70,7 +71,7 @@ public class TemplateRender {
             ft = freeMarkerConfigBuilder.addTemplate(templateKey, content);
         }
         if (ft == null) {
-            throw new CommonException("error.templateRender.renderError");
+            throw new CommonException(ERROR_TEMPLATERENDER_RENDERERROR);
         }
         return FreeMarkerTemplateUtils.processTemplateIntoString(ft, variables);
     }

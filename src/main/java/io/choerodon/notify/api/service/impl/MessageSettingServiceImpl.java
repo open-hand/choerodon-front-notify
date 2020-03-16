@@ -23,8 +23,6 @@ import io.choerodon.notify.infra.feign.DevopsFeginClient;
 import io.choerodon.notify.infra.mapper.MessageSettingMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +39,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MessageSettingServiceImpl implements MessageSettingService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageSettingServiceImpl.class);
     private static final String RESOURCE_DELETE_CONFIRMATION = "resourceDeleteConfirmation";
     private static final String ERROR_SAVE_MESSAGE_SETTING = "error.save.message.setting";
     private static final String ERROR_UPDATE_MESSAGE_SETTING = "error.update.message.setting";

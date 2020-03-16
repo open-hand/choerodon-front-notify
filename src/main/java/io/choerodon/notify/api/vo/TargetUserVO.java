@@ -1,7 +1,5 @@
 package io.choerodon.notify.api.vo;
 
-import java.util.Objects;
-
 /**
  * 〈功能简述〉
  * 〈通知用户VO〉

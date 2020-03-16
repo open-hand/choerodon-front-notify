@@ -41,7 +41,7 @@ public enum DeleteResourceType {
         nameMapping.put(SECRET.getTypeName(), "删除密文");
     }
 
-    public static Map<String, String> notifyTargetMapping = new HashMap(6);
+    public static final Map<String, String> notifyTargetMapping = new HashMap(6);
 
     static {
         notifyTargetMapping.put(INSTANCE.getTypeName(), TargetUserType.PROJECT_OWNER.getTypeName());
@@ -52,7 +52,7 @@ public enum DeleteResourceType {
         notifyTargetMapping.put(SECRET.getTypeName(), TargetUserType.HANDLER.getTypeName());
     }
 
-    public static Map<String, Integer> orderMapping = new HashMap(6);
+    public static final Map<String, Integer> orderMapping = new HashMap(6);
 
     static {
         orderMapping.put(INSTANCE.getTypeName(), 10);
