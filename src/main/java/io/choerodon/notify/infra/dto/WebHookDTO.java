@@ -36,8 +36,8 @@ public class WebHookDTO extends BaseDTO {
     @ApiModelProperty("钉钉的加签密钥")
     private String secret;
 
-    @ApiModelProperty("项目ID/必填字段")
-    private Long projectId;
+    @ApiModelProperty("项目或组织ID/必填字段")
+    private Long sourceId;
 
     @ApiModelProperty("webhook是否启用")
     private Boolean enableFlag;
@@ -60,13 +60,12 @@ public class WebHookDTO extends BaseDTO {
         return this;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public WebHookDTO setProjectId(Long projectId) {
-        this.projectId = projectId;
-        return this;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 
     public String getName() {

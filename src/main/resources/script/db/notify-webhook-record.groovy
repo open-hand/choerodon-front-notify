@@ -30,5 +30,15 @@ databaseChangeLog(logicalFilePath: 'script/db/notify-webhook-record.groovy') {
             column(name: "LAST_UPDATE_DATE", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
     }
-
+    changeSet(author: '957038053@hand-china.com', id: '2020-3-17-add-column') {
+        sql(stripComments: true, splitStatements: false, endDelimiter: ';') {
+            "alter table NOTIFY_WEBHOOK_RECORD change column PROJECT_ID SOURCE_ID BIGINT UNSIGNED;"
+        }
+        addColumn(tableName: "NOTIFY_WEBHOOK_RECORD") {
+            column(name: 'END_TIME', type: 'DATETIME', remarks: '发送结束时间', afterColumn: 'SEND_TIME')
+        }
+        addColumn(tableName: "NOTIFY_WEBHOOK_RECORD") {
+            column(name: 'SOURCE_LEVEL', type: 'VARCHAR(255)', remarks: '层级', afterColumn: 'SOURCE_ID')
+        }
+    }
 }

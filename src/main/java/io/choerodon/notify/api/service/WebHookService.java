@@ -55,7 +55,7 @@ public interface WebHookService {
      * @param createVO  webHook创建信息
      * @return
      */
-    WebHookVO create(Long projectId, WebHookVO createVO);
+    WebHookVO create(Long projectId, WebHookVO createVO, String source);
 
     /**
      * 更新WebHook
@@ -89,4 +89,6 @@ public interface WebHookService {
      * @return
      */
     WebHookDTO enabled(Long id);
+
+    void retry(Long id, Long sourceId);
 }

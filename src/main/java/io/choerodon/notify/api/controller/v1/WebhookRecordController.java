@@ -13,10 +13,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -58,4 +55,12 @@ public class WebhookRecordController {
         }
         return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, webhookRecordVO, params), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "查询WebHook发送记录详情")
+    @GetMapping("/{id}")
+    @Permission(type = ResourceType.PROJECT)
+    public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);
+    }
+
 }

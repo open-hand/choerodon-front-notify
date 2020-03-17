@@ -62,4 +62,9 @@ public class WebhookRecordServiceImpl implements WebhookRecordService {
         pageInfo.setList(list);
         return pageInfo;
     }
+
+    @Override
+    public WebhookRecordVO queryById(Long id) {
+        return null;
+    }
 }

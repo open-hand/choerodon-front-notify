@@ -24,16 +24,17 @@ import springfox.documentation.annotations.ApiIgnore;
  * @since 2019/10/28
  */
 @RestController
-@RequestMapping(value = "/v1/projects/{project_id}/web_hooks")
+@RequestMapping
 public class WebHookController {
-
+    private static final String PROJECT = "project";
+    private static final String ORGANIZATION = "organiaztion";
     private WebHookService webHookService;
 
     public WebHookController(WebHookService webHookService) {
         this.webHookService = webHookService;
     }
 
-    @GetMapping
+    @GetMapping("/v1/projects/{project_id}/web_hooks")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook信息（分页接口）")
     @CustomPageRequest
@@ -48,7 +49,7 @@ public class WebHookController {
         return new ResponseEntity<>(webHookService.pagingWebHook(pageable, projectId, filterDTO, params), HttpStatus.OK);
     }
 
-    @GetMapping("/check_path")
+    @GetMapping("/v1/projects/{project_id}/web_hooks/check_path")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "校验WebHook地址是否已经存在")
     public ResponseEntity<Boolean> check(@RequestParam(value = "id", required = false) Long id,
@@ -58,7 +59,7 @@ public class WebHookController {
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook详情")
-    @GetMapping("/{id}")
+    @GetMapping("/v1/projects/{project_id}/web_hooks/{id}")
     public ResponseEntity<WebHookVO> getOne(@PathVariable(name = "project_id") Long projectId,
                                             @PathVariable("id") Long id) {
         return new ResponseEntity<>(webHookService.getById(projectId, id), HttpStatus.OK);
@@ -66,25 +67,29 @@ public class WebHookController {
 
 
     @Permission(type = ResourceType.PROJECT)
-    @ApiOperation(value = "新增WebHook")
-    @PostMapping
-    public ResponseEntity<WebHookVO> create(@PathVariable(name = "project_id") Long projectId,
-                                            @RequestBody @Validated WebHookVO webHookVO) {
-        webHookVO.setProjectId(projectId);
-        //校验type
-        if (!WebHookTypeEnum.isInclude(webHookVO.getType())) {
-            throw new CommonException("error.web.hook.type.invalid");
-        }
-        return new ResponseEntity<>(webHookService.create(projectId, webHookVO), HttpStatus.OK);
+    @ApiOperation(value = "项目层新增WebHook")
+    @PostMapping("/v1/projects/{project_id}/web_hooks")
+    public ResponseEntity<WebHookVO> createInProject(@PathVariable(name = "project_id") Long projectId,
+                                                     @RequestBody @Validated WebHookVO webHookVO) {
+        return new ResponseEntity<>(webHookService.create(projectId, webHookVO, PROJECT), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT)
+    @ApiOperation(value = "组织层新增WebHook")
+    @PostMapping("/v1/organization/{organization_id}/web_hooks")
+    public ResponseEntity<WebHookVO> createInOrg(@PathVariable(name = "organization_id") Long organizationId,
+                                                 @RequestBody @Validated WebHookVO webHookVO) {
+        return new ResponseEntity<>(webHookService.create(organizationId, webHookVO, ORGANIZATION), HttpStatus.OK);
+    }
+
+
+    @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "更新WebHook")
-    @PutMapping("/{id}")
+    @PutMapping("/v1/projects/{project_id}/web_hooks/{id}")
     public ResponseEntity<WebHookVO> update(@PathVariable("project_id") Long projectId,
                                             @PathVariable("id") Long id,
                                             @RequestBody @Validated WebHookVO webHookVO) {
-        webHookVO.setProjectId(projectId);
+        webHookVO.setSourceId(projectId);
         //校验type
         if (!WebHookTypeEnum.isInclude(webHookVO.getType())) {
             throw new CommonException("error.web.hook.type.invalid");
@@ -94,7 +99,7 @@ public class WebHookController {
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "删除WebHook")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/v1/projects/{project_id}/web_hooks/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         webHookService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -102,16 +107,32 @@ public class WebHookController {
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "禁用WebHook")
-    @PutMapping("/{id}/disabled")
+    @PutMapping("/v1/projects/{project_id}/web_hooks/{id}/disabled")
     public ResponseEntity<WebHookDTO> disabled(@PathVariable("id") Long id) {
         return new ResponseEntity<>(webHookService.disabled(id), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "启用WebHook")
-    @PutMapping("/{id}/enabled")
+    @PutMapping("/v1/projects/{project_id}/web_hooks/{id}/enabled")
     public ResponseEntity<WebHookDTO> enabled(@PathVariable("id") Long id) {
         return new ResponseEntity<>(webHookService.enabled(id), HttpStatus.OK);
     }
 
+    @Permission(type = ResourceType.PROJECT)
+    @ApiOperation(value = "重试发送记录")
+    @PostMapping("/v1/notifu/{source_id}/web_hooks/{id}/retry")
+    public void retey(
+            @PathVariable("source_id") Long sourceId,
+            @PathVariable("id") Long id) {
+        webHookService.retry(id, sourceId);
+    }
+//
+//    @Permission(type = ResourceType.PROJECT)
+//    @ApiOperation(value = "查询执行记录详情")
+//    @GetMapping("/v1/projects/{project_id}/web_hooks/{id}")
+//    public ResponseEntity<WebHookVO> getOne(@PathVariable(name = "project_id") Long projectId,
+//                                            @PathVariable("id") Long id) {
+//        return new ResponseEntity<>(webHookService.getById(projectId, id), HttpStatus.OK);
+//    }
 }
