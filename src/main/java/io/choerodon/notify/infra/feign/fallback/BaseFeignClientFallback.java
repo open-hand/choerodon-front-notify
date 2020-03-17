@@ -1,5 +1,6 @@
 package io.choerodon.notify.infra.feign.fallback;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.notify.api.dto.UserDTO;
 import io.choerodon.notify.infra.feign.BaseFeignClient;
 import org.springframework.http.ResponseEntity;
@@ -17,5 +18,15 @@ public class BaseFeignClientFallback implements BaseFeignClient {
     @Override
     public ResponseEntity<List<UserDTO>> listUsersByIds(Long[] ids, Boolean onlyEnabled) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<Boolean> checkIsOrgRoot(Long organizationId, Long userId) {
+        throw new CommonException("error.checkout.org.root");
+    }
+
+    @Override
+    public ResponseEntity<Boolean> checkIsProjectOwner(Long id, Long projectId) {
+        throw new CommonException("error.checkout.project.owner");
     }
 }

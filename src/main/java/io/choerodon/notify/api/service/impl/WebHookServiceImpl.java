@@ -10,6 +10,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.notify.infra.feign.BaseFeignClient;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,20 +47,25 @@ import io.choerodon.web.util.PageableHelper;
 @Service
 public class WebHookServiceImpl implements WebHookService {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebHookServiceImpl.class);
+    private static final String PROJECT = "project";
+    private static final String ORGANIZATION = "organization";
+
     private WebHookMapper webHookMapper;
     private WebHookMessageSettingService webHookMessageSettingService;
     private TemplateService templateService;
     private SendSettingService sendSettingService;
     private TemplateRender templateRender;
     private WebhookRecordMapper webhookRecordMapper;
+    private BaseFeignClient baseFeignClient;
 
-    public WebHookServiceImpl(WebHookMapper webHookMapper, WebHookMessageSettingService webHookMessageSettingService, TemplateService templateService, SendSettingService sendSettingService, TemplateRender templateRender, WebhookRecordMapper webhookRecordMapper) {
+    public WebHookServiceImpl(WebHookMapper webHookMapper, WebHookMessageSettingService webHookMessageSettingService, TemplateService templateService, SendSettingService sendSettingService, TemplateRender templateRender, WebhookRecordMapper webhookRecordMapper, BaseFeignClient baseFeignClient) {
         this.webHookMapper = webHookMapper;
         this.webHookMessageSettingService = webHookMessageSettingService;
         this.templateService = templateService;
         this.sendSettingService = sendSettingService;
         this.templateRender = templateRender;
         this.webhookRecordMapper = webhookRecordMapper;
+        this.baseFeignClient = baseFeignClient;
     }
 
     @Override
@@ -98,20 +105,20 @@ public class WebHookServiceImpl implements WebHookService {
                 String content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
                 if (WebHookTypeEnum.DINGTALK.getValue().equalsIgnoreCase(hook.getType())) {
                     webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-                    webhookRecordDTO.setProjectId(hook.getProjectId());
+                    webhookRecordDTO.setProjectId(hook.getSourceId());
                     webhookRecordDTO.setContent(content);
                     webhookRecordDTO.setSendSettingCode(dto.getCode());
                     String title = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.TITLE);
                     sendDingTalk(hook, content, title, mobiles, dto.getCode());
                 } else if (WebHookTypeEnum.WECHAT.getValue().equalsIgnoreCase(hook.getType())) {
                     webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-                    webhookRecordDTO.setProjectId(hook.getProjectId());
+                    webhookRecordDTO.setProjectId(hook.getSourceId());
                     webhookRecordDTO.setContent(content);
                     webhookRecordDTO.setSendSettingCode(dto.getCode());
                     sendWeChat(hook, content, dto.getCode());
                 } else if (WebHookTypeEnum.JSON.getValue().equalsIgnoreCase(hook.getType())) {
                     webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-                    webhookRecordDTO.setProjectId(hook.getProjectId());
+                    webhookRecordDTO.setProjectId(hook.getSourceId());
                     webhookRecordDTO.setContent(content);
                     webhookRecordDTO.setSendSettingCode(dto.getCode());
                     sendJson(hook, dto);
@@ -140,7 +147,7 @@ public class WebHookServiceImpl implements WebHookService {
         RestTemplate template = new RestTemplate();
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setProjectId(hook.getProjectId());
+        webhookRecordDTO.setProjectId(hook.getSourceId());
         webhookRecordDTO.setContent(text);
         webhookRecordDTO.setSendSettingCode(code);
         try {
@@ -219,7 +226,7 @@ public class WebHookServiceImpl implements WebHookService {
         ResponseEntity<String> response = template.postForEntity(hook.getWebhookPath(), request, String.class);
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setProjectId(hook.getProjectId());
+        webhookRecordDTO.setProjectId(hook.getSourceId());
         webhookRecordDTO.setContent(content);
         webhookRecordDTO.setSendSettingCode(code);
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -238,7 +245,7 @@ public class WebHookServiceImpl implements WebHookService {
         ResponseEntity<String> response = template.postForEntity(hook.getWebhookPath(), dto, String.class);
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setProjectId(hook.getProjectId());
+        webhookRecordDTO.setProjectId(hook.getSourceId());
         webhookRecordDTO.setSendSettingCode(dto.getCode());
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.warn("Web hook response not success {}", response);
@@ -274,7 +281,7 @@ public class WebHookServiceImpl implements WebHookService {
         WebHookVO webHookVO = new WebHookVO();
         BeanUtils.copyProperties(webHookDTO, webHookVO);
         //2.查询可选的发送设置
-        webHookVO.setTriggerEventSelection(sendSettingService.getUnderProject());
+        webHookVO.setTriggerEventSelection(sendSettingService.getUnderProject(null, null));
         //3.查询已选的发送设置主键
         List<WebHookMessageSettingDTO> byWebHookId = webHookMessageSettingService.getByWebHookId(id);
         webHookVO.setSendSettingIdList(CollectionUtils.isEmpty(byWebHookId) ? null : byWebHookId.stream().map(WebHookMessageSettingDTO::getSendSettingId).collect(Collectors.toSet()));
@@ -283,7 +290,21 @@ public class WebHookServiceImpl implements WebHookService {
 
     @Override
     @Transactional
-    public WebHookVO create(Long projectId, WebHookVO webHookVO) {
+    public WebHookVO create(Long sourceId, WebHookVO webHookVO, String source) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        //校验管理员权限
+        if (!(PROJECT.equals(source) && baseFeignClient.checkIsProjectOwner(userId, sourceId).getBody())) {
+            throw new CommonException("user.not.project.owner");
+        }
+        if (ORGANIZATION.equals(source) && baseFeignClient.checkIsOrgRoot(userId, sourceId).getBody()) {
+            throw new CommonException("user.not.org.root");
+        }
+
+        webHookVO.setSourceId(sourceId);
+        //校验type
+        if (!WebHookTypeEnum.isInclude(webHookVO.getType())) {
+            throw new CommonException("error.web.hook.type.invalid");
+        }
         //0.校验web hook path
         if (!checkPath(null, webHookVO.getWebhookPath())) {
             throw new CommonException("error.web.hook.path.duplicate");
@@ -295,7 +316,7 @@ public class WebHookServiceImpl implements WebHookService {
         //2.新增WebHook的发送设置配置
         webHookMessageSettingService.update(webHookVO.getId(), webHookVO.getSendSettingIdList());
         //3.返回数据
-        return getById(projectId, webHookVO.getId());
+        return getById(sourceId, webHookVO.getId());
     }
 
     @Override

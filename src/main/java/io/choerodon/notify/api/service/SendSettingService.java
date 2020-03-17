@@ -2,7 +2,9 @@ package io.choerodon.notify.api.service;
 
 import com.github.pagehelper.PageInfo;
 import io.choerodon.notify.api.dto.*;
+import io.choerodon.notify.api.vo.SendSettingCategoryVO;
 import io.choerodon.notify.api.vo.WebHookVO;
+import io.choerodon.notify.infra.dto.SendSettingCategoryDTO;
 import io.choerodon.notify.infra.dto.SendSettingDTO;
 import io.choerodon.swagger.notify.NotifyBusinessTypeScanData;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +62,7 @@ public interface SendSettingService {
     /**
      * 查询项目层下的所有可选的SendSetting
      */
-    WebHookVO.SendSetting getUnderProject();
+    WebHookVO.SendSetting getUnderProject(String name, String description);
 
     /**
      * 根据id
@@ -81,8 +83,10 @@ public interface SendSettingService {
      * @return 消息服务信息
      */
     MessageServiceVO forbiddenConfiguration(Long id);
+
     /**
      * 根据code查询发送设置
+     *
      * @param code
      * @return
      */
@@ -90,8 +94,10 @@ public interface SendSettingService {
 
     /**
      * 校验资源删除验证通知是否启用
+     *
      * @return
      */
     Boolean checkResourceDeleteEnabled();
+
 
 }

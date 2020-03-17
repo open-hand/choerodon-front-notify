@@ -3,7 +3,9 @@ package io.choerodon.notify.infra.mapper;
 import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.notify.api.dto.MessageServiceVO;
 import io.choerodon.notify.api.dto.SendSettingDetailDTO;
+import io.choerodon.notify.infra.dto.SendSettingCategoryDTO;
 import io.choerodon.notify.infra.dto.SendSettingDTO;
+import io.choerodon.notify.infra.dto.WebHookDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -31,4 +33,6 @@ public interface SendSettingMapper extends Mapper<SendSettingDTO> {
 
     List<SendSettingDetailDTO> queryByLevelAndAllowConfig(@Param("level") String level,
                                                           @Param("allowConfig") boolean allowConfig);
+
+    List<SendSettingDTO> pageSendSettingByCondition(@Param("condition") SendSettingDTO condition);
 }
