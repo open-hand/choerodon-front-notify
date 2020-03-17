@@ -158,7 +158,7 @@ public class NoticesSendServiceImpl implements NoticesSendService {
 
         // 2.获取是否启用自定义发送类型
         boolean customizedSendingTypesFlag = !CollectionUtils.isEmpty(noticeSendDTO.getCustomizedSendingTypes());
-        LOGGER.info(">>>WHETHER_TO_CUSTOMIZE_THE_CONFIGURATION>>>{}>>>email:{}>>>pm:{}>>>sms:{}>>>wb:{}", customizedSendingTypesFlag, noticeSendDTO.isSendingEmail(), noticeSendDTO.isSendingSiteMessage(), noticeSendDTO.isSendingSMS(), noticeSendDTO.isSendingWebHook());
+        LOGGER.info(">>>WHETHER_TO_CUSTOMIZE_THE_CONFIGURATION>>>{}>>>email:{}>>>pm:{}>>>sms:{}>>>wb:{}", customizedSendingTypesFlag, noticeSendDTO.isSendingEmail(), noticeSendDTO.isSendingSiteMessage(), noticeSendDTO.isSendingSMS(), noticeSendDTO.isSendingWebHookOther(),noticeSendDTO.isSendingWebHookJson());
         //项目层的设置
         MessageSettingVO messageSettingVO = messageSettingService.getSettingByCode(noticeSendDTO.getSourceId(), noticeSendDTO.getNotifyType(), noticeSendDTO.getCode(), noticeSendDTO.getEnvId(), noticeSendDTO.getEventName());
         // 3.1.发送邮件
@@ -207,7 +207,7 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         //是否需要发送webhook
 
         //自定义发送，并且要发送webhook，且平台层发送，非自定义发送，平台层开启则发
-        if ((customizedSendingTypesFlag && noticeSendDTO.isSendingWebHook() && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag())) ||
+        if ((customizedSendingTypesFlag && (noticeSendDTO.isSendingWebHookOther()||noticeSendDTO.isSendingWebHookJson()) && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag())) ||
                 (!customizedSendingTypesFlag && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag()))) {
             siteLevelWebhookVerification = true;
         }

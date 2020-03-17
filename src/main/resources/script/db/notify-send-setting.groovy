@@ -116,4 +116,13 @@ databaseChangeLog(logicalFilePath: 'script/db/notify-send-setting.groovy') {
             column(name: 'IS_EDIT', type: 'TINYINT UNSIGNED', remarks: '能够编辑isAllowConfig', defaultValue: 1)
         }
     }
+
+    changeSet(author: 'scp', id: '2020-03-17-rename-column-webhook') {
+        renameColumn(columnDataType: 'TINYINT UNSIGNED', newColumnName: "WEBHOOK_OTHER_ENABLED_FLAG", oldColumnName: "WEBHOOK_ENABLED_FLAG", remarks: '是否启用webhook 微信钉钉发送方式', tableName: 'NOTIFY_SEND_SETTING')
+        addColumn(tableName: "NOTIFY_SEND_SETTING") {
+            column(name: 'WEBHOOK_JSON_ENABLED_FLAG', type: 'TINYINT UNSIGNED', remarks: '是否启用webhook json发送方式', afterColumn: "WEBHOOK_OTHER_ENABLED_FLAG") {
+                constraints(nullable: false)
+            }
+        }
+    }
 }
