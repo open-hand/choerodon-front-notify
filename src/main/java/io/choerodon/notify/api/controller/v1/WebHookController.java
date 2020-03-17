@@ -70,7 +70,7 @@ public class WebHookController {
     @ApiOperation(value = "项目层新增WebHook")
     @PostMapping("/v1/projects/{project_id}/web_hooks")
     public ResponseEntity<WebHookVO> createInProject(@PathVariable(name = "project_id") Long projectId,
-                                            @RequestBody @Validated WebHookVO webHookVO) {
+                                                     @RequestBody @Validated WebHookVO webHookVO) {
         return new ResponseEntity<>(webHookService.create(projectId, webHookVO, PROJECT), HttpStatus.OK);
     }
 
@@ -78,7 +78,7 @@ public class WebHookController {
     @ApiOperation(value = "组织层新增WebHook")
     @PostMapping("/v1/organization/{organization_id}/web_hooks")
     public ResponseEntity<WebHookVO> createInOrg(@PathVariable(name = "organization_id") Long organizationId,
-                                            @RequestBody @Validated WebHookVO webHookVO) {
+                                                 @RequestBody @Validated WebHookVO webHookVO) {
         return new ResponseEntity<>(webHookService.create(organizationId, webHookVO, ORGANIZATION), HttpStatus.OK);
     }
 
@@ -119,4 +119,20 @@ public class WebHookController {
         return new ResponseEntity<>(webHookService.enabled(id), HttpStatus.OK);
     }
 
+    @Permission(type = ResourceType.PROJECT)
+    @ApiOperation(value = "重试发送记录")
+    @PostMapping("/v1/notifu/{source_id}/web_hooks/{id}/retry")
+    public void retey(
+            @PathVariable("source_id") Long sourceId,
+            @PathVariable("id") Long id) {
+        webHookService.retry(id, sourceId);
+    }
+//
+//    @Permission(type = ResourceType.PROJECT)
+//    @ApiOperation(value = "查询执行记录详情")
+//    @GetMapping("/v1/projects/{project_id}/web_hooks/{id}")
+//    public ResponseEntity<WebHookVO> getOne(@PathVariable(name = "project_id") Long projectId,
+//                                            @PathVariable("id") Long id) {
+//        return new ResponseEntity<>(webHookService.getById(projectId, id), HttpStatus.OK);
+//    }
 }

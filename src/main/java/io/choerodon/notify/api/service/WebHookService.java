@@ -89,4 +89,6 @@ public interface WebHookService {
      * @return
      */
     WebHookDTO enabled(Long id);
+
+    void retry(Long id, Long sourceId);
 }

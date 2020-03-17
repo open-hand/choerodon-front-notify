@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.notify.api.dto.UserDTO;
 import io.choerodon.notify.infra.feign.BaseFeignClient;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -376,6 +377,25 @@ public class WebHookServiceImpl implements WebHookService {
             throw new UpdateException("error.web.hook.enabled");
         }
         return webHookDTO;
+    }
+
+    @Override
+    public void retry(Long id, Long sourceId) {
+        WebHookDTO webHookDTO = webHookMapper.selectByPrimaryKey(id);
+        if (Objects.isNull(webHookDTO)) {
+            throw new CommonException("error.retry.webhook");
+        }
+        NoticeSendDTO noticeSendDTO = new NoticeSendDTO();
+        noticeSendDTO.setSourceId(sourceId);
+
+//        try {
+//            //1.获取邮件接收用户
+//            Set<String> mobiles = users.stream().map(UserDTO::getPhone).collect(Collectors.toSet());
+//            //2.发送邮件
+//            trySendWebHook(noticeSendDTO, sendSettingDTO, mobiles);
+//        } catch (Exception e) {
+//            LOGGER.warn(">>>SENDING_WEBHOOL_ERROR>>> An error occurred while sending the message.", e);
+//        }
     }
 
     /**
