@@ -28,8 +28,9 @@ public class SendSettingProjectController {
     @ApiOperation("查询项目下可选的发送设置（用于WebHook）")
     public ResponseEntity<WebHookVO.SendSetting> getSendSettings(@PathVariable("project_id") Long projectId,
                                                                  @RequestParam(name = "name", required = false) String name,
-                                                                 @RequestParam(name = "description", required = false) String description) {
-        return new ResponseEntity<>(sendSettingService.getUnderProject(name, description), HttpStatus.OK);
+                                                                 @RequestParam(name = "description", required = false) String description,
+                                                                 @RequestParam(name = "type", required = false) String type) {
+        return new ResponseEntity<>(sendSettingService.getUnderProject(name, description, type), HttpStatus.OK);
     }
 
 

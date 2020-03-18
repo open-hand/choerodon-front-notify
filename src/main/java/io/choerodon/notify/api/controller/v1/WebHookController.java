@@ -57,13 +57,13 @@ public class WebHookController {
         return new ResponseEntity<>(webHookService.checkPath(id, path), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT)
-    @ApiOperation(value = "查询WebHook详情")
-    @GetMapping("/v1/projects/{project_id}/web_hooks/{id}")
-    public ResponseEntity<WebHookVO> getOne(@PathVariable(name = "project_id") Long projectId,
-                                            @PathVariable("id") Long id) {
-        return new ResponseEntity<>(webHookService.getById(projectId, id), HttpStatus.OK);
-    }
+//    @Permission(type = ResourceType.PROJECT)
+//    @ApiOperation(value = "查询WebHook详情")
+//    @GetMapping("/v1/projects/{project_id}/web_hooks/{id}")
+//    public ResponseEntity<WebHookVO> getOne(@PathVariable(name = "project_id") Long projectId,
+//                                            @PathVariable("id") Long id) {
+//        return new ResponseEntity<>(webHookService.getById(projectId, id), HttpStatus.OK);
+//    }
 
 
     @Permission(type = ResourceType.PROJECT)

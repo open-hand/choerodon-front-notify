@@ -48,7 +48,9 @@ public class SendSettingDTO extends BaseDTO {
 
     private Boolean smsEnabledFlag;
 
-    private Boolean webhookEnabledFlag;
+    private Boolean webhookOtherEnabledFlag;
+
+    private Boolean webhookJsonEnabledFlag;
 
     private Boolean backlogFlag;
 
@@ -57,7 +59,7 @@ public class SendSettingDTO extends BaseDTO {
         this.code = code;
     }
 
-    public SendSettingDTO(String code, String name, String description, String level, String categoryCode, Boolean isAllowConfig, Boolean enabled, Integer retryCount, Boolean isSendInstantly, Boolean isManualRetry, Boolean emailEnabledFlag, Boolean pmEnabledFlag, Boolean smsEnabledFlag, Boolean webhookEnabledFlag, Boolean backlogFlag) {
+    public SendSettingDTO(String code, String name, String description, String level, String categoryCode, Boolean isAllowConfig, Boolean enabled, Integer retryCount, Boolean isSendInstantly, Boolean isManualRetry, Boolean emailEnabledFlag, Boolean pmEnabledFlag, Boolean smsEnabledFlag, Boolean webhookOtherEnabledFlag, Boolean webhookJsonEnabledFlag, Boolean backlogFlag) {
         this.code = code;
         this.name = name;
         this.description = description;
@@ -71,7 +73,8 @@ public class SendSettingDTO extends BaseDTO {
         this.emailEnabledFlag = emailEnabledFlag;
         this.pmEnabledFlag = pmEnabledFlag;
         this.smsEnabledFlag = smsEnabledFlag;
-        this.webhookEnabledFlag = webhookEnabledFlag;
+        this.webhookOtherEnabledFlag = webhookOtherEnabledFlag;
+        this.webhookJsonEnabledFlag = webhookJsonEnabledFlag;
         this.backlogFlag = backlogFlag;
     }
 
@@ -97,8 +100,27 @@ public class SendSettingDTO extends BaseDTO {
                 ", isManualRetry=" + isManualRetry +
                 ", backlogFlag=" + backlogFlag +
                 ", isEdit" + isEdit +
-                ", webhookEnabledFlag=" + webhookEnabledFlag +
+                ", webhookOtherEnabledFlag=" + webhookOtherEnabledFlag +
+                ", webhookJsonEnabledFlag=" + webhookJsonEnabledFlag +
                 '}';
+    }
+
+    public Boolean getWebhookOtherEnabledFlag() {
+        return webhookOtherEnabledFlag;
+    }
+
+    public SendSettingDTO setWebhookOtherEnabledFlag(Boolean webhookOtherEnabledFlag) {
+        this.webhookOtherEnabledFlag = webhookOtherEnabledFlag;
+        return this;
+    }
+
+    public Boolean getWebhookJsonEnabledFlag() {
+        return webhookJsonEnabledFlag;
+    }
+
+    public SendSettingDTO setWebhookJsonEnabledFlag(Boolean webhookJsonEnabledFlag) {
+        this.webhookJsonEnabledFlag = webhookJsonEnabledFlag;
+        return this;
     }
 
     public Long getId() {
@@ -217,14 +239,6 @@ public class SendSettingDTO extends BaseDTO {
         this.smsEnabledFlag = smsEnabledFlag;
     }
 
-    public Boolean getWebhookEnabledFlag() {
-        return webhookEnabledFlag;
-    }
-
-    public SendSettingDTO setWebhookEnabledFlag(Boolean webhookEnabledFlag) {
-        this.webhookEnabledFlag = webhookEnabledFlag;
-        return this;
-    }
 
     public Boolean getBacklogFlag() {
         return backlogFlag;

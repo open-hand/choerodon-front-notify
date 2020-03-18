@@ -15,7 +15,7 @@ public interface WebHookMapper extends Mapper<WebHookDTO> {
      * @param sendSettingId
      * @return
      */
-    Set<WebHookDTO> selectBySendSetting(@Param("project_id") Long projectId,
+    Set<WebHookDTO> selectBySendSetting(@Param("sourceId") Long sourceId,
                                         @Param("send_setting_id") Long sendSettingId);
 
     /**

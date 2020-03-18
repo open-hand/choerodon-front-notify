@@ -2,6 +2,7 @@ package io.choerodon.notify.infra.dto;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +39,9 @@ public class WebHookDTO extends BaseDTO {
 
     @ApiModelProperty("项目或组织ID/必填字段")
     private Long sourceId;
+
+    @ApiModelProperty("webhook的层级")
+    private String sourceLevel;
 
     @ApiModelProperty("webhook是否启用")
     private Boolean enableFlag;
@@ -101,6 +105,15 @@ public class WebHookDTO extends BaseDTO {
 
     public WebHookDTO setEnableFlag(Boolean enableFlag) {
         this.enableFlag = enableFlag;
+        return this;
+    }
+
+    public String getSourceLevel() {
+        return sourceLevel;
+    }
+
+    public WebHookDTO setSourceLevel(String sourceLevel) {
+        this.sourceLevel = sourceLevel;
         return this;
     }
 }

@@ -10,16 +10,13 @@ import io.choerodon.core.exception.ext.InsertException;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.notify.api.dto.*;
 import io.choerodon.notify.api.service.*;
-import io.choerodon.notify.infra.dto.NotifyScheduleRecordDTO;
+import io.choerodon.notify.infra.dto.*;
 import io.choerodon.notify.infra.dto.ReceiveSettingDTO;
-import io.choerodon.notify.infra.dto.SendSettingDTO;
 import io.choerodon.notify.infra.enums.SenderType;
 import io.choerodon.notify.infra.enums.SendingTypeEnum;
 import io.choerodon.notify.infra.feign.AsgardFeignClient;
 import io.choerodon.notify.infra.feign.UserFeignClient;
-import io.choerodon.notify.infra.mapper.NotifyScheduleRecordMapper;
-import io.choerodon.notify.infra.mapper.ReceiveSettingMapper;
-import io.choerodon.notify.infra.mapper.SendSettingMapper;
+import io.choerodon.notify.infra.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +43,9 @@ public class NoticesSendServiceImpl implements NoticesSendService {
     private SmsService smsService;
     private NotifyScheduleRecordMapper notifyScheduleRecordMapper;
     private MessageSettingService messageSettingService;
+    private WebHookMapper webHookMapper;
+    private WebHookMessageSettingMapper webHookMessageSettingMapper;
+
 
     public NoticesSendServiceImpl(EmailSendService emailSendService,
                                   @Qualifier("pmWsSendService") WebSocketSendService webSocketSendService,
@@ -55,7 +55,9 @@ public class NoticesSendServiceImpl implements NoticesSendService {
                                   AsgardFeignClient asgardFeignClient,
                                   SmsService smsService,
                                   NotifyScheduleRecordMapper notifyScheduleRecordMapper,
-                                  MessageSettingService messageSettingService) {
+                                  MessageSettingService messageSettingService,
+                                  WebHookMapper webHookMapper,
+                                  WebHookMessageSettingMapper webHookMessageSettingMapper) {
         this.emailSendService = emailSendService;
         this.webSocketSendService = webSocketSendService;
         this.webHookService = webHookService;
@@ -66,6 +68,9 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         this.asgardFeignClient = asgardFeignClient;
         this.notifyScheduleRecordMapper = notifyScheduleRecordMapper;
         this.messageSettingService = messageSettingService;
+        this.webHookMapper = webHookMapper;
+        this.webHookMessageSettingMapper = webHookMessageSettingMapper;
+
     }
 
     //单元测试
@@ -139,7 +144,7 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         // 0.2 校验SendSetting启用状态 / 发送方式启用状态 : 如停用 或 发送方式皆不启用 则 取消发送
         if (!sendSettingDTO.getEnabled() ||
                 !(sendSettingDTO.getEmailEnabledFlag() || sendSettingDTO.getPmEnabledFlag() ||
-                        sendSettingDTO.getSmsEnabledFlag() || sendSettingDTO.getWebhookEnabledFlag())) {
+                        sendSettingDTO.getSmsEnabledFlag() || sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag())) {
             LOGGER.warn(">>>CANCEL_SENDING>>> The send setting has been disabled OR all sending types for this send setting have been disabled.[INFO:send_setting_code:'{}']", noticeSendDTO.getCode());
             return;
         }
@@ -195,7 +200,25 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         }
 
         // 3.3.发送WebHook
-        if ((customizedSendingTypesFlag && noticeSendDTO.isSendingWebHook()) || (!customizedSendingTypesFlag && sendSettingDTO.getWebhookEnabledFlag())) {
+        //平台层webhook发送设置是否开启.
+        boolean siteLevelWebhookVerification = false;
+        //项目/组织层是否需要校验
+        boolean isRequiredWebhookVerification = false;
+        //是否需要发送webhook
+
+        //自定义发送，并且要发送webhook，且平台层发送，非自定义发送，平台层开启则发
+        if ((customizedSendingTypesFlag && noticeSendDTO.isSendingWebHook() && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag())) ||
+                (!customizedSendingTypesFlag && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag()))) {
+            siteLevelWebhookVerification = true;
+        }
+        //获取这次要发送的webhook的项目层或组织层的设置
+        List<WebHookDTO> webHookDTOS = getWebHookSetting(sendSettingDTO, noticeSendDTO);
+        if (!CollectionUtils.isEmpty(webHookDTOS)) {
+            if (webHookDTOS.stream().map(webHookDTO -> webHookDTO.getEnableFlag()).collect(Collectors.toList()).contains(true)) {
+                isRequiredWebhookVerification = true;
+            }
+        }
+        if (siteLevelWebhookVerification && isRequiredWebhookVerification) {
             trySendWebHook(noticeSendDTO, sendSettingDTO, users);
         }
         // 3.4 发送短信
@@ -406,5 +429,36 @@ public class NoticesSendServiceImpl implements NoticesSendService {
             ReceiveSettingDTO setting = new ReceiveSettingDTO(sendSettingDTO.getId(), type.getValue(), noticeSendDTO.getSourceId(), sendSettingDTO.getLevel(), user.getId());
             return receiveSettingMapper.selectCount(setting) == 0;
         }).collect(Collectors.toSet());
+    }
+
+    private List<WebHookDTO> getWebHookSetting(SendSettingDTO sendSettingDTO, NoticeSendDTO noticeSendDTO) {
+        WebHookDTO webHookDTO = new WebHookDTO();
+        webHookDTO.setSourceId(noticeSendDTO.getSourceId());
+        webHookDTO.setSourceLevel(sendSettingDTO.getLevel());
+        //包含钉钉 微信，json
+        List<WebHookDTO> webHookDTOS = webHookMapper.select(webHookDTO);
+        //找出所有的webhook message setting
+        List<WebHookMessageSettingDTO> webHookMessageSettingDTOS = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(webHookDTOS)) {
+            webHookDTOS.stream().forEach(webHookDTO1 -> {
+                WebHookMessageSettingDTO webHookMessageSettingDTO = new WebHookMessageSettingDTO();
+                webHookMessageSettingDTO.setWebhookId(webHookDTO1.getId());
+                List<WebHookMessageSettingDTO> webHookMessageSettingDTOS1 = webHookMessageSettingMapper.select(webHookMessageSettingDTO);
+                if (!CollectionUtils.isEmpty(webHookMessageSettingDTOS1)) {
+                    webHookMessageSettingDTOS.addAll(webHookMessageSettingDTOS1);
+                }
+            });
+        }
+        //根据sendsetting id筛选真正要发送的wenhook
+        Set<Long> webHoookIds = webHookMessageSettingDTOS.stream()
+                .filter(webHookMessageSettingDTO -> webHookMessageSettingDTO.getSendSettingId().equals(sendSettingDTO.getId()))
+                .map(WebHookMessageSettingDTO::getWebhookId).collect(Collectors.toSet());
+        //根据WebHookMessageSettingDTO查找webhook
+
+        List<WebHookDTO> hookDTOS = webHoookIds.stream().map(id ->
+        {
+            return webHookMapper.selectByPrimaryKey(id);
+        }).collect(Collectors.toList());
+        return hookDTOS;
     }
 }
