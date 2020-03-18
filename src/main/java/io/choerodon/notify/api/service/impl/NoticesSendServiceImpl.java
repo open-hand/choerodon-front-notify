@@ -461,4 +461,5 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         }).collect(Collectors.toList());
         return hookDTOS;
     }
+    
 }
