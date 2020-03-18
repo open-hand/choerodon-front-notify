@@ -5,6 +5,7 @@ import io.choerodon.notify.api.dto.NoticeSendDTO;
 import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.SendSettingDTO;
 import io.choerodon.notify.infra.dto.WebHookDTO;
+import io.choerodon.notify.infra.dto.WebhookRecordDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Set;
@@ -91,4 +92,6 @@ public interface WebHookService {
     WebHookDTO enabled(Long id);
 
     void retry(Long id, Long sourceId);
+
+//    PageInfo<WebhookRecordDTO> pagingByRecord(Pageable pageable, Long sourceId, String sourceLevel, String params);
 }

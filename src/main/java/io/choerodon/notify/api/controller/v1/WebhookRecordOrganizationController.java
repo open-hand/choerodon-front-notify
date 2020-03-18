@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -21,11 +20,11 @@ import springfox.documentation.annotations.ApiIgnore;
  * @date 2019/11/4
  */
 @RestController
-@RequestMapping(value = "/v1/web_hook_records")
-public class WebhookRecordController {
+@RequestMapping(value = "/v1/organization/{organization_id}/web_hook_records")
+public class WebhookRecordOrganizationController {
     private WebhookRecordService webhookRecordService;
 
-    public WebhookRecordController(WebhookRecordService webhookRecordService) {
+    public WebhookRecordOrganizationController(WebhookRecordService webhookRecordService) {
         this.webhookRecordService = webhookRecordService;
     }
 
@@ -35,31 +34,21 @@ public class WebhookRecordController {
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebhookRecordVO>> pagingByMessage(@ApiIgnore
                                                                      @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                     @RequestParam(required = false, name = "project_name") String projectName,
+                                                                     @PathVariable(name = "organization_id") Long sourceId,
+                                                                     @RequestParam(required = false, name = "source_level") String sourceLevel,
                                                                      @RequestParam(required = false) String status,
-                                                                     @RequestParam(required = false, name = "send_setting_name") String sendSettingName,
-                                                                     @RequestParam(required = false, name = "webhook_path") String webhookPath,
-                                                                     @RequestParam(required = false) String params) {
-        WebhookRecordVO webhookRecordVO = new WebhookRecordVO();
-        if (!StringUtils.isEmpty(projectName)) {
-            webhookRecordVO.setProjectName(projectName);
-        }
-        if (!StringUtils.isEmpty(status)) {
-            webhookRecordVO.setStatus(status);
-        }
-        if (!StringUtils.isEmpty(sendSettingName)) {
-            webhookRecordVO.setSendSettingName(sendSettingName);
-        }
-        if (!StringUtils.isEmpty(webhookPath)) {
-            webhookRecordVO.setStatus(webhookPath);
-        }
-        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, webhookRecordVO, params), HttpStatus.OK);
+                                                                     @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
+                                                                     @RequestParam(required = false, name = "webhook_type") String webhookType) {
+
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, sourceLevel, status, sendSettingCode, webhookType), HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询WebHook发送记录详情")
     @GetMapping("/{id}")
     @Permission(type = ResourceType.PROJECT)
-    public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
+            @PathVariable(name = "organization_id") Long organizationId,
+            @PathVariable(name = "id") Long id) {
         return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);
     }
 

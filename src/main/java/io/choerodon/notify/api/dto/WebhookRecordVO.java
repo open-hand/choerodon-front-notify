@@ -27,6 +27,16 @@ public class WebhookRecordVO {
 
     private String webhookPath;
 
+    private Long webhookId;
+
+    public Long getWebhookId() {
+        return webhookId;
+    }
+
+    public void setWebhookId(Long webhookId) {
+        this.webhookId = webhookId;
+    }
+
     public Long getId() {
         return id;
     }
