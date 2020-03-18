@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Table, Button, Modal } from 'choerodon-ui/pro';
 import { message } from 'choerodon-ui';
-import { axios, Breadcrumb, Header, Content, StatusTag, Action } from '@choerodon/boot';
+import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page } from '@choerodon/boot';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import Store from './Store';
 
@@ -32,6 +32,7 @@ const WebhooksSetting = () => {
       style: {
         width: '51.39%',
       },
+      okText: '创建',
       children: (
         <CreateAndEditWebhooksForm dataSet={createWebhooksFormDataSet} triggerEventsSettingDataSet={createTriggerEventsSettingDataSet} />
       ),
@@ -136,7 +137,7 @@ const WebhooksSetting = () => {
   const typeRenderer = ({ value }) => webhooksTypeMap[value];
 
   return (
-    <React.Fragment>
+    <Page>
       <Header>
         <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
       </Header>
@@ -155,7 +156,7 @@ const WebhooksSetting = () => {
           <Column name="enableFlag" renderer={StatusRenderer} />
         </Table>
       </Content>
-    </React.Fragment>
+    </Page>
   );
 };
 
