@@ -44,7 +44,9 @@ public class SendSettingVO {
 
     private Boolean smsEnabledFlag;
 
-    private Boolean webhookEnabledFlag;
+    private Boolean webhookOtherEnabledFlag;
+
+    private Boolean webhookJsonEnabledFlag;
 
     private Boolean backlogFlag;
 
@@ -156,14 +158,6 @@ public class SendSettingVO {
         this.smsEnabledFlag = smsEnabledFlag;
     }
 
-    public Boolean getWebhookEnabledFlag() {
-        return webhookEnabledFlag;
-    }
-
-    public void setWebhookEnabledFlag(Boolean webhookEnabledFlag) {
-        this.webhookEnabledFlag = webhookEnabledFlag;
-    }
-
     public Boolean getBacklogFlag() {
         return backlogFlag;
     }
@@ -210,5 +204,21 @@ public class SendSettingVO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public Boolean getWebhookOtherEnabledFlag() {
+        return webhookOtherEnabledFlag;
+    }
+
+    public void setWebhookOtherEnabledFlag(Boolean webhookOtherEnabledFlag) {
+        this.webhookOtherEnabledFlag = webhookOtherEnabledFlag;
+    }
+
+    public Boolean getWebhookJsonEnabledFlag() {
+        return webhookJsonEnabledFlag;
+    }
+
+    public void setWebhookJsonEnabledFlag(Boolean webhookJsonEnabledFlag) {
+        this.webhookJsonEnabledFlag = webhookJsonEnabledFlag;
     }
 }
