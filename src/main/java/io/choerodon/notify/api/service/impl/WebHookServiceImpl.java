@@ -100,9 +100,9 @@ public class WebHookServiceImpl implements WebHookService {
         }
         //3. 发送WebHook
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
-        try {
-            for (WebHookDTO hook : hooks) {
 
+        for (WebHookDTO hook : hooks) {
+            try {
                 Map<String, Object> userParams = dto.getParams();
                 String content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
                 if (WebHookTypeEnum.DINGTALK.getValue().equalsIgnoreCase(hook.getType())) {
@@ -130,12 +130,13 @@ public class WebHookServiceImpl implements WebHookService {
                 } else {
                     throw new CommonException("Unsupported web hook type : {}", hook.getType());
                 }
+            } catch (Exception e) {
+                webhookRecordDTO.setWebhookId(hook.getId());
+                webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
+                webhookRecordDTO.setFailedReason(e.getMessage());
+                webhookRecordMapper.insertSelective(webhookRecordDTO);
+                LOGGER.error(">>>SENDING_WEBHOOK_ERROR>>> An error occurred while sending the web hook", e.getMessage());
             }
-        } catch (Exception e) {
-            webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-            webhookRecordDTO.setFailedReason(e.getMessage());
-            webhookRecordMapper.insertSelective(webhookRecordDTO);
-            LOGGER.error(">>>SENDING_WEBHOOK_ERROR>>> An error occurred while sending the web hook", e.getMessage());
         }
     }
 
@@ -155,6 +156,7 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setSourceId(hook.getSourceId());
         webhookRecordDTO.setContent(text);
         webhookRecordDTO.setSendSettingCode(code);
+        webhookRecordDTO.setWebhookId(hook.getId());
         try {
             //1.添加安全设置，构造请求uri（此处直接封装uri而非用String类型来进行http请求：RestTemplate 在执行请求时，如果路径为String类型，将分析路径参数并组合路径，此时会丢失sign的部分特殊字符）
             long timestamp = System.currentTimeMillis();
@@ -234,6 +236,7 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setSourceId(hook.getSourceId());
         webhookRecordDTO.setContent(content);
         webhookRecordDTO.setSendSettingCode(code);
+        webhookRecordDTO.setWebhookId(hook.getId());
         if (!response.getStatusCode().is2xxSuccessful()) {
             webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
             webhookRecordDTO.setFailedReason(response.getBody());
@@ -252,6 +255,7 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
         webhookRecordDTO.setSourceId(hook.getSourceId());
         webhookRecordDTO.setSendSettingCode(dto.getCode());
+        webhookRecordDTO.setWebhookId(hook.getId());
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.warn("Web hook response not success {}", response);
             webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
@@ -401,6 +405,12 @@ public class WebHookServiceImpl implements WebHookService {
 //            LOGGER.warn(">>>SENDING_WEBHOOL_ERROR>>> An error occurred while sending the message.", e);
 //        }
     }
+
+//    @Override
+//    public PageInfo<WebhookRecordDTO> pagingByRecord(Pageable pageable, Long sourceId, String sourceLevel, String params) {
+//        return PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize(), PageableHelper.getSortSql(pageable.getSort()))
+//                .doSelectPageInfo(() -> webhookRecordMapper.pagingByRecord(sourceId, sourceLevel, params));
+//    }
 
     /**
      * 根据主键校验WebHook是否存在

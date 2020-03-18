@@ -32,34 +32,9 @@ public class WebhookRecordServiceImpl implements WebhookRecordService {
     }
 
     @Override
-    public PageInfo<WebhookRecordVO> pagingWebHookRecord(Pageable pageable, WebhookRecordVO webhookRecordVO, String params) {
-        List<Long> ids = new ArrayList<>();
-        if (webhookRecordVO.getProjectName() != null) {
-            ids = userFeignClient.getProListByName(webhookRecordVO.getProjectName()).getBody();
-            if (CollectionUtils.isEmpty(ids)) {
-                return new PageInfo<>();
-            }
-        }
-        List<Long> finalIds = ids;
+    public PageInfo<WebhookRecordVO> pagingWebHookRecord(Pageable pageable, Long sourceId, String sourceLevel, String status, String sendSettingCode, String webhookType) {
         PageInfo<WebhookRecordVO> pageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize(), PageableHelper.getSortSql(pageable.getSort())).
-                doSelectPageInfo(() -> webhookRecordMapper.fulltextSearch(webhookRecordVO, params, finalIds));
-        List<WebhookRecordVO> list = pageInfo.getList();
-        Set<Long> idSet = new HashSet<>();
-        if (!CollectionUtils.isEmpty(list)) {
-            list.forEach(i -> idSet.add(i.getProjectId()));
-        }
-        List<ProjectDTO> projectDTOS = userFeignClient.listProjectsByIds(idSet).getBody();
-        if (!CollectionUtils.isEmpty(projectDTOS)) {
-            for (WebhookRecordVO webhookRecordVO1 : list) {
-                for (ProjectDTO dto : projectDTOS) {
-                    if (dto.getId().equals(webhookRecordVO1.getProjectId())) {
-                        webhookRecordVO1.setProjectName(dto.getName());
-                        break;
-                    }
-                }
-            }
-        }
-        pageInfo.setList(list);
+                doSelectPageInfo(() -> webhookRecordMapper.fulltextSearch(sourceId, sourceLevel, status, sendSettingCode, webhookType));
         return pageInfo;
     }
 

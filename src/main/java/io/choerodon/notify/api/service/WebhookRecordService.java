@@ -9,7 +9,9 @@ import org.springframework.data.domain.Pageable;
  * @date 2019/11/4
  */
 public interface WebhookRecordService {
-    PageInfo<WebhookRecordVO> pagingWebHookRecord(Pageable pageable, WebhookRecordVO webhookRecordVO, String params);
 
     WebhookRecordVO queryById(Long id);
+
+    PageInfo<WebhookRecordVO> pagingWebHookRecord(Pageable pageable, Long sourceId, String sourceLevel, String status, String sendSettingCode, String webhookType);
+
 }
