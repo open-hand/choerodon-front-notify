@@ -34,22 +34,23 @@ public class WebHookController {
         this.webHookService = webHookService;
     }
 
-    @GetMapping("/v1/projects/{project_id}/web_hooks")
+    @GetMapping("/v1/notices/{source_Id}/web_hooks")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook信息（分页接口）")
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebHookDTO>> pagingByMessage(@ApiIgnore
                                                                 @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                @PathVariable(name = "project_id") Long projectId,
+                                                                @PathVariable(name = "source_Id") Long sourceId,
+                                                                @RequestParam(required = true) String sourceLevel,
                                                                 @RequestParam(required = false) String name,
                                                                 @RequestParam(required = false) String type,
                                                                 @RequestParam(required = false) Boolean enableFlag,
                                                                 @RequestParam(required = false) String params) {
         WebHookDTO filterDTO = new WebHookDTO().setEnableFlag(enableFlag).setName(name).setType(type);
-        return new ResponseEntity<>(webHookService.pagingWebHook(pageable, projectId, filterDTO, params), HttpStatus.OK);
+        return new ResponseEntity<>(webHookService.pagingWebHook(pageable, sourceId, sourceLevel, filterDTO, params), HttpStatus.OK);
     }
 
-    @GetMapping("/v1/projects/{project_id}/web_hooks/check_path")
+    @GetMapping("/v1/notices/{source_Id}/web_hooks/check_path")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "校验WebHook地址是否已经存在")
     public ResponseEntity<Boolean> check(@RequestParam(value = "id", required = false) Long id,
@@ -74,7 +75,7 @@ public class WebHookController {
         return new ResponseEntity<>(webHookService.create(projectId, webHookVO, PROJECT), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "组织层新增WebHook")
     @PostMapping("/v1/organization/{organization_id}/web_hooks")
     public ResponseEntity<WebHookVO> createInOrg(@PathVariable(name = "organization_id") Long organizationId,
@@ -99,7 +100,7 @@ public class WebHookController {
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "删除WebHook")
-    @DeleteMapping("/v1/projects/{project_id}/web_hooks/{id}")
+    @DeleteMapping("/v1/notices/{source_Id}/web_hooks/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         webHookService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -107,21 +108,21 @@ public class WebHookController {
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "禁用WebHook")
-    @PutMapping("/v1/projects/{project_id}/web_hooks/{id}/disabled")
+    @PutMapping("/v1/notices/{source_Id}/web_hooks/{id}/disabled")
     public ResponseEntity<WebHookDTO> disabled(@PathVariable("id") Long id) {
         return new ResponseEntity<>(webHookService.disabled(id), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "启用WebHook")
-    @PutMapping("/v1/projects/{project_id}/web_hooks/{id}/enabled")
+    @PutMapping("/v1/notices/{source_Id}/web_hooks/{id}/enabled")
     public ResponseEntity<WebHookDTO> enabled(@PathVariable("id") Long id) {
         return new ResponseEntity<>(webHookService.enabled(id), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "重试发送记录")
-    @PostMapping("/v1/notifu/{source_id}/web_hooks/{id}/retry")
+    @PostMapping("/v1/notices/{source_id}/web_hooks/{id}/retry")
     public void retey(
             @PathVariable("source_id") Long sourceId,
             @PathVariable("id") Long id) {
