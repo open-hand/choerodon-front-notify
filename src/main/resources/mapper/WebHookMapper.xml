@@ -9,7 +9,7 @@
         LEFT JOIN NOTIFY_WEBHOOK_MESSAGE_SETTING wms ON wh.ID = wms.WEBHOOK_ID
         WHERE
         wms.SEND_SETTING_ID = #{send_setting_id}
-        AND wh.PROJECT_ID =#{project_id}
+        AND wh.SOURCE_ID =#{sourceId}
         AND wh.enable_flag=1
     </select>
 

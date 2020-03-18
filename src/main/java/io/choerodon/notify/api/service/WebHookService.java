@@ -46,7 +46,7 @@ public interface WebHookService {
      * @param projectId 项目ID
      * @return
      */
-    WebHookVO getById(Long projectId, Long webHookId);
+    WebHookVO getById(Long projectId, Long webHookId, String type);
 
     /**
      * 添加WebHook

@@ -73,7 +73,8 @@ public class WebHookServiceImpl implements WebHookService {
     public void trySendWebHook(NoticeSendDTO dto, SendSettingDTO sendSetting, Set<String> mobiles) {
         LOGGER.info(">>>START_SENDING_WEB_HOOK>>> Send a web hook.[INFO:send_setting_code:'{}']", sendSetting.getCode());
         //0. 若发送设置非项目层 / 发送信息未指定项目Id 则取消发送
-        if (!ResourceLevel.PROJECT.value().equalsIgnoreCase(sendSetting.getLevel())
+        if (!(ResourceLevel.PROJECT.value().equalsIgnoreCase(sendSetting.getLevel())
+                || !ResourceLevel.ORGANIZATION.value().equalsIgnoreCase(sendSetting.getLevel()))
                 || ObjectUtils.isEmpty(dto.getSourceId())
                 || dto.getSourceId().equals(0L)) {
             LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> Missing project information.");
@@ -106,20 +107,23 @@ public class WebHookServiceImpl implements WebHookService {
                 String content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
                 if (WebHookTypeEnum.DINGTALK.getValue().equalsIgnoreCase(hook.getType())) {
                     webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-                    webhookRecordDTO.setProjectId(hook.getSourceId());
+                    webhookRecordDTO.setSourceId(hook.getSourceId());
+                    webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
                     webhookRecordDTO.setContent(content);
                     webhookRecordDTO.setSendSettingCode(dto.getCode());
                     String title = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.TITLE);
                     sendDingTalk(hook, content, title, mobiles, dto.getCode());
                 } else if (WebHookTypeEnum.WECHAT.getValue().equalsIgnoreCase(hook.getType())) {
                     webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-                    webhookRecordDTO.setProjectId(hook.getSourceId());
+                    webhookRecordDTO.setSourceId(hook.getSourceId());
+                    webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
                     webhookRecordDTO.setContent(content);
                     webhookRecordDTO.setSendSettingCode(dto.getCode());
                     sendWeChat(hook, content, dto.getCode());
                 } else if (WebHookTypeEnum.JSON.getValue().equalsIgnoreCase(hook.getType())) {
                     webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-                    webhookRecordDTO.setProjectId(hook.getSourceId());
+                    webhookRecordDTO.setSourceId(hook.getSourceId());
+                    webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
                     webhookRecordDTO.setContent(content);
                     webhookRecordDTO.setSendSettingCode(dto.getCode());
                     sendJson(hook, dto);
@@ -148,7 +152,7 @@ public class WebHookServiceImpl implements WebHookService {
         RestTemplate template = new RestTemplate();
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setProjectId(hook.getSourceId());
+        webhookRecordDTO.setSourceId(hook.getSourceId());
         webhookRecordDTO.setContent(text);
         webhookRecordDTO.setSendSettingCode(code);
         try {
@@ -227,7 +231,7 @@ public class WebHookServiceImpl implements WebHookService {
         ResponseEntity<String> response = template.postForEntity(hook.getWebhookPath(), request, String.class);
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setProjectId(hook.getSourceId());
+        webhookRecordDTO.setSourceId(hook.getSourceId());
         webhookRecordDTO.setContent(content);
         webhookRecordDTO.setSendSettingCode(code);
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -246,7 +250,7 @@ public class WebHookServiceImpl implements WebHookService {
         ResponseEntity<String> response = template.postForEntity(hook.getWebhookPath(), dto, String.class);
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setProjectId(hook.getSourceId());
+        webhookRecordDTO.setSourceId(hook.getSourceId());
         webhookRecordDTO.setSendSettingCode(dto.getCode());
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.warn("Web hook response not success {}", response);
@@ -276,13 +280,13 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     @Override
-    public WebHookVO getById(Long projectId, Long id) {
+    public WebHookVO getById(Long projectId, Long id, String type) {
         //1.查询WebHookVO
         WebHookDTO webHookDTO = checkExistedById(id);
         WebHookVO webHookVO = new WebHookVO();
         BeanUtils.copyProperties(webHookDTO, webHookVO);
         //2.查询可选的发送设置
-        webHookVO.setTriggerEventSelection(sendSettingService.getUnderProject(null, null));
+        webHookVO.setTriggerEventSelection(sendSettingService.getUnderProject(null, null, type));
         //3.查询已选的发送设置主键
         List<WebHookMessageSettingDTO> byWebHookId = webHookMessageSettingService.getByWebHookId(id);
         webHookVO.setSendSettingIdList(CollectionUtils.isEmpty(byWebHookId) ? null : byWebHookId.stream().map(WebHookMessageSettingDTO::getSendSettingId).collect(Collectors.toSet()));
@@ -317,7 +321,7 @@ public class WebHookServiceImpl implements WebHookService {
         //2.新增WebHook的发送设置配置
         webHookMessageSettingService.update(webHookVO.getId(), webHookVO.getSendSettingIdList());
         //3.返回数据
-        return getById(sourceId, webHookVO.getId());
+        return getById(sourceId, webHookVO.getId(), webHookVO.getType());
     }
 
     @Override
@@ -340,7 +344,7 @@ public class WebHookServiceImpl implements WebHookService {
         //2.更新WebHook的发送设置配置
         webHookMessageSettingService.update(webHookDTO.getId(), webHookVO.getSendSettingIdList());
         //3.返回更新数据
-        return getById(projectId, webHookDTO.getId());
+        return getById(projectId, webHookDTO.getId(), webHookVO.getType());
     }
 
 

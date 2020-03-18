@@ -82,20 +82,21 @@
             )
         </if>
     </select>
-    <select id="pageSendSettingByCondition">
+    <select id="pageSendSettingByCondition" resultType="io.choerodon.notify.infra.dto.SendSettingDTO">
         SELECT
          *
         FROM notify_send_setting nss
         WHERE 1=1
-        <if test="condition.name != null">
+        <if test="sendSettingDTO.name != null">
             AND nss.`NAME` LIKE concat(concat('%', #{sendSettingDTO.name}), '%')
         </if>
-        <if test="condition.description != null">
+        <if test="sendSettingDTO.description != null">
             AND nss.DESCRIPTION LIKE concat(concat('%', #{sendSettingDTO.description}), '%')
         </if>
         AND
-        nss.FD_LEVEL=#{level}
+        nss.FD_LEVEL=#{sendSettingDTO.level}
         AND
-        nss.IS_ENABLED=1
+        nss.IS_ENABLED=#{sendSettingDTO.enabled}
+
     </select>
 </mapper>

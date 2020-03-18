@@ -15,6 +15,7 @@ import io.choerodon.notify.api.vo.SendSettingCategoryVO;
 import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.*;
 import io.choerodon.notify.infra.enums.LevelType;
+import io.choerodon.notify.infra.enums.WebHookTypeEnum;
 import io.choerodon.notify.infra.mapper.*;
 import io.choerodon.swagger.notify.NotifyBusinessTypeScanData;
 import io.choerodon.web.util.PageableHelper;
@@ -84,7 +85,8 @@ public class SendSettingServiceImpl implements SendSettingService {
                 query.setPmEnabledFlag(sendSettingDTO.getPmEnabledFlag());
                 query.setEmailEnabledFlag(sendSettingDTO.getEmailEnabledFlag());
                 query.setSmsEnabledFlag(sendSettingDTO.getSmsEnabledFlag());
-                query.setWebhookEnabledFlag(sendSettingDTO.getWebhookEnabledFlag());
+                query.setWebhookOtherEnabledFlag(sendSettingDTO.getWebhookOtherEnabledFlag());
+                query.setWebhookJsonEnabledFlag(sendSettingDTO.getWebhookJsonEnabledFlag());
                 sendSettingMapper.updateByPrimaryKeySelective(query);
             }
 
@@ -341,7 +343,7 @@ public class SendSettingServiceImpl implements SendSettingService {
     }
 
     @Override
-    public WebHookVO.SendSetting getUnderProject(String name, String description) {
+    public WebHookVO.SendSetting getUnderProject(String name, String description, String type) {
         WebHookVO.SendSetting sendSetting = new WebHookVO.SendSetting();
         //1.获取WebHook 发送设置可选集合(启用,且启用WebHook的发送设置)
         SendSettingDTO condition = new SendSettingDTO();
@@ -349,7 +351,12 @@ public class SendSettingServiceImpl implements SendSettingService {
         condition.setName(name);
         condition.setDescription(description);
         condition.setEnabled(true);
-        condition.setWebhookEnabledFlag(true);
+        if (WebHookTypeEnum.DINGTALK.getValue().equals(type) || WebHookTypeEnum.WECHAT.getValue().equals(type)) {
+            condition.setWebhookOtherEnabledFlag(true);
+        }
+        if (WebHookTypeEnum.JSON.getValue().equals(type)) {
+            condition.setWebhookJsonEnabledFlag(true);
+        }
         List<SendSettingDTO> sendSettingSelection = sendSettingMapper.pageSendSettingByCondition(condition);
         if (CollectionUtils.isEmpty(sendSettingSelection)) {
             return sendSetting;

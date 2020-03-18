@@ -30,7 +30,9 @@ public class WebhookRecordDTO extends BaseDTO {
 
     private String failedReason;
 
-    private Long projectId;
+    private Long sourceId;
+
+    private String sourceLevel;
 
     private String webhookPath;
 
@@ -82,12 +84,20 @@ public class WebhookRecordDTO extends BaseDTO {
         this.failedReason = failedReason;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceLevel() {
+        return sourceLevel;
+    }
+
+    public void setSourceLevel(String sourceLevel) {
+        this.sourceLevel = sourceLevel;
     }
 
     public String getWebhookPath() {

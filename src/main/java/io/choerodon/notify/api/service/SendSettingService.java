@@ -62,7 +62,7 @@ public interface SendSettingService {
     /**
      * 查询项目层下的所有可选的SendSetting
      */
-    WebHookVO.SendSetting getUnderProject(String name, String description);
+    WebHookVO.SendSetting getUnderProject(String name, String description, String type);
 
     /**
      * 根据id
