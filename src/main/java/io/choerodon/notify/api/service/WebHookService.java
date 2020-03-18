@@ -29,7 +29,7 @@ public interface WebHookService {
      * @param params    模糊匹配字段
      * @return
      */
-    PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long projectId, WebHookDTO filterDTO, String params);
+    PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long sourceId, String sourceLevel, WebHookDTO filterDTO, String params);
 
     /**
      * WebHook名称校验重复

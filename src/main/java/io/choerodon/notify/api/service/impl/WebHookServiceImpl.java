@@ -264,9 +264,9 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     @Override
-    public PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long projectId, WebHookDTO filterDTO, String params) {
+    public PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long sourceId, String sourceLevel, WebHookDTO filterDTO, String params) {
         return PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize(), PageableHelper.getSortSql(pageable.getSort()))
-                .doSelectPageInfo(() -> webHookMapper.doFTR(projectId, filterDTO, params));
+                .doSelectPageInfo(() -> webHookMapper.doFTR(sourceId, sourceLevel, filterDTO, params));
     }
 
     @Override
