@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @NotifyBusinessType(code = "systemNotification", name = "系统公告", level = Level.SITE,
         emailEnabledFlag = true, pmEnabledFlag = true,
+        webhookOtherEnabledFlag = false, webhookJsonEnabledFlag = false,
         description = "系统全平台公告", isManualRetry = true, categoryCode = "sys-management")
 @Component
 public class SystemNotificationPmTemplate implements PmTemplate {
