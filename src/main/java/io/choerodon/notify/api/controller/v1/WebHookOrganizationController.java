@@ -116,8 +116,17 @@ public class WebHookOrganizationController {
     @ApiOperation(value = "组织层重试发送记录")
     @GetMapping("/{record_id}/retry")
     public void retey(
-            @PathVariable("organization_id") Long organization_id,
+            @PathVariable("organization_id") Long organizationId,
             @PathVariable("record_id") Long recordId) {
         webHookService.retry(recordId);
+    }
+
+    @Permission(type = ResourceType.ORGANIZATION)
+    @ApiOperation(value = "项目层强制失败")
+    @GetMapping("/{record_id}/force/failure")
+    public void failure(
+            @PathVariable("organization_id") Long organizationId,
+            @PathVariable("record_id") Long recordId) {
+        webHookService.failure(recordId);
     }
 }
