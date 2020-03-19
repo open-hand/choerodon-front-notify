@@ -28,7 +28,7 @@ import springfox.documentation.annotations.ApiIgnore;
 public class WebHookProjectController {
 
     private static final String PROJECT = "project";
-    private static final String ORGANIZATION = "organiaztion";
+    private static final String ORGANIZATION = "organization";
     private WebHookService webHookService;
 
     public WebHookProjectController(WebHookService webHookService) {

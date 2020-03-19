@@ -27,7 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("/v1/organization/{organization_id}")
 public class WebHookOrganizationController {
     private static final String PROJECT = "project";
-    private static final String ORGANIZATION = "organiaztion";
+    private static final String ORGANIZATION = "organization";
     private WebHookService webHookService;
 
     public WebHookOrganizationController(WebHookService webHookService) {
