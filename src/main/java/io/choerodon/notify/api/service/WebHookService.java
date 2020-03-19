@@ -93,4 +93,5 @@ public interface WebHookService {
 
     void retry(Long recordId);
 
+    void failure(Long recordId);
 }

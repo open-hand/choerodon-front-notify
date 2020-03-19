@@ -120,4 +120,13 @@ public class WebHookProjectController {
             @PathVariable("record_id") Long recordId) {
         webHookService.retry(recordId);
     }
+
+    @Permission(type = ResourceType.PROJECT)
+    @ApiOperation(value = "项目层强制失败")
+    @GetMapping("/{record_id}/force/failure")
+    public void failure(
+            @PathVariable("project_id") Long projectId,
+            @PathVariable("record_id") Long recordId) {
+        webHookService.failure(recordId);
+    }
 }

@@ -529,6 +529,7 @@ public class WebHookServiceImpl implements WebHookService {
             throw new CommonException("error.web.hook.path.duplicate");
         }
         //1.新增WebHook
+        webHookVO.setSourceLevel(source);
         if (webHookMapper.insertSelective(webHookVO) != 1) {
             throw new InsertException("error.web.hook.insert");
         }
@@ -642,6 +643,16 @@ public class WebHookServiceImpl implements WebHookService {
             NoticeSendDTO dto = (NoticeSendDTO) requestBody.get("dto");
             sendJson(webHookDTO, dto, webhookRecordDetailDTO);
         }
+    }
+
+    @Override
+    public void failure(Long recordId) {
+//        WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
+//        if (Objects.isNull(webhookRecordDTO)) {
+//            throw new CommonException("error.project.force.failure");
+//        }
+//        webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
+//        if (webhookRecordMapper.updateByPrimaryKeySelective())
     }
 
     /**
