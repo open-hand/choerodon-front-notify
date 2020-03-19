@@ -91,7 +91,6 @@ public interface WebHookService {
      */
     WebHookDTO enabled(Long id);
 
-    void retry(Long id, Long sourceId);
+    void retry(Long recordId);
 
-//    PageInfo<WebhookRecordDTO> pagingByRecord(Pageable pageable, Long sourceId, String sourceLevel, String params);
 }

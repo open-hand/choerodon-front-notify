@@ -5,6 +5,7 @@ import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.notify.api.dto.WebhookRecordVO;
 import io.choerodon.notify.api.service.WebhookRecordService;
+import io.choerodon.notify.infra.dto.WebhookRecordDTO;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +47,7 @@ public class WebhookRecordOrganizationController {
     @ApiOperation(value = "查询WebHook发送记录详情")
     @GetMapping("/{id}")
     @Permission(type = ResourceType.PROJECT)
-    public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
+    public ResponseEntity<WebhookRecordDTO> getWebhookRecordDeatils(
             @PathVariable(name = "organization_id") Long organizationId,
             @PathVariable(name = "id") Long id) {
         return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);
