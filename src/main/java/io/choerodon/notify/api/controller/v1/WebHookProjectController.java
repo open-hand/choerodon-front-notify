@@ -55,8 +55,10 @@ public class WebHookProjectController {
     @GetMapping("/web_hooks/check_path")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "校验WebHook地址是否已经存在")
-    public ResponseEntity<Boolean> check(@RequestParam(value = "id", required = false) Long id,
-                                         @RequestParam("path") String path) {
+    public ResponseEntity<Boolean> check(
+            @PathVariable(name = "project_id") Long projectId,
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam("path") String path) {
         return new ResponseEntity<>(webHookService.checkPath(id, path), HttpStatus.OK);
     }
 

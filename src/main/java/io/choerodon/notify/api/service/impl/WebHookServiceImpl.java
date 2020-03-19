@@ -310,6 +310,7 @@ public class WebHookServiceImpl implements WebHookService {
         requestBody.put("request", request);
         requestBody.put("requestData", requestData);
         ResponseEntity<String> response = null;
+        WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
         try {
             webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
             webhookRecordDTO.setSourceId(hook.getSourceId());
@@ -328,9 +329,11 @@ public class WebHookServiceImpl implements WebHookService {
             webhookRecordDTO.setContent(content);
             webhookRecordDTO.setSendSettingCode(code);
             webhookRecordDTO.setWebhookId(hook.getId());
+
             if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
                 if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
                     webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
+                    updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
                 }
             }
 
@@ -339,6 +342,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDTO.setFailedReason(response.getBody());
                 webhookRecordDTO.setEndTime(new Date());
                 if (!Objects.isNull(webhookRecordDTO.getId())) {
+                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                     webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
                     webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                     webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
@@ -353,6 +357,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDTO.setStatus(RecordStatus.COMPLETE.getValue());
                 webhookRecordDTO.setEndTime(new Date());
                 if (!Objects.isNull(webhookRecordDTO.getId())) {
+                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                     webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
                     webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                     webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
@@ -373,6 +378,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDetailDTO.setResponseBody(response.getBody());
             }
             if (!Objects.isNull(webhookRecordDTO.getId())) {
+                webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                 webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
                 webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                 webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
@@ -400,6 +406,7 @@ public class WebHookServiceImpl implements WebHookService {
         request.put("hookId", hook.getId());
         request.put("dto", dto);
         ResponseEntity<String> response = null;
+        WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
         try {
             response = template.postForEntity(hook.getWebhookPath(), dto, String.class);
             webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
@@ -410,6 +417,7 @@ public class WebHookServiceImpl implements WebHookService {
             if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
                 if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
                     webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
+                    updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
                 }
             }
             if (!response.getStatusCode().is2xxSuccessful()) {
@@ -418,6 +426,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDTO.setFailedReason(response.getBody());
                 webhookRecordDTO.setEndTime(new Date());
                 if (!Objects.isNull(webhookRecordDTO.getId())) {
+                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                     webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
                     webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                     webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
@@ -430,6 +439,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDTO.setStatus(RecordStatus.COMPLETE.getValue());
                 webhookRecordDTO.setEndTime(new Date());
                 if (!Objects.isNull(webhookRecordDTO.getId())) {
+                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                     webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
                     webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                     webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
@@ -450,6 +460,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDetailDTO.setResponseBody(response.getBody());
             }
             if (!Objects.isNull(webhookRecordDTO.getId())) {
+                webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                 webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
                 webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                 webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
@@ -497,11 +508,15 @@ public class WebHookServiceImpl implements WebHookService {
     public WebHookVO create(Long sourceId, WebHookVO webHookVO, String source) {
         Long userId = DetailsHelper.getUserDetails().getUserId();
         //校验管理员权限
-        if (!(PROJECT.equals(source) && baseFeignClient.checkIsProjectOwner(userId, sourceId).getBody())) {
-            throw new CommonException("user.not.project.owner");
+        if (PROJECT.equals(source)) {
+            if (!baseFeignClient.checkIsProjectOwner(userId, sourceId).getBody()) {
+                throw new CommonException("user.not.project.owner");
+            }
         }
-        if (ORGANIZATION.equals(source) && baseFeignClient.checkIsOrgRoot(userId, sourceId).getBody()) {
-            throw new CommonException("user.not.org.root");
+        if (ORGANIZATION.equals(source)) {
+            if (!baseFeignClient.checkIsOrgRoot(userId, sourceId).getBody()) {
+                throw new CommonException("user.not.org.root");
+            }
         }
 
         webHookVO.setSourceId(sourceId);
@@ -609,7 +624,7 @@ public class WebHookServiceImpl implements WebHookService {
                 mobiles = (Set<String>) at.get("atMobiles");
             }
             String code = (String) requestDate.get("code");
-            sendDingTalk(webHookDTO, text, title, mobiles, code, webhookRecordDetailDTO);
+            sendDingTalk(webHookDTO, webhookRecordDTO.getContent(), title, mobiles, code, webhookRecordDetailDTO);
         }
         if (WebHookTypeEnum.WECHAT.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
