@@ -1,5 +1,7 @@
 package io.choerodon.notify.api.dto;
 
+import io.choerodon.notify.infra.dto.WebhookRecordDetailDTO;
+
 import java.util.Date;
 
 /**
@@ -28,6 +30,55 @@ public class WebhookRecordVO {
     private String webhookPath;
 
     private Long webhookId;
+
+    private String name;
+    private Long sourceId;
+
+    private String sourceLevel;
+
+    private Date endTime;
+
+    public Long getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceLevel() {
+        return sourceLevel;
+    }
+
+    public void setSourceLevel(String sourceLevel) {
+        this.sourceLevel = sourceLevel;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public WebhookRecordDetailDTO getWebhookRecordDetailDTO() {
+        return webhookRecordDetailDTO;
+    }
+
+    public void setWebhookRecordDetailDTO(WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        this.webhookRecordDetailDTO = webhookRecordDetailDTO;
+    }
+
+    private WebhookRecordDetailDTO webhookRecordDetailDTO;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Long getWebhookId() {
         return webhookId;

@@ -23,7 +23,6 @@ public class WebHookDTO extends BaseDTO {
     private Long id;
 
     @ApiModelProperty("webhook名称")
-    @NotEmpty(message = "error.web.hook.create.or.update.name.can.not.be.empty")
     private String name;
 
     @NotEmpty(message = "error.web.hook.create.or.update.type.can.not.be.empty")

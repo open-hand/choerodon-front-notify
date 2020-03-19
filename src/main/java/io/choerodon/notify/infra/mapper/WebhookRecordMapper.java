@@ -20,5 +20,5 @@ public interface WebhookRecordMapper extends Mapper<WebhookRecordDTO> {
                                          @Param("sendSettingCode") String sendSettingCode,
                                          @Param("webhookType") String webhookType);
 
-    WebhookRecordDTO queryRecordDetailById(@Param("id") Long id);
+    WebhookRecordVO queryRecordDetailById(@Param("id") Long id);
 }

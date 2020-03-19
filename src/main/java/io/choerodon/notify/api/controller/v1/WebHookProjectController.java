@@ -112,12 +112,10 @@ public class WebHookProjectController {
 
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "项目层重试发送记录")
-    @PostMapping("/{record_id}/retry")
+    @GetMapping("/{record_id}/retry")
     public void retey(
             @PathVariable("project_id") Long projectId,
             @PathVariable("record_id") Long recordId) {
         webHookService.retry(recordId);
     }
-
-
 }

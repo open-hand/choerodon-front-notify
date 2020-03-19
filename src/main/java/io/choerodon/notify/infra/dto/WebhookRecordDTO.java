@@ -52,6 +52,8 @@ public class WebhookRecordDTO extends BaseDTO {
     @Transient
     private WebhookRecordDetailDTO webhookRecordDetailDTO;
 
+
+
     public WebhookRecordDetailDTO getWebhookRecordDetailDTO() {
         return webhookRecordDetailDTO;
     }

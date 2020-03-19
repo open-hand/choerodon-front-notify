@@ -47,7 +47,7 @@ public class WebhookRecordOrganizationController {
     @ApiOperation(value = "查询WebHook发送记录详情")
     @GetMapping("/{id}")
     @Permission(type = ResourceType.PROJECT)
-    public ResponseEntity<WebhookRecordDTO> getWebhookRecordDeatils(
+    public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
             @PathVariable(name = "organization_id") Long organizationId,
             @PathVariable(name = "id") Long id) {
         return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);
