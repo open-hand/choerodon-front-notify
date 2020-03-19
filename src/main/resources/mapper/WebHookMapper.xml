@@ -15,24 +15,34 @@
 
     <select id="doFTR" resultType="io.choerodon.notify.infra.dto.WebHookDTO">
         SELECT
-        *
+        nw.ID,
+        nw.TYPE,
+        nw.WEBHOOK_PATH,
+        nw.SOURCE_ID,
+        nw.SOURCE_LEVEL,
+        nw. ENABLE_FLAG,
+        nss.`NAME`
         FROM
-        notify_webhook
-        where source_id=#{sourceId}
-        AND source_level=#{sourceLevel}
+        notify_webhook nw
+        JOIN notify_webhook_message_setting nwms
+        ON nwms.WEBHOOK_ID=nw.ID
+        JOIN notify_send_setting nss
+        ON nss.ID=nwms.SEND_SETTING_ID
+        where nw.source_id=#{sourceId}
+        AND nw.source_level=#{sourceLevel}
         <if test="filterDTO.name !=null">
-            AND name LIKE concat(concat('%',#{filterDTO.name}),'%')
+            AND nw.name LIKE concat(concat('%',#{filterDTO.name}),'%')
         </if>
         <if test="filterDTO.type !=null">
-            AND type=#{filterDTO.type}
+            AND nw.type=#{filterDTO.type}
         </if>
         <if test="filterDTO.enableFlag !=null">
-            AND enable_flag=#{filterDTO.enableFlag}
+            AND nw.enable_flag=#{filterDTO.enableFlag}
         </if>
         <if test="params !=null">
             AND (
             name LIKE concat(concat('%',#{params}),'%') OR
-            webhook_path LIKE concat(concat('%',#{params}),'%')
+            nw.webhook_path LIKE concat(concat('%',#{params}),'%')
             )
         </if>
     </select>
