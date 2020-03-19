@@ -35,7 +35,7 @@ public class WebHookOrganizationController {
     }
 
     @GetMapping("/web_hooks")
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "查询WebHook信息（分页接口）")
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebHookDTO>> pagingByMessage(@ApiIgnore
@@ -66,7 +66,7 @@ public class WebHookOrganizationController {
         return new ResponseEntity<>(webHookService.create(organizationId, webHookVO, ORGANIZATION), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "更新WebHook")
     @PutMapping("/web_hooks/{id}")
     public ResponseEntity<WebHookVO> update(@PathVariable("organization_id") Long organizationId,
@@ -81,7 +81,7 @@ public class WebHookOrganizationController {
     }
 
 
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "删除WebHook")
     @DeleteMapping("/web_hooks/{id}")
     public ResponseEntity delete(
@@ -91,7 +91,7 @@ public class WebHookOrganizationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "禁用WebHook")
     @PutMapping("/web_hooks/{id}/disabled")
     public ResponseEntity<WebHookDTO> disabled(
@@ -100,12 +100,22 @@ public class WebHookOrganizationController {
         return new ResponseEntity<>(webHookService.disabled(id), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "启用WebHook")
     @PutMapping("/web_hooks/{id}/enabled")
     public ResponseEntity<WebHookDTO> enabled(
             @PathVariable("organization_id") Long organizationId,
             @PathVariable("id") Long id) {
         return new ResponseEntity<>(webHookService.enabled(id), HttpStatus.OK);
+    }
+
+
+    @Permission(type = ResourceType.ORGANIZATION)
+    @ApiOperation(value = "组织层重试发送记录")
+    @PostMapping("/{record_id}/retry")
+    public void retey(
+            @PathVariable("organization_id") Long organization_id,
+            @PathVariable("record_id") Long recordId) {
+        webHookService.retry(recordId);
     }
 }

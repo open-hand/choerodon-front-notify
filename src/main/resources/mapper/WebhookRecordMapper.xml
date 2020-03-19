@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.notify.infra.mapper.WebhookRecordMapper">
+    <resultMap type="io.choerodon.notify.infra.dto.WebhookRecordDTO" id="WebhookRecordDTOResultMap">
+        <!-- 查询订单关联查询用户信息,订单对用户是一个一对一的关系 使用association-->
+        <!--订单表的信息-->
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="status" property="status"/>
+        <result column="sendTime" property="sendTime"/>
+        <result column="failedReason" property="failedReason"/>
+        <result column="sourceId" property="sourceId"/>
+        <result column="sourceLevel" property="sourceLevel"/>
+        <result column="webhookPath" property="webhookPath"/>
+        <result column="webhookId" property="webhookId"/>
+        <association property="webhookRecordDetailDTO" javaType="io.choerodon.notify.infra.dto.WebhookRecordDetailDTO">
+            <id column="id" property="id"/>
+            <result column="webhookRecordId" property="webhookRecordId"/>
+            <result column="requestHeaders" property="requestHeaders"/>
+            <result column="requestBody" property="requestBody"/>
+            <result column="responseHeaders" property="responseHeaders"/>
+            <result column="responseBody" property="responseBody"/>
+        </association>
+    </resultMap>
 
     <select id="fulltextSearch" resultType="io.choerodon.notify.api.dto.WebhookRecordVO">
         SELECT
@@ -27,5 +48,33 @@
         <if test="webhookType != null">
             AND nw.TYPE=#{webhookType}
         </if>
+    </select>
+
+    <select id="queryRecordDetailById" resultMap="WebhookRecordDTOResultMap">
+        SELECT
+          nss.`NAME`,
+          nwr.SEND_TIME,
+          nwr.END_TIME,
+          nw.WEBHOOK_PATH,
+          nwrd.REQUEST_HEADERS,
+          nwrd.REQUEST_BODY,
+          nwrd.RESPONSE_HEADERS,
+          nwrd.RESPONSE_BODY
+        FROM
+          notify_webhook_record nwr
+        JOIN
+           notify_webhook nw
+        ON
+           nwr.WEBHOOK_ID=nw.ID
+        JOIN
+           notify_send_setting nss
+        ON
+           nwr.SEND_SETTING_CODE =nss.`CODE`
+        JOIN
+           notify_webhook_record_detail nwrd
+        ON
+           nwrd.WEBHOOK_RECORD_ID=nwr.ID
+        WHERE
+           nwr.ID=#{id}
     </select>
 </mapper>

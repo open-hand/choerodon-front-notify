@@ -110,21 +110,14 @@ public class WebHookProjectController {
         return new ResponseEntity<>(webHookService.enabled(id), HttpStatus.OK);
     }
 
+    @Permission(type = ResourceType.PROJECT)
+    @ApiOperation(value = "项目层重试发送记录")
+    @PostMapping("/{record_id}/retry")
+    public void retey(
+            @PathVariable("project_id") Long projectId,
+            @PathVariable("record_id") Long recordId) {
+        webHookService.retry(recordId);
+    }
 
-//    @Permission(type = ResourceType.PROJECT)
-//    @ApiOperation(value = "重试发送记录")
-//    @PostMapping("/v1/notices/{source_id}/web_hooks/{id}/retry")
-//    public void retey(
-//            @PathVariable("source_id") Long sourceId,
-//            @PathVariable("id") Long id) {
-//        webHookService.retry(id, sourceId);
-//    }
-//
-//    @Permission(type = ResourceType.PROJECT)
-//    @ApiOperation(value = "查询执行记录详情")
-//    @GetMapping("/v1/projects/{project_id}/web_hooks/{id}")
-//    public ResponseEntity<WebHookVO> getOne(@PathVariable(name = "project_id") Long projectId,
-//                                            @PathVariable("id") Long id) {
-//        return new ResponseEntity<>(webHookService.getById(projectId, id), HttpStatus.OK);
-//    }
+
 }

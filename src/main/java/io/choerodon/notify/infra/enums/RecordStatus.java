@@ -2,7 +2,8 @@ package io.choerodon.notify.infra.enums;
 
 public enum RecordStatus {
     COMPLETE("COMPLETED"),
-    FAILED("FAILED");
+    FAILED("FAILED"),
+    RUNNING("RUNNING");
     private String value;
 
     RecordStatus(String value) {
