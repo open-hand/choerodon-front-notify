@@ -514,7 +514,7 @@ public class WebHookServiceImpl implements WebHookService {
             }
         }
         if (ORGANIZATION.equals(source)) {
-            if (!baseFeignClient.checkIsOrgRoot(userId, sourceId).getBody()) {
+            if (!baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
                 throw new CommonException("user.not.org.root");
             }
         }
