@@ -13,8 +13,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import freemarker.template.TemplateException;
+import io.choerodon.core.notify.WebHookJsonSendDTO;
+import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.notify.api.dto.SendSettingVO;
 import io.choerodon.notify.api.dto.UserDTO;
 import io.choerodon.notify.infra.feign.BaseFeignClient;
 import io.choerodon.notify.infra.mapper.WebhookRecordDetailMapper;
@@ -57,6 +62,8 @@ public class WebHookServiceImpl implements WebHookService {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebHookServiceImpl.class);
     private static final String PROJECT = "project";
     private static final String ORGANIZATION = "organization";
+
+    private static final String REQUEST_HEADER = "Content-Type:application/json";
 
     private WebHookMapper webHookMapper;
     private WebHookMessageSettingService webHookMessageSettingService;
@@ -163,6 +170,16 @@ public class WebHookServiceImpl implements WebHookService {
      * @param title 发送主题
      */
     private void sendDingTalk(WebHookDTO hook, String text, String title, Set<String> mobiles, String code, WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        WebHookJsonSendDTO webHookJsonSendDTO = fillWebHookJson(code);
+        Gson gson = new Gson();
+        //组装重试时候的数据
+        Map<String, Object> retryData = new HashMap<>();
+        retryData.put("text", text);
+        retryData.put("title", title);
+        retryData.put("mobiles", mobiles);
+        retryData.put("code", code);
+        webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
+
         RestTemplate template = new RestTemplate();
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
@@ -170,16 +187,16 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setContent(text);
         webhookRecordDTO.setSendSettingCode(code);
         webhookRecordDTO.setWebhookId(hook.getId());
-        WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
+        WebhookRecordDTO updateRecordDTO = null;
+        //如果是重试，查询记录
         if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
-            if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
+            if ((updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId())) != null) {
                 webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
                 updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
             }
         }
         ResponseEntity<String> response = null;
         Map<String, Object> request = new HashMap<>();
-        Map<String, Object> requestBody = new HashMap<>();
         try {
             //1.添加安全设置，构造请求uri（此处直接封装uri而非用String类型来进行http请求：RestTemplate 在执行请求时，如果路径为String类型，将分析路径参数并组合路径，此时会丢失sign的部分特殊字符）
             long timestamp = System.currentTimeMillis();
@@ -201,60 +218,55 @@ public class WebHookServiceImpl implements WebHookService {
             markdown.put("text", text);
             markdown.put("title", title);
             request.put("markdown", markdown);
-            Map<String, Object> requestDate = new HashMap<>();
-            requestDate.put("web_uri", uri);
-            requestDate.put("code", code);
-            requestBody.put("request", request);
-            requestBody.put("requestDate", requestDate);
+            //额外内容
+            request.put("web_uri", uri);
+            com.google.gson.JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("requestBody", JSON.toJSONString(request));
+            webHookJsonSendDTO.setObjectAttributes(jsonObject);
             //5.发送请求
             webhookRecordDTO.setSendTime(new Date());
+            webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
+            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
             response = template.postForEntity(uri, request, String.class);
-
-            webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
-            webhookRecordDetailDTO.setRequestBody(JSON.toJSONString(requestBody));
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
             webhookRecordDetailDTO.setResponseBody(response.getBody());
-
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                LOGGER.warn(">>>SENDING_WEBHOOK_ERROR>>> Sending the web hook was not successful,response:{}", response);
-                webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-                webhookRecordDTO.setFailedReason(response.getBody());
-                webhookRecordDTO.setEndTime(new Date());
-                if (!Objects.isNull(webhookRecordDTO.getId())) {
-                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                    webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-                } else {
-                    webhookRecordMapper.insertSelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-                }
-            } else {
-                webhookRecordDTO.setStatus(RecordStatus.COMPLETE.getValue());
-                webhookRecordDTO.setEndTime(new Date());
-                if (!Objects.isNull(webhookRecordDTO.getId())) {
-                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                    webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-                } else {
-                    webhookRecordMapper.insertSelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-                }
-            }
+            recordCompletedOrFailedLog(response, webhookRecordDTO, updateRecordDTO, webhookRecordDetailDTO);
 
         } catch (Exception e) {
+            recordRunningLog(response, webhookRecordDTO, e, webhookRecordDetailDTO, webHookJsonSendDTO, updateRecordDTO);
+            e.printStackTrace();
+        }
+    }
+
+    private void recordRunningLog(ResponseEntity<String> response, WebhookRecordDTO webhookRecordDTO, Exception e,
+                                  WebhookRecordDetailDTO webhookRecordDetailDTO, WebHookJsonSendDTO webHookJsonSendDTO, WebhookRecordDTO updateRecordDTO) {
+        webhookRecordDTO.setStatus(RecordStatus.RUNNING.getValue());
+        webhookRecordDTO.setFailedReason(e.getMessage());
+        webhookRecordDTO.setEndTime(new Date());
+        webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
+        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+        if (!Objects.isNull(response)) {
+            webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
+            webhookRecordDetailDTO.setResponseBody(response.getBody());
+        }
+        if (!Objects.isNull(webhookRecordDTO.getId())) {
+            webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
+            webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
+            webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
+            webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
+        } else {
+            webhookRecordMapper.insertSelective(webhookRecordDTO);
+            webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
+            webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
+        }
+    }
+
+    private void recordCompletedOrFailedLog(ResponseEntity<String> response, WebhookRecordDTO webhookRecordDTO, WebhookRecordDTO updateRecordDTO, WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            LOGGER.warn(">>>SENDING_WEBHOOK_ERROR>>> Sending the web hook was not successful,response:{}", response);
             webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-            webhookRecordDTO.setFailedReason(e.getMessage());
+            webhookRecordDTO.setFailedReason(response.getBody());
             webhookRecordDTO.setEndTime(new Date());
-            webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
-            webhookRecordDetailDTO.setRequestBody(JSON.toJSONString(requestBody));
-            if (!Objects.isNull(response)) {
-                webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
-                webhookRecordDetailDTO.setResponseBody(response.getBody());
-            }
             if (!Objects.isNull(webhookRecordDTO.getId())) {
                 webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
                 webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
@@ -265,8 +277,47 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
                 webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
             }
-            e.printStackTrace();
+        } else {
+            webhookRecordDTO.setStatus(RecordStatus.COMPLETE.getValue());
+            webhookRecordDTO.setEndTime(new Date());
+            if (!Objects.isNull(webhookRecordDTO.getId())) {
+                webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
+                webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
+                webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
+                webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
+            } else {
+                webhookRecordMapper.insertSelective(webhookRecordDTO);
+                webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
+                webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
+            }
         }
+    }
+
+    private WebHookJsonSendDTO fillWebHookJson(String code) {
+        WebHookJsonSendDTO webHookJsonSendDTO = new WebHookJsonSendDTO();
+        webHookJsonSendDTO.setCreatedAt(new Date());
+        SendSettingVO sendSettingVO = sendSettingService.query(code);
+        if (Objects.isNull(sendSettingVO)) {
+            throw new CommonException("error.send.DingTalk.not.exist");
+        }
+        webHookJsonSendDTO.setEventName(sendSettingVO.getName());
+        webHookJsonSendDTO.setObjectKind(code);
+        WebHookJsonSendDTO.User user = new WebHookJsonSendDTO.User();
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+
+        List<UserDTO> userDTOS = baseFeignClient.listUsersByIds(new Long[]{userDetails.getUserId()}, true).getBody();
+        if (CollectionUtils.isEmpty(userDTOS)) {
+            throw new CommonException("error.execute.user.not.exist");
+        }
+        UserDTO userDTO = userDTOS.get(0);
+        if (userDTO.getLdap()) {
+            user.setLoginName(userDTO.getLoginName());
+        } else {
+            user.setLoginName(userDTO.getEmail());
+        }
+        user.setUserName(userDTO.getRealName());
+        webHookJsonSendDTO.setUser(user);
+        return webHookJsonSendDTO;
     }
 
     /**
@@ -292,6 +343,13 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     private void sendWeChat(WebHookDTO hook, String content, String code, WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        WebHookJsonSendDTO webHookJsonSendDTO = fillWebHookJson(code);
+        Gson gson = new Gson();
+        Map<String, Object> retryData = new HashMap<>();
+        retryData.put("content", content);
+        retryData.put("code", code);
+        webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
+
         RestTemplate template = new RestTemplate();
         Map<String, Object> request = new TreeMap<>();
         request.put("msgtype", "markdown");
@@ -300,98 +358,52 @@ public class WebHookServiceImpl implements WebHookService {
         request.put("markdown", markdown);
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setEndTime(new Date());
+        com.google.gson.JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("requestBody", JSON.toJSONString(request));
+        webHookJsonSendDTO.setObjectAttributes(jsonObject);
 
-        Map<String, Object> requestData = new TreeMap<>();
-        requestData.put("webhookPath", hook.getWebhookPath());
-        requestData.put("code", code);
-        requestData.put("sourceId", hook.getSourceId());
-        requestData.put("hookId", hook.getId());
-        Map<String, Object> requestBody = new TreeMap<>();
-        requestBody.put("request", request);
-        requestBody.put("requestData", requestData);
         ResponseEntity<String> response = null;
         WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
+        if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
+            if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
+                webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
+                updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
+            }
+        }
         try {
             webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
             webhookRecordDTO.setSourceId(hook.getSourceId());
             webhookRecordDTO.setContent(content);
             webhookRecordDTO.setSendSettingCode(code);
             webhookRecordDTO.setWebhookId(hook.getId());
+            webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
+            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+
             response = template.postForEntity(hook.getWebhookPath(), request, String.class);
 
-            webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
-            webhookRecordDetailDTO.setRequestBody(JSON.toJSONString(request));
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders().toString()));
             webhookRecordDetailDTO.setResponseBody(response.getBody());
-
             webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
             webhookRecordDTO.setSourceId(hook.getSourceId());
             webhookRecordDTO.setContent(content);
             webhookRecordDTO.setSendSettingCode(code);
             webhookRecordDTO.setWebhookId(hook.getId());
-
-            if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
-                if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
-                    webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
-                    updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
-                }
-            }
-
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-                webhookRecordDTO.setFailedReason(response.getBody());
-                webhookRecordDTO.setEndTime(new Date());
-                if (!Objects.isNull(webhookRecordDTO.getId())) {
-                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                    webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-                } else {
-                    webhookRecordMapper.insertSelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-                }
-
-                LOGGER.warn("Web hook response not success {}", response);
-            } else {
-                webhookRecordDTO.setStatus(RecordStatus.COMPLETE.getValue());
-                webhookRecordDTO.setEndTime(new Date());
-                if (!Objects.isNull(webhookRecordDTO.getId())) {
-                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                    webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-                } else {
-                    webhookRecordMapper.insertSelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-                }
-            }
+            recordCompletedOrFailedLog(response, webhookRecordDTO, updateRecordDTO, webhookRecordDetailDTO);
         } catch (Exception e) {
-            webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-            webhookRecordDTO.setFailedReason(e.getMessage());
-            webhookRecordDTO.setEndTime(new Date());
-            webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
-            webhookRecordDetailDTO.setRequestBody(JSON.toJSONString(requestBody));
-            if (!Objects.isNull(response)) {
-                webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
-                webhookRecordDetailDTO.setResponseBody(response.getBody());
-            }
-            if (!Objects.isNull(webhookRecordDTO.getId())) {
-                webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-            } else {
-                webhookRecordMapper.insertSelective(webhookRecordDTO);
-                webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-            }
+            recordRunningLog(response, webhookRecordDTO, e, webhookRecordDetailDTO, webHookJsonSendDTO, updateRecordDTO);
             e.printStackTrace();
         }
     }
 
     private void sendJson(WebHookDTO hook, NoticeSendDTO dto, WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        WebHookJsonSendDTO webHookJsonSendDTO = fillWebHookJson(dto.getCode());
+        Map<String, Object> retryData = new HashMap<>();
+        retryData.put("dto", dto);
+        webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
+        com.google.gson.JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("requestBody", JSON.toJSONString(dto));
+        webHookJsonSendDTO.setObjectAttributes(jsonObject);
+
         RestTemplate template = new RestTemplate();
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
@@ -399,76 +411,27 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setSendSettingCode(dto.getCode());
         webhookRecordDTO.setWebhookId(hook.getId());
         webhookRecordDTO.setSendTime(new Date());
-        Map<String, Object> request = new HashMap<>();
-        request.put("webhookPath", hook.getWebhookPath());
-        request.put("code", dto.getCode());
-        request.put("sourceId", hook.getSourceId());
-        request.put("hookId", hook.getId());
-        request.put("dto", dto);
+
+
         ResponseEntity<String> response = null;
         WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
+        webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
+        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+        //如果是重试，查出记录
+        if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
+            if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
+                webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
+                updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
+            }
+        }
         try {
             response = template.postForEntity(hook.getWebhookPath(), dto, String.class);
-            webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
-            webhookRecordDetailDTO.setRequestBody(JSON.toJSONString(request));
+
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
             webhookRecordDetailDTO.setResponseBody(JSON.toJSONString(response.getBody()));
-
-            if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
-                if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
-                    webhookRecordDTO.setId(webhookRecordDetailDTO.getWebhookRecordId());
-                    updateRecordDTO = webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId());
-                }
-            }
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                LOGGER.warn("Web hook response not success {}", response);
-                webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-                webhookRecordDTO.setFailedReason(response.getBody());
-                webhookRecordDTO.setEndTime(new Date());
-                if (!Objects.isNull(webhookRecordDTO.getId())) {
-                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                    webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-                } else {
-                    webhookRecordMapper.insertSelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-                }
-            } else {
-                webhookRecordDTO.setStatus(RecordStatus.COMPLETE.getValue());
-                webhookRecordDTO.setEndTime(new Date());
-                if (!Objects.isNull(webhookRecordDTO.getId())) {
-                    webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                    webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-                } else {
-                    webhookRecordMapper.insertSelective(webhookRecordDTO);
-                    webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                    webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-                }
-            }
+            recordCompletedOrFailedLog(response, webhookRecordDTO, updateRecordDTO, webhookRecordDetailDTO);
         } catch (Exception e) {
-            webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-            webhookRecordDTO.setFailedReason(e.getMessage());
-            webhookRecordDTO.setEndTime(new Date());
-            webhookRecordDetailDTO.setRequestHeaders(StringUtils.EMPTY);
-            webhookRecordDetailDTO.setRequestBody(JSON.toJSONString(request));
-            if (!Objects.isNull(response)) {
-                webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
-                webhookRecordDetailDTO.setResponseBody(response.getBody());
-            }
-            if (!Objects.isNull(webhookRecordDTO.getId())) {
-                webhookRecordDTO.setObjectVersionNumber(updateRecordDTO.getObjectVersionNumber());
-                webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO);
-                webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                webhookRecordDetailMapper.updateByPrimaryKeySelective(webhookRecordDetailDTO);
-            } else {
-                webhookRecordMapper.insertSelective(webhookRecordDTO);
-                webhookRecordDetailDTO.setWebhookRecordId(webhookRecordDTO.getId());
-                webhookRecordDetailMapper.insertSelective(webhookRecordDetailDTO);
-            }
+            recordRunningLog(response, webhookRecordDTO, e, webhookRecordDetailDTO, webHookJsonSendDTO, updateRecordDTO);
             e.printStackTrace();
         }
     }
@@ -601,7 +564,7 @@ public class WebHookServiceImpl implements WebHookService {
     @Override
     public void retry(Long recordId) {
         WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
-        if (Objects.isNull(webhookRecordDTO)) {
+        if (Objects.isNull(webhookRecordDTO) || !RecordStatus.RUNNING.getValue().equals(webhookRecordDTO.getStatus())) {
             throw new CommonException("error.retry.webhook");
         }
         WebHookDTO webHookDTO = webHookMapper.selectByPrimaryKey(webhookRecordDTO.getWebhookId());
@@ -613,46 +576,41 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setWebhookRecordDetailDTO(webhookRecordDetailMapper.selectOne(condition));
         if (WebHookTypeEnum.DINGTALK.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
-            Map<String, Object> requestBody = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRequestBody());
-            Map<String, Object> request = (Map<String, Object>) requestBody.get("request");
-            Map<String, Object> requestDate = (Map<String, Object>) requestBody.get("requestDate");
-            Map<String, Object> markdown = (Map<String, Object>) request.get("markdown");
-            String text = (String) markdown.get("text");
-            String title = (String) markdown.get("title");
-            Map<String, Object> at = (Map<String, Object>) request.get("at");
+            Map<String, Object> retryData = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRetryData());
+            String text = (String) retryData.get("text");
+            String title = (String) retryData.get("title");
             Set<String> mobiles = new HashSet<>();
-            if ((Boolean) at.get("isAtAll")) {
-                mobiles = (Set<String>) at.get("atMobiles");
+            if (Objects.isNull(retryData.get("mobiles"))) {
+                mobiles = (Set<String>) retryData.get("mobiles");
             }
-            String code = (String) requestDate.get("code");
-            sendDingTalk(webHookDTO, webhookRecordDTO.getContent(), title, mobiles, code, webhookRecordDetailDTO);
+            String code = (String) retryData.get("code");
+            sendDingTalk(webHookDTO, text, title, mobiles, code, webhookRecordDetailDTO);
         }
         if (WebHookTypeEnum.WECHAT.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
-            Map<String, Object> requestBody = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRequestBody());
-            Map<String, Object> request = (Map<String, Object>) requestBody.get("request");
-            Map<String, Object> requestDate = (Map<String, Object>) requestBody.get("requestDate");
-            Map<String, Object> markdown = (Map<String, Object>) request.get("markdown");
-            String content = (String) markdown.get("content");
-            String code = (String) requestDate.get("code");
+            Map<String, Object> retryData = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRetryData());
+            String content = (String) retryData.get("content");
+            String code = (String) retryData.get("code");
             sendWeChat(webHookDTO, content, code, webhookRecordDetailDTO);
         }
         if (WebHookTypeEnum.JSON.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
-            Map<String, Object> requestBody = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRequestBody());
-            NoticeSendDTO dto = (NoticeSendDTO) requestBody.get("dto");
+            Map<String, Object> retryData = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRetryData());
+            NoticeSendDTO dto = (NoticeSendDTO) retryData.get("dto");
             sendJson(webHookDTO, dto, webhookRecordDetailDTO);
         }
     }
 
     @Override
     public void failure(Long recordId) {
-//        WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
-//        if (Objects.isNull(webhookRecordDTO)) {
-//            throw new CommonException("error.project.force.failure");
-//        }
-//        webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
-//        if (webhookRecordMapper.updateByPrimaryKeySelective())
+        WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
+        if (Objects.isNull(webhookRecordDTO)) {
+            throw new CommonException("error.project.force.failure");
+        }
+        webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
+        if (webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO) != 1) {
+            throw new CommonException("error.project.force.failure");
+        }
     }
 
     /**

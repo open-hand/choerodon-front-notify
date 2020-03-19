@@ -24,6 +24,15 @@ public class WebhookRecordDetailDTO extends BaseDTO {
     private String requestBody;
     private String responseHeaders;
     private String responseBody;
+    private String retryData;
+
+    public String getRetryData() {
+        return retryData;
+    }
+
+    public void setRetryData(String retryData) {
+        this.retryData = retryData;
+    }
 
     public Long getId() {
         return id;

@@ -32,4 +32,10 @@ databaseChangeLog(logicalFilePath: 'script/db/notify_webhook_record_detail.groov
             column(name: "LAST_UPDATE_DATE", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
     }
+
+    changeSet(id: '2020-3-19-notify_webhook-add-column', author: 'xiangwang04@icloud.com') {
+        addColumn(tableName: 'NOTIFY_WEBHOOK_RECORD_DETAIL') {
+            column(name: 'RETRY_DATA', type: 'TEXT', remarks: '重试时候需要的参数', afterColumn: 'RESPONSE_BODY')
+        }
+    }
 }

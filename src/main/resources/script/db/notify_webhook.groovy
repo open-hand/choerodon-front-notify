@@ -9,7 +9,7 @@ databaseChangeLog(logicalFilePath: 'script/db/notify_webhook.groovy') {
             column(name: 'ID', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表 ID，主键，单表时自增、步长为 1') {
                 constraints(primaryKey: true, primaryKeyName: 'PK_NOTIFY_WEBHOOK')
             }
-            column(name: 'WEBHOOK_NAME', type: 'varchar(255)', remarks: 'webhook 名称')
+            column(name: 'WEBHOOK_NAME', type: 'varchar(255)', remarks: 'webhook 名称', defaultValue: '')
             column(name: 'WEBHOOK_TYPE', type: 'varchar(255)', remarks: 'webhook 类型，钉钉') {
                 constraints(nullable: false)
             }
