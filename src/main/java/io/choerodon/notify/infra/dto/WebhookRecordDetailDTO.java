@@ -12,7 +12,7 @@ import javax.persistence.Table;
  * User: Mr.Wang
  * Date: 2020/3/18
  */
-@Table(name = "notify_webhook_record_details")
+@Table(name = "notify_webhook_record_detail")
 public class WebhookRecordDetailDTO extends BaseDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -47,7 +47,7 @@ public class WebhookRecordProjectController {
     @ApiOperation(value = "项目层查询WebHook发送记录详情")
     @GetMapping("/{id}")
     @Permission(type = ResourceType.PROJECT)
-    public ResponseEntity<WebhookRecordDTO> getWebhookRecordDeatils(
+    public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
             @PathVariable(name = "project_id") Long projectId,
             @PathVariable(name = "id") Long id) {
         return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);

@@ -51,10 +51,12 @@ public class WebHookOrganizationController {
     }
 
     @GetMapping("/web_hooks/check_path")
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "校验WebHook地址是否已经存在")
-    public ResponseEntity<Boolean> check(@RequestParam(value = "id", required = false) Long id,
-                                         @RequestParam("path") String path) {
+    public ResponseEntity<Boolean> check(
+            @PathVariable(name = "organization_id") Long organizationId,
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam("path") String path) {
         return new ResponseEntity<>(webHookService.checkPath(id, path), HttpStatus.OK);
     }
 
@@ -112,7 +114,7 @@ public class WebHookOrganizationController {
 
     @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "组织层重试发送记录")
-    @PostMapping("/{record_id}/retry")
+    @GetMapping("/{record_id}/retry")
     public void retey(
             @PathVariable("organization_id") Long organization_id,
             @PathVariable("record_id") Long recordId) {

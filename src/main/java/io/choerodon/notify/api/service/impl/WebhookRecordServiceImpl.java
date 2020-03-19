@@ -33,7 +33,7 @@ public class WebhookRecordServiceImpl implements WebhookRecordService {
     }
 
     @Override
-    public WebhookRecordDTO queryById(Long id) {
+    public WebhookRecordVO queryById(Long id) {
         return webhookRecordMapper.queryRecordDetailById(id);
     }
 }

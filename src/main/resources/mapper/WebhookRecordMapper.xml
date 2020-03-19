@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.notify.infra.mapper.WebhookRecordMapper">
-    <resultMap type="io.choerodon.notify.infra.dto.WebhookRecordDTO" id="WebhookRecordDTOResultMap">
-        <!-- 查询订单关联查询用户信息,订单对用户是一个一对一的关系 使用association-->
-        <!--订单表的信息-->
+    <resultMap type="io.choerodon.notify.api.dto.WebhookRecordVO" id="WebhookRecordDTOResultMap">
         <id column="id" property="id"/>
         <result column="content" property="content"/>
         <result column="status" property="status"/>
-        <result column="sendTime" property="sendTime"/>
-        <result column="failedReason" property="failedReason"/>
-        <result column="sourceId" property="sourceId"/>
-        <result column="sourceLevel" property="sourceLevel"/>
-        <result column="webhookPath" property="webhookPath"/>
-        <result column="webhookId" property="webhookId"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="failed_reason" property="failedReason"/>
+        <result column="source_id" property="sourceId"/>
+        <result column="source_level" property="sourceLevel"/>
+        <result column="webhook_path" property="webhookPath"/>
+        <result column="webhook_id" property="webhookId"/>
+        <result column="name" property="name"/>
         <association property="webhookRecordDetailDTO" javaType="io.choerodon.notify.infra.dto.WebhookRecordDetailDTO">
             <id column="id" property="id"/>
-            <result column="webhookRecordId" property="webhookRecordId"/>
-            <result column="requestHeaders" property="requestHeaders"/>
-            <result column="requestBody" property="requestBody"/>
-            <result column="responseHeaders" property="responseHeaders"/>
-            <result column="responseBody" property="responseBody"/>
+            <result column="webhook_recordId" property="webhookRecordId"/>
+            <result column="request_headers" property="requestHeaders"/>
+            <result column="request_body" property="requestBody"/>
+            <result column="response_headers" property="responseHeaders"/>
+            <result column="response_body" property="responseBody"/>
         </association>
     </resultMap>
 
