@@ -8,7 +8,6 @@ import io.choerodon.notify.api.service.WebHookMessageSettingService;
 import io.choerodon.notify.api.service.WebHookService;
 import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.WebHookDTO;
-import io.choerodon.notify.infra.dto.WebHookMessageSettingDTO;
 import io.choerodon.notify.infra.enums.WebHookTypeEnum;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.swagger.annotations.ApiOperation;

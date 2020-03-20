@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.sun.org.apache.regexp.internal.RE;
 import freemarker.template.TemplateException;
 import io.choerodon.core.notify.WebHookJsonSendDTO;
 import io.choerodon.core.oauth.CustomUserDetails;
@@ -182,6 +183,7 @@ public class WebHookServiceImpl implements WebHookService {
      */
     private void sendDingTalk(WebHookDTO hook, String text, String title, Set<String> mobiles, String code, WebhookRecordDetailDTO webhookRecordDetailDTO) {
         WebHookJsonSendDTO webHookJsonSendDTO = fillWebHookJson(code);
+        WebhookRecordDTO webhookRecordDTO = fillWebhookRecordDTO(code, hook, text);
         Gson gson = new Gson();
         //组装重试时候的数据
         Map<String, Object> retryData = new HashMap<>();
@@ -192,12 +194,7 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
 
         RestTemplate template = new RestTemplate();
-        WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
-        webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setSourceId(hook.getSourceId());
-        webhookRecordDTO.setContent(text);
-        webhookRecordDTO.setSendSettingCode(code);
-        webhookRecordDTO.setWebhookId(hook.getId());
+
         WebhookRecordDTO updateRecordDTO = null;
         //如果是重试，查询记录
         if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
@@ -237,7 +234,7 @@ public class WebHookServiceImpl implements WebHookService {
             //5.发送请求
             webhookRecordDTO.setSendTime(new Date());
             webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
-            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
             response = template.postForEntity(uri, request, String.class);
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
             webhookRecordDetailDTO.setResponseBody(response.getBody());
@@ -247,6 +244,20 @@ public class WebHookServiceImpl implements WebHookService {
             recordRunningLog(response, webhookRecordDTO, e, webhookRecordDetailDTO, webHookJsonSendDTO, updateRecordDTO);
             e.printStackTrace();
         }
+    }
+
+    private WebhookRecordDTO fillWebhookRecordDTO(String code, WebHookDTO hook, String text) {
+        WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
+        SendSettingDTO sendSettingDTO = new SendSettingDTO();
+        SendSettingDTO settingDTO = sendSettingDTO.setCode(code);
+        SendSettingDTO selectOne = sendSettingMapper.selectOne(settingDTO);
+        webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
+        webhookRecordDTO.setSourceId(hook.getSourceId());
+        webhookRecordDTO.setContent(text);
+        webhookRecordDTO.setSendSettingCode(code);
+        webhookRecordDTO.setWebhookId(hook.getId());
+        webhookRecordDTO.setSourceLevel(selectOne.getLevel());
+        return webhookRecordDTO;
     }
 
     private void recordRunningLog(ResponseEntity<String> response, WebhookRecordDTO webhookRecordDTO, Exception e,
@@ -360,14 +371,14 @@ public class WebHookServiceImpl implements WebHookService {
         retryData.put("content", content);
         retryData.put("code", code);
         webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
-
+        webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
         RestTemplate template = new RestTemplate();
         Map<String, Object> request = new TreeMap<>();
         request.put("msgtype", "markdown");
         Map<String, Object> markdown = new TreeMap<>();
         markdown.put("content", content);
         request.put("markdown", markdown);
-        WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
+        WebhookRecordDTO webhookRecordDTO = fillWebhookRecordDTO(code, hook, content);
         webhookRecordDTO.setEndTime(new Date());
         com.google.gson.JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("requestBody", JSON.toJSONString(request));
@@ -382,13 +393,7 @@ public class WebHookServiceImpl implements WebHookService {
             }
         }
         try {
-            webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-            webhookRecordDTO.setSourceId(hook.getSourceId());
-            webhookRecordDTO.setContent(content);
-            webhookRecordDTO.setSendSettingCode(code);
-            webhookRecordDTO.setWebhookId(hook.getId());
-            webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
-            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
 
             response = template.postForEntity(hook.getWebhookPath(), request, String.class);
 
@@ -417,17 +422,13 @@ public class WebHookServiceImpl implements WebHookService {
 
         RestTemplate template = new RestTemplate();
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
-        webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
-        webhookRecordDTO.setSourceId(hook.getSourceId());
-        webhookRecordDTO.setSendSettingCode(dto.getCode());
-        webhookRecordDTO.setWebhookId(hook.getId());
+        fillWebhookRecordDTO(dto.getCode(), hook, JSON.toJSONString(dto));
+        webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
         webhookRecordDTO.setSendTime(new Date());
-
-
         ResponseEntity<String> response = null;
         WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
-        webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
-        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+
+        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
         //如果是重试，查出记录
         if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
             if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
@@ -487,11 +488,11 @@ public class WebHookServiceImpl implements WebHookService {
                 throw new CommonException("user.not.project.owner");
             }
         }
-//        if (ORGANIZATION.equals(source)) {
-//            if (!baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
-//                throw new CommonException("user.not.org.root");
-//            }
-//        }
+        if (ORGANIZATION.equals(source)) {
+            if (!baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
+                throw new CommonException("user.not.org.root");
+            }
+        }
 
         webHookVO.setSourceId(sourceId);
         //校验type
@@ -509,7 +510,7 @@ public class WebHookServiceImpl implements WebHookService {
         List<SendSettingDTO> sendSettingDTOS = new ArrayList<>();
         sendSettingIdList.stream().forEach(aLong -> {
             SendSettingDTO sendSettingDTO = sendSettingMapper.selectByPrimaryKey(aLong);
-            if(!Objects.isNull(sendSettingDTO)){
+            if (!Objects.isNull(sendSettingDTO)) {
                 sendSettingDTOS.add(sendSettingDTO);
             }
         });
@@ -587,7 +588,7 @@ public class WebHookServiceImpl implements WebHookService {
     @Override
     public void retry(Long recordId) {
         WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
-        if (Objects.isNull(webhookRecordDTO) || !RecordStatus.RUNNING.getValue().equals(webhookRecordDTO.getStatus())) {
+        if (Objects.isNull(webhookRecordDTO)) {
             throw new CommonException("error.retry.webhook");
         }
         WebHookDTO webHookDTO = webHookMapper.selectByPrimaryKey(webhookRecordDTO.getWebhookId());
@@ -627,7 +628,7 @@ public class WebHookServiceImpl implements WebHookService {
     @Override
     public void failure(Long recordId) {
         WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
-        if (Objects.isNull(webhookRecordDTO)) {
+        if (Objects.isNull(webhookRecordDTO) || !RecordStatus.RUNNING.getValue().equals(webhookRecordDTO.getStatus())) {
             throw new CommonException("error.project.force.failure");
         }
         webhookRecordDTO.setStatus(RecordStatus.FAILED.getValue());
