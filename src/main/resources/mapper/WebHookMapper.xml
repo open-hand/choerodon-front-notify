@@ -15,13 +15,14 @@
 
     <select id="doFTR" resultType="io.choerodon.notify.infra.dto.WebHookDTO">
         SELECT
-        nwms.ID,
+        nw.ID,
         nw.TYPE,
         nw.WEBHOOK_PATH,
         nw.SOURCE_ID,
         nw.SOURCE_LEVEL,
         nw. ENABLE_FLAG,
-        nss.`NAME`
+        nss.`NAME`,
+        nwms.ID as SETTING_ID
         FROM
         notify_webhook nw
         JOIN notify_webhook_message_setting nwms
