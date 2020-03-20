@@ -4,9 +4,11 @@ import com.github.pagehelper.PageInfo;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.notify.api.service.WebHookMessageSettingService;
 import io.choerodon.notify.api.service.WebHookService;
 import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.WebHookDTO;
+import io.choerodon.notify.infra.dto.WebHookMessageSettingDTO;
 import io.choerodon.notify.infra.enums.WebHookTypeEnum;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.swagger.annotations.ApiOperation;
@@ -30,10 +32,14 @@ public class WebHookProjectController {
     private static final String PROJECT = "project";
     private static final String ORGANIZATION = "organization";
     private WebHookService webHookService;
+    private WebHookMessageSettingService webHookMessageSettingService;
 
-    public WebHookProjectController(WebHookService webHookService) {
+    public WebHookProjectController(WebHookService webHookService, WebHookMessageSettingService webHookMessageSettingService) {
         this.webHookService = webHookService;
+        this.webHookMessageSettingService = webHookMessageSettingService;
     }
+
+
 
     @GetMapping("/web_hooks")
     @Permission(type = ResourceType.PROJECT)
@@ -95,12 +101,12 @@ public class WebHookProjectController {
     }
 
     @Permission(type = ResourceType.PROJECT)
-    @ApiOperation(value = "禁用WebHook")
+    @ApiOperation(value = "禁用WebHook设置")
     @PutMapping("/web_hooks/{id}/disabled")
     public ResponseEntity<WebHookDTO> disabled(
             @PathVariable("project_id") Long projectId,
-            @PathVariable("id") Long id) {
-        return new ResponseEntity<>(webHookService.disabled(id), HttpStatus.OK);
+            @PathVariable("id") Long settingId) {
+        return new ResponseEntity<>(webHookService.disabled(settingId), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT)

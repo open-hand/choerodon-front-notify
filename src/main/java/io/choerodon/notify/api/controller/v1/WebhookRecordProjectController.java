@@ -36,7 +36,7 @@ public class WebhookRecordProjectController {
     public ResponseEntity<PageInfo<WebhookRecordVO>> pagingByMessage(@ApiIgnore
                                                                      @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                                                      @PathVariable(name = "project_id") Long sourceId,
-                                                                     @RequestParam(required = false, name = "source_level") String sourceLevel,
+                                                                     @RequestParam(required = true, name = "source_level") String sourceLevel,
                                                                      @RequestParam(required = false) String status,
                                                                      @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
                                                                      @RequestParam(required = false, name = "webhook_type") String webhookType) {

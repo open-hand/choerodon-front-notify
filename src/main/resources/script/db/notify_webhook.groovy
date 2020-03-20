@@ -63,4 +63,10 @@ databaseChangeLog(logicalFilePath: 'script/db/notify_webhook.groovy') {
             column(name: 'SOURCE_LEVEL', type: 'VARCHAR(255)', remarks: '层级', afterColumn: 'SOURCE_ID')
         }
     }
+
+    changeSet(id: '2020-3-20-notify_webhook-modify-column', author: '957038053@qq.com') {
+        sql(stripComments: true, splitStatements: false, endDelimiter: ';') {
+            "alter table NOTIFY_WEBHOOK  modify column `NAME` text;"
+        }
+    }
 }

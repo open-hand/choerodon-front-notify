@@ -46,17 +46,6 @@ public class WebHookDTO extends BaseDTO {
     @ApiModelProperty("webhook是否启用")
     private Boolean enableFlag;
 
-    @Transient
-    private Long settingId;
-
-    public Long getSettingId() {
-        return settingId;
-    }
-
-    public void setSettingId(Long settingId) {
-        this.settingId = settingId;
-    }
-
     public Long getId() {
         return id;
     }

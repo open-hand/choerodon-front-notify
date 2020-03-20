@@ -37,7 +37,7 @@
         ON nwr.WEBHOOK_ID =nw.ID
         where
         AND nwr.SOURCE_ID=#{sourceId}
-        AND nwr.SOURCE_LEVEL
+        AND nwr.SOURCE_LEVEL=#{sourceLevel}
         <if test="status != null">
             AND nwr.STATUS=#{status}
         </if>

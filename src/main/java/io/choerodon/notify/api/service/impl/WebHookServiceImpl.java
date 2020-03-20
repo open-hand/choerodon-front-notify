@@ -22,7 +22,7 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.notify.api.dto.SendSettingVO;
 import io.choerodon.notify.api.dto.UserDTO;
 import io.choerodon.notify.infra.feign.BaseFeignClient;
-import io.choerodon.notify.infra.mapper.WebhookRecordDetailMapper;
+import io.choerodon.notify.infra.mapper.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -53,8 +53,6 @@ import io.choerodon.notify.infra.dto.*;
 import io.choerodon.notify.infra.enums.RecordStatus;
 import io.choerodon.notify.infra.enums.SendingTypeEnum;
 import io.choerodon.notify.infra.enums.WebHookTypeEnum;
-import io.choerodon.notify.infra.mapper.WebHookMapper;
-import io.choerodon.notify.infra.mapper.WebhookRecordMapper;
 import io.choerodon.web.util.PageableHelper;
 
 @Service
@@ -73,8 +71,19 @@ public class WebHookServiceImpl implements WebHookService {
     private WebhookRecordMapper webhookRecordMapper;
     private BaseFeignClient baseFeignClient;
     private WebhookRecordDetailMapper webhookRecordDetailMapper;
+    private WebHookMessageSettingMapper webHookMessageSettingMapper;
+    private SendSettingMapper sendSettingMapper;
 
-    public WebHookServiceImpl(WebHookMapper webHookMapper, WebHookMessageSettingService webHookMessageSettingService, TemplateService templateService, SendSettingService sendSettingService, TemplateRender templateRender, WebhookRecordMapper webhookRecordMapper, BaseFeignClient baseFeignClient, WebhookRecordDetailMapper webhookRecordDetailMapper) {
+    public WebHookServiceImpl(WebHookMapper webHookMapper,
+                              WebHookMessageSettingService webHookMessageSettingService,
+                              TemplateService templateService,
+                              SendSettingService sendSettingService,
+                              TemplateRender templateRender,
+                              WebhookRecordMapper webhookRecordMapper,
+                              BaseFeignClient baseFeignClient,
+                              WebhookRecordDetailMapper webhookRecordDetailMapper,
+                              WebHookMessageSettingMapper webHookMessageSettingMapper,
+                              SendSettingMapper sendSettingMapper) {
         this.webHookMapper = webHookMapper;
         this.webHookMessageSettingService = webHookMessageSettingService;
         this.templateService = templateService;
@@ -83,6 +92,8 @@ public class WebHookServiceImpl implements WebHookService {
         this.webhookRecordMapper = webhookRecordMapper;
         this.baseFeignClient = baseFeignClient;
         this.webhookRecordDetailMapper = webhookRecordDetailMapper;
+        this.webHookMessageSettingMapper = webHookMessageSettingMapper;
+        this.sendSettingMapper = sendSettingMapper;
     }
 
     @Override
@@ -476,11 +487,11 @@ public class WebHookServiceImpl implements WebHookService {
                 throw new CommonException("user.not.project.owner");
             }
         }
-        if (ORGANIZATION.equals(source)) {
-            if (!baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
-                throw new CommonException("user.not.org.root");
-            }
-        }
+//        if (ORGANIZATION.equals(source)) {
+//            if (!baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
+//                throw new CommonException("user.not.org.root");
+//            }
+//        }
 
         webHookVO.setSourceId(sourceId);
         //校验type
@@ -493,6 +504,18 @@ public class WebHookServiceImpl implements WebHookService {
         }
         //1.新增WebHook
         webHookVO.setSourceLevel(source);
+
+        Set<Long> sendSettingIdList = webHookVO.getSendSettingIdList();
+        List<SendSettingDTO> sendSettingDTOS = new ArrayList<>();
+        sendSettingIdList.stream().forEach(aLong -> {
+            SendSettingDTO sendSettingDTO = sendSettingMapper.selectByPrimaryKey(aLong);
+            if(!Objects.isNull(sendSettingDTO)){
+                sendSettingDTOS.add(sendSettingDTO);
+            }
+        });
+        String collect = sendSettingDTOS.stream().
+                map(SendSettingDTO::getName).collect(Collectors.joining(","));
+        webHookVO.setName(collect);
         if (webHookMapper.insertSelective(webHookVO) != 1) {
             throw new InsertException("error.web.hook.insert");
         }
@@ -621,6 +644,17 @@ public class WebHookServiceImpl implements WebHookService {
      */
     private WebHookDTO checkExistedById(Long id) {
         return Optional.ofNullable(webHookMapper.selectByPrimaryKey(id))
+                .orElseThrow(() -> new NotExistedException("error.web.hook.does.not.existed"));
+    }
+
+    /**
+     * 根据主键校验WebHookSetting是否存在
+     *
+     * @param id WebHook主键
+     * @return WebHook
+     */
+    private WebHookMessageSettingDTO checkWebHookSettingExistedById(Long id) {
+        return Optional.ofNullable(webHookMessageSettingMapper.selectByPrimaryKey(id))
                 .orElseThrow(() -> new NotExistedException("error.web.hook.does.not.existed"));
     }
 

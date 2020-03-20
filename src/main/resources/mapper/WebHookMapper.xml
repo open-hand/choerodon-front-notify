@@ -15,20 +15,9 @@
 
     <select id="doFTR" resultType="io.choerodon.notify.infra.dto.WebHookDTO">
         SELECT
-        nw.ID,
-        nw.TYPE,
-        nw.WEBHOOK_PATH,
-        nw.SOURCE_ID,
-        nw.SOURCE_LEVEL,
-        nw. ENABLE_FLAG,
-        nss.`NAME`,
-        nwms.ID as SETTING_ID
+        nw.*
         FROM
         notify_webhook nw
-        JOIN notify_webhook_message_setting nwms
-        ON nwms.WEBHOOK_ID=nw.ID
-        JOIN notify_send_setting nss
-        ON nss.ID=nwms.SEND_SETTING_ID
         where nw.source_id=#{sourceId}
         AND nw.source_level=#{sourceLevel}
         <if test="filterDTO.name !=null">

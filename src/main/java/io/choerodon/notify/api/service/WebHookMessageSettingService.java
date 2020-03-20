@@ -29,4 +29,5 @@ public interface WebHookMessageSettingService {
      * @return
      */
     List<WebHookMessageSettingDTO> update(Long webHookId, Set<Long> sendSettingIds);
+
 }
