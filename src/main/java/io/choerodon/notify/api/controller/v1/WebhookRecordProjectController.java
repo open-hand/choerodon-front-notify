@@ -29,23 +29,23 @@ public class WebhookRecordProjectController {
         this.webhookRecordService = webhookRecordService;
     }
 
-    @GetMapping
+    @GetMapping("/{webhook_id}")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook发送记录(分页接口)")
     @CustomPageRequest
-    public ResponseEntity<PageInfo<WebhookRecordVO>> pagingByMessage(@ApiIgnore
-                                                                     @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                     @PathVariable(name = "project_id") Long sourceId,
-                                                                     @RequestParam(required = true, name = "source_level") String sourceLevel,
-                                                                     @RequestParam(required = false) String status,
-                                                                     @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
-                                                                     @RequestParam(required = false, name = "webhook_type") String webhookType) {
+    public ResponseEntity<PageInfo<WebhookRecordDTO>> pagingByMessage(@ApiIgnore
+                                                                      @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                      @PathVariable(name = "project_id") Long sourceId,
+                                                                      @PathVariable(name = "webhook_id") Long webhookId,
+                                                                      @RequestParam(required = false) String status,
+                                                                      @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
+                                                                      @RequestParam(required = false, name = "webhook_type") String webhookType) {
 
-        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, sourceLevel, status, sendSettingCode, webhookType), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, sendSettingCode, webhookType), HttpStatus.OK);
     }
 
     @ApiOperation(value = "项目层查询WebHook发送记录详情")
-    @GetMapping("/{id}")
+    @GetMapping("/deatils/{id}")
     @Permission(type = ResourceType.PROJECT)
     public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
             @PathVariable(name = "project_id") Long projectId,

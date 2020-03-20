@@ -1,5 +1,6 @@
 package io.choerodon.notify.api.dto;
 
+import io.choerodon.notify.api.vo.WebhookRecordDetailVO;
 import io.choerodon.notify.infra.dto.WebhookRecordDetailDTO;
 
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
  * @date 2019/11/4
  */
 public class WebhookRecordVO {
-    private Long id;
+    private Long recordId;
 
     private String content;
 
@@ -23,10 +24,6 @@ public class WebhookRecordVO {
 
     private String failedReason;
 
-    private Long projectId;
-
-    private String projectName;
-
     private String webhookPath;
 
     private Long webhookId;
@@ -34,9 +31,30 @@ public class WebhookRecordVO {
     private String name;
     private Long sourceId;
 
+
     private String sourceLevel;
 
     private Date endTime;
+
+    private String type;
+
+    WebhookRecordDetailVO webhookRecordDetailVO;
+
+    public WebhookRecordDetailVO getWebhookRecordDetailVO() {
+        return webhookRecordDetailVO;
+    }
+
+    public void setWebhookRecordDetailVO(WebhookRecordDetailVO webhookRecordDetailVO) {
+        this.webhookRecordDetailVO = webhookRecordDetailVO;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Long getSourceId() {
         return sourceId;
@@ -88,12 +106,12 @@ public class WebhookRecordVO {
         this.webhookId = webhookId;
     }
 
-    public Long getId() {
-        return id;
+    public Long getRecordId() {
+        return recordId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
     }
 
     public String getContent() {
@@ -142,22 +160,6 @@ public class WebhookRecordVO {
 
     public void setFailedReason(String failedReason) {
         this.failedReason = failedReason;
-    }
-
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
     }
 
     public String getWebhookPath() {

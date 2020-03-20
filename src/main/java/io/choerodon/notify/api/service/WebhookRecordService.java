@@ -13,6 +13,6 @@ public interface WebhookRecordService {
 
     WebhookRecordVO queryById(Long id);
 
-    PageInfo<WebhookRecordVO> pagingWebHookRecord(Pageable pageable, Long sourceId, String sourceLevel, String status, String sendSettingCode, String webhookType);
+    PageInfo<WebhookRecordDTO> pagingWebHookRecord(Pageable pageable, Long sourceId, Long webhookId, String status, String sendSettingCode, String webhookType);
 
 }

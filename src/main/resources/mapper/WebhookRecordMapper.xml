@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.notify.infra.mapper.WebhookRecordMapper">
     <resultMap type="io.choerodon.notify.api.dto.WebhookRecordVO" id="WebhookRecordDTOResultMap">
-        <id column="id" property="id"/>
+        <id column="recordId" property="recordId"/>
         <result column="content" property="content"/>
         <result column="status" property="status"/>
         <result column="send_time" property="sendTime"/>
@@ -12,8 +12,8 @@
         <result column="webhook_path" property="webhookPath"/>
         <result column="webhook_id" property="webhookId"/>
         <result column="name" property="name"/>
-        <association property="webhookRecordDetailDTO" javaType="io.choerodon.notify.infra.dto.WebhookRecordDetailDTO">
-            <id column="id" property="id"/>
+        <association property="webhookRecordDetailVO" javaType="io.choerodon.notify.api.vo.WebhookRecordDetailVO">
+            <id column="id" property="deatilId"/>
             <result column="webhook_recordId" property="webhookRecordId"/>
             <result column="request_headers" property="requestHeaders"/>
             <result column="request_body" property="requestBody"/>
@@ -22,8 +22,9 @@
         </association>
     </resultMap>
 
-    <select id="fulltextSearch" resultType="io.choerodon.notify.api.dto.WebhookRecordVO">
+    <select id="fulltextSearchPage" resultType="io.choerodon.notify.infra.dto.WebhookRecordDTO">
         SELECT
+        nwr.ID as id,
         nss.`NAME`,
         nwr.SEND_TIME,
         nwr.SEND_SETTING_CODE,
@@ -37,7 +38,7 @@
         ON nwr.WEBHOOK_ID =nw.ID
         where
          nwr.SOURCE_ID=#{sourceId}
-        AND nwr.SOURCE_LEVEL=#{sourceLevel}
+        AND nwr.WEBHOOK_ID=#{webhookId}
         <if test="status != null">
             AND nwr.STATUS=#{status}
         </if>
@@ -49,8 +50,36 @@
         </if>
     </select>
 
+    <!--<select id="fulltextSearch" resultType="io.choerodon.notify.infra.dto.WebhookRecordDTO">-->
+        <!--SELECT-->
+        <!--nss.`NAME`,-->
+        <!--nwr.SEND_TIME,-->
+        <!--nwr.SEND_SETTING_CODE,-->
+        <!--nwr.`STATUS`,-->
+        <!--nwr.WEBHOOK_PATH,-->
+        <!--nw.TYPE-->
+        <!--FROM notify_webhook_record nwr-->
+        <!--JOIN notify_send_setting nss-->
+        <!--ON nss.`CODE`=nwr.SEND_SETTING_CODE-->
+        <!--JOIN notify_webhook nw-->
+        <!--ON nwr.WEBHOOK_ID =nw.ID-->
+        <!--where-->
+        <!--nwr.SOURCE_ID=#{sourceId}-->
+        <!--AND nwr.webhookId=#{webhookId}-->
+        <!--<if test="status != null">-->
+            <!--AND nwr.STATUS=#{status}-->
+        <!--</if>-->
+        <!--<if test="sendSettingCode != null">-->
+            <!--AND nwr.SEND_SETTING_CODE=#{sendSettingCode}-->
+        <!--</if>-->
+        <!--<if test="webhookType != null">-->
+            <!--AND nw.TYPE=#{webhookType}-->
+        <!--</if>-->
+    <!--</select>-->
+
     <select id="queryRecordDetailById" resultMap="WebhookRecordDTOResultMap">
         SELECT
+          nwr.ID AS recordId,
           nss.`NAME`,
           nwr.SEND_TIME,
           nwr.END_TIME,
