@@ -15,7 +15,7 @@
 
     <select id="doFTR" resultType="io.choerodon.notify.infra.dto.WebHookDTO">
         SELECT
-        nw.ID,
+        nwms.ID,
         nw.TYPE,
         nw.WEBHOOK_PATH,
         nw.SOURCE_ID,
