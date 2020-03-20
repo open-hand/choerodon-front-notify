@@ -30,7 +30,7 @@ public class WebhookRecordProjectController {
     }
 
     @GetMapping
-    @Permission(type = ResourceType.SITE)
+    @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook发送记录(分页接口)")
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebhookRecordVO>> pagingByMessage(@ApiIgnore

@@ -30,7 +30,7 @@ public class WebhookRecordOrganizationController {
     }
 
     @GetMapping
-    @Permission(type = ResourceType.SITE)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "查询WebHook发送记录(分页接口)")
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebhookRecordVO>> pagingByMessage(@ApiIgnore
@@ -46,7 +46,7 @@ public class WebhookRecordOrganizationController {
 
     @ApiOperation(value = "查询WebHook发送记录详情")
     @GetMapping("/{id}")
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
             @PathVariable(name = "organization_id") Long organizationId,
             @PathVariable(name = "id") Long id) {
