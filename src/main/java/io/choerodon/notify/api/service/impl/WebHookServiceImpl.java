@@ -421,8 +421,8 @@ public class WebHookServiceImpl implements WebHookService {
         webHookJsonSendDTO.setObjectAttributes(jsonObject);
 
         RestTemplate template = new RestTemplate();
-        WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
-        fillWebhookRecordDTO(dto.getCode(), hook, JSON.toJSONString(dto));
+
+        WebhookRecordDTO webhookRecordDTO = fillWebhookRecordDTO(dto.getCode(), hook, JSON.toJSONString(dto));
         webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
         webhookRecordDTO.setSendTime(new Date());
         ResponseEntity<String> response = null;
