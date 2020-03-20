@@ -36,7 +36,7 @@
         JOIN notify_webhook nw
         ON nwr.WEBHOOK_ID =nw.ID
         where
-        AND nwr.SOURCE_ID=#{sourceId}
+         nwr.SOURCE_ID=#{sourceId}
         AND nwr.SOURCE_LEVEL=#{sourceLevel}
         <if test="status != null">
             AND nwr.STATUS=#{status}

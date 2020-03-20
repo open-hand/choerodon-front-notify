@@ -305,7 +305,7 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     private WebHookJsonSendDTO fillWebHookJson(String code) {
-        WebHookJsonSendDTO webHookJsonSendDTO = new WebHookJsonSendDTO();
+        WebHookJsonSendDTO webHookJsonSendDTO = new WebHookJsonSendDTO(null, null, null, null, null);
         webHookJsonSendDTO.setCreatedAt(new Date());
         SendSettingVO sendSettingVO = sendSettingService.query(code);
         if (Objects.isNull(sendSettingVO)) {
@@ -313,7 +313,7 @@ public class WebHookServiceImpl implements WebHookService {
         }
         webHookJsonSendDTO.setEventName(sendSettingVO.getName());
         webHookJsonSendDTO.setObjectKind(code);
-        WebHookJsonSendDTO.User user = new WebHookJsonSendDTO.User();
+        WebHookJsonSendDTO.User user = new WebHookJsonSendDTO.User(null, null);
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
 
         List<UserDTO> userDTOS = baseFeignClient.listUsersByIds(new Long[]{userDetails.getUserId()}, true).getBody();
