@@ -54,7 +54,7 @@ const MessageTypeDetail = observer(() => {
   ) : <div>无</div>);
   const getIcon = (type) => {
     if (!messageTypeDetailDataSet.current.get(`${type}EnabledFlag`)) {
-      return (            
+      return (
         <Tooltip title="该模板未启用，请在发送设置中选择">
           <Icon type="error" style={{ color: '#FFB100' }} />
         </Tooltip>
@@ -86,13 +86,15 @@ const MessageTypeDetail = observer(() => {
         <TabPane tab={(<span>站内信模板 {getIcon('pm')}</span>)} key="2">
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'pm')} showTheme />
         </TabPane>
-        <TabPane tab={(<span>webhook模板 {getIcon('webhook')}</span>)} key="3">
-          <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'webhook')} showTheme />
+        <TabPane tab={(<span>webhook-JSON模板 {getIcon('webhookJson')}</span>)} key="3">
+          <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'webhookJson')} showTheme />
         </TabPane>
-        <TabPane tab={(<span>短信模板 {getIcon('sms')}</span>)} key="4">
+        <TabPane tab={(<span>webhook-钉钉微信模板 {getIcon('webhookOther')}</span>)} key="4">
+          <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'webhookOther')} showTheme />
+        </TabPane>
+        <TabPane tab={(<span>短信模板 {getIcon('sms')}</span>)} key="5">
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'sms')} />
         </TabPane>
-       
       </Tabs>
     </React.Fragment>
   ) : <Spin />;

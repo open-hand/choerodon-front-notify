@@ -14,14 +14,14 @@ export default (id, type, orgId) => ({
   ],
   transport: {
     read: {
-      url: `notify/v1/notices/${type === 'project' ? id : orgId}/web_hooks`,
+      url: `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`,
       method: 'get',
       params: {
         sourceLevel: type,
       },
     },
     destroy: ({ data: [record, ...etc] }) => ({
-      url: `notify/v1/projects/${id}/web_hooks/${record.id}`,
+      url: `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.id}`,
       method: 'delete',
       data: undefined,
     }),

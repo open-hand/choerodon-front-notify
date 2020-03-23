@@ -4,7 +4,9 @@ import { inject } from 'mobx-react';
 import { injectIntl } from 'react-intl';
 import TriggerEventsSettingDataSet from './TriggerEventsSettingDataSet';
 import WebhooksDataSet from './WebhooksDataSet';
+import WebhookRecordTableDataSet from './WebhookRecordTableDataSet';
 import WebhooksFormDataSet from './WebhooksFormDataSet';
+import useStore from './useStore';
 
 const Store = createContext();
 
@@ -16,10 +18,15 @@ export const StoreProvider = injectIntl(inject('AppState')(
     const webhooksDataSet = useMemo(() => new DataSet(WebhooksDataSet(id, type, orgId)), []);
     const createTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('create', id)), []);
     const editTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('edit', id)), []);
-    const editWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('edit', id, editTriggerEventsSettingDataSet)), []);
-    const createWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('create', id)), []);
+    const editWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('edit', id, editTriggerEventsSettingDataSet, orgId, type)), []);
+    const createWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('create', id, undefined, orgId, type)), []);
+    const webhookRecordTableDataSet = useMemo(() => new DataSet(WebhookRecordTableDataSet(id, type, orgId)), []);
+    // const webhookRecordDetailDataSet = useMemo(() => new DataSet(WebhookRecordDetailDataSet()), []);
     const value = {
+      webhooksSettingUseStore: useStore(),
       projectId: id,
+      // webhookRecordDetailDataSet,
+      webhookRecordTableDataSet,
       webhooksDataSet,
       editWebhooksFormDataSet,
       editTriggerEventsSettingDataSet,

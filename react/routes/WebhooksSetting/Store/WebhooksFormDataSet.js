@@ -19,19 +19,24 @@ const typeOptionDataSet = new DataSet({
  * @param id(create: projectId / edit: webhookId)
  * @returns DataSet
  */
-export default function (type, id, children) {
+export default function (type, id, children, orgId, orgType) {
   const validateWebhooksPath = async (value) => {
-    const res = await axios.get(`notify/v1/projects/${id}/web_hooks/check_path`, {
-      params: {
-        id,
-        path: value,
-      },
-    });
-    if (!res) {
-      return '路径重复';
+    try {
+      const res = await axios.get(`notify/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
+        params: {
+          id,
+          path: value,
+        },
+      });
+      if (!res) {
+        return '路径重复';
+      }
+      return true;
+    } catch (e) {
+      return '校验失败';
     }
-    return true;
   };
+
   return {
     autoQuery: false,
     queryUrl: '',
