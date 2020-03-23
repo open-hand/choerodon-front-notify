@@ -1,5 +1,4 @@
 import React from 'react';
-import { PageWrap, PageTab } from '@choerodon/boot';
 import { StoreProvider } from './Store';
 import WebhooksSetting from './WebhooksSetting';
 
