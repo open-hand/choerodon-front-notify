@@ -2,6 +2,8 @@ package io.choerodon.notify.infra.dto;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +24,6 @@ public class WebHookDTO extends BaseDTO {
     private Long id;
 
     @ApiModelProperty("webhook名称")
-    @NotEmpty(message = "error.web.hook.create.or.update.name.can.not.be.empty")
     private String name;
 
     @NotEmpty(message = "error.web.hook.create.or.update.type.can.not.be.empty")
@@ -36,8 +37,11 @@ public class WebHookDTO extends BaseDTO {
     @ApiModelProperty("钉钉的加签密钥")
     private String secret;
 
-    @ApiModelProperty("项目ID/必填字段")
-    private Long projectId;
+    @ApiModelProperty("项目或组织ID/必填字段")
+    private Long sourceId;
+
+    @ApiModelProperty("webhook的层级")
+    private String sourceLevel;
 
     @ApiModelProperty("webhook是否启用")
     private Boolean enableFlag;
@@ -60,13 +64,12 @@ public class WebHookDTO extends BaseDTO {
         return this;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public WebHookDTO setProjectId(Long projectId) {
-        this.projectId = projectId;
-        return this;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 
     public String getName() {
@@ -102,6 +105,15 @@ public class WebHookDTO extends BaseDTO {
 
     public WebHookDTO setEnableFlag(Boolean enableFlag) {
         this.enableFlag = enableFlag;
+        return this;
+    }
+
+    public String getSourceLevel() {
+        return sourceLevel;
+    }
+
+    public WebHookDTO setSourceLevel(String sourceLevel) {
+        this.sourceLevel = sourceLevel;
         return this;
     }
 }

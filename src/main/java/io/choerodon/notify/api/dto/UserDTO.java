@@ -19,6 +19,16 @@ public class UserDTO {
 
     private String phone;
 
+    private Boolean ldap;
+
+    public Boolean getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(Boolean ldap) {
+        this.ldap = ldap;
+    }
+
     public Long getId() {
         return id;
     }
@@ -77,12 +87,13 @@ public class UserDTO {
                 Objects.equals(realName, userDTO.realName) &&
                 Objects.equals(imageUrl, userDTO.imageUrl) &&
                 Objects.equals(email, userDTO.email) &&
-                Objects.equals(phone, userDTO.phone);
+                Objects.equals(phone, userDTO.phone) &&
+                Objects.equals(ldap, userDTO.ldap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, loginName, realName, imageUrl, email, phone);
+        return Objects.hash(id, loginName, realName, imageUrl, email, phone, ldap);
     }
 
     @Override
@@ -94,6 +105,7 @@ public class UserDTO {
                 ", imageUrl='" + imageUrl + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
+                ", ldap='" + ldap + '\'' +
                 '}';
     }
 }

@@ -9,29 +9,30 @@
         LEFT JOIN NOTIFY_WEBHOOK_MESSAGE_SETTING wms ON wh.ID = wms.WEBHOOK_ID
         WHERE
         wms.SEND_SETTING_ID = #{send_setting_id}
-        AND wh.PROJECT_ID =#{project_id}
+        AND wh.SOURCE_ID =#{sourceId}
         AND wh.enable_flag=1
     </select>
 
     <select id="doFTR" resultType="io.choerodon.notify.infra.dto.WebHookDTO">
         SELECT
-        *
+        nw.*
         FROM
-        notify_webhook
-        where project_id=#{projectId}
+        notify_webhook nw
+        where nw.source_id=#{sourceId}
+        AND nw.source_level=#{sourceLevel}
         <if test="filterDTO.name !=null">
-            AND name LIKE concat(concat('%',#{filterDTO.name}),'%')
+            AND nw.name LIKE concat(concat('%',#{filterDTO.name}),'%')
         </if>
         <if test="filterDTO.type !=null">
-            AND type=#{filterDTO.type}
+            AND nw.type=#{filterDTO.type}
         </if>
         <if test="filterDTO.enableFlag !=null">
-            AND enable_flag=#{filterDTO.enableFlag}
+            AND nw.enable_flag=#{filterDTO.enableFlag}
         </if>
         <if test="params !=null">
             AND (
             name LIKE concat(concat('%',#{params}),'%') OR
-            webhook_path LIKE concat(concat('%',#{params}),'%')
+            nw.webhook_path LIKE concat(concat('%',#{params}),'%')
             )
         </if>
     </select>

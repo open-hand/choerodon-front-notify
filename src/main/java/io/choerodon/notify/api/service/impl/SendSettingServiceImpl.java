@@ -11,9 +11,11 @@ import io.choerodon.notify.api.dto.*;
 import io.choerodon.notify.api.service.MessageSettingService;
 import io.choerodon.notify.api.service.SendSettingService;
 import io.choerodon.notify.api.validator.CommonValidator;
+import io.choerodon.notify.api.vo.SendSettingCategoryVO;
 import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.*;
 import io.choerodon.notify.infra.enums.LevelType;
+import io.choerodon.notify.infra.enums.WebHookTypeEnum;
 import io.choerodon.notify.infra.mapper.*;
 import io.choerodon.swagger.notify.NotifyBusinessTypeScanData;
 import io.choerodon.web.util.PageableHelper;
@@ -83,7 +85,8 @@ public class SendSettingServiceImpl implements SendSettingService {
                 query.setPmEnabledFlag(sendSettingDTO.getPmEnabledFlag());
                 query.setEmailEnabledFlag(sendSettingDTO.getEmailEnabledFlag());
                 query.setSmsEnabledFlag(sendSettingDTO.getSmsEnabledFlag());
-                query.setWebhookEnabledFlag(sendSettingDTO.getWebhookEnabledFlag());
+                query.setWebhookOtherEnabledFlag(sendSettingDTO.getWebhookOtherEnabledFlag());
+                query.setWebhookJsonEnabledFlag(sendSettingDTO.getWebhookJsonEnabledFlag());
                 sendSettingMapper.updateByPrimaryKeySelective(query);
             }
 
@@ -272,12 +275,13 @@ public class SendSettingServiceImpl implements SendSettingService {
         if (sendSettingMapper.updateByPrimaryKeySelective(updateDTO) != 1) {
             throw new CommonException(SEND_SETTING_UPDATE_EXCEPTION);
         }
-        compareAndUpdateProjectSetting(oldSetting,updateDTO);
+        compareAndUpdateProjectSetting(oldSetting, updateDTO);
         return sendSettingMapper.selectByPrimaryKey(id);
     }
 
     /**
      * 比较更新内容，（取消勾选发送方式时，把项目的设置也取消掉）
+     *
      * @param oldSetting
      * @param updateDTO
      */
@@ -339,10 +343,21 @@ public class SendSettingServiceImpl implements SendSettingService {
     }
 
     @Override
-    public WebHookVO.SendSetting getUnderProject() {
+    public WebHookVO.SendSetting getUnderProject(String name, String description, String type) {
         WebHookVO.SendSetting sendSetting = new WebHookVO.SendSetting();
         //1.获取WebHook 发送设置可选集合(启用,且启用WebHook的发送设置)
-        List<SendSettingDTO> sendSettingSelection = sendSettingMapper.select(new SendSettingDTO().setEnabled(true).setLevel(ResourceType.PROJECT.value()).setWebhookEnabledFlag(true));
+        SendSettingDTO condition = new SendSettingDTO();
+        condition.setLevel(ResourceType.PROJECT.value());
+        condition.setName(name);
+        condition.setDescription(description);
+        condition.setEnabled(true);
+        if (WebHookTypeEnum.DINGTALK.getValue().equals(type) || WebHookTypeEnum.WECHAT.getValue().equals(type)) {
+            condition.setWebhookOtherEnabledFlag(true);
+        }
+        if (WebHookTypeEnum.JSON.getValue().equals(type)) {
+            condition.setWebhookJsonEnabledFlag(true);
+        }
+        List<SendSettingDTO> sendSettingSelection = sendSettingMapper.pageSendSettingByCondition(condition);
         if (CollectionUtils.isEmpty(sendSettingSelection)) {
             return sendSetting;
         }

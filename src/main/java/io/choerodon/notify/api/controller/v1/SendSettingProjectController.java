@@ -7,10 +7,7 @@ import io.choerodon.notify.api.vo.WebHookVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author lrc
@@ -29,8 +26,11 @@ public class SendSettingProjectController {
     @GetMapping
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation("查询项目下可选的发送设置（用于WebHook）")
-    public ResponseEntity<WebHookVO.SendSetting> getSendSettings(@PathVariable("project_id") Long projectId) {
-        return new ResponseEntity<>(sendSettingService.getUnderProject(), HttpStatus.OK);
+    public ResponseEntity<WebHookVO.SendSetting> getSendSettings(@PathVariable("project_id") Long projectId,
+                                                                 @RequestParam(name = "name", required = false) String name,
+                                                                 @RequestParam(name = "description", required = false) String description,
+                                                                 @RequestParam(name = "type", required = false) String type) {
+        return new ResponseEntity<>(sendSettingService.getUnderProject(name, description, type), HttpStatus.OK);
     }
 
 

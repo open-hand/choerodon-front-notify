@@ -1,5 +1,8 @@
 package io.choerodon.notify.api.dto;
 
+import io.choerodon.notify.api.vo.WebhookRecordDetailVO;
+import io.choerodon.notify.infra.dto.WebhookRecordDetailDTO;
+
 import java.util.Date;
 
 /**
@@ -7,7 +10,7 @@ import java.util.Date;
  * @date 2019/11/4
  */
 public class WebhookRecordVO {
-    private Long id;
+    private Long recordId;
 
     private String content;
 
@@ -21,18 +24,94 @@ public class WebhookRecordVO {
 
     private String failedReason;
 
-    private Long projectId;
-
-    private String projectName;
-
     private String webhookPath;
 
-    public Long getId() {
-        return id;
+    private Long webhookId;
+
+    private String name;
+    private Long sourceId;
+
+
+    private String sourceLevel;
+
+    private Date endTime;
+
+    private String type;
+
+    WebhookRecordDetailVO webhookRecordDetailVO;
+
+    public WebhookRecordDetailVO getWebhookRecordDetailVO() {
+        return webhookRecordDetailVO;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setWebhookRecordDetailVO(WebhookRecordDetailVO webhookRecordDetailVO) {
+        this.webhookRecordDetailVO = webhookRecordDetailVO;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Long getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceLevel() {
+        return sourceLevel;
+    }
+
+    public void setSourceLevel(String sourceLevel) {
+        this.sourceLevel = sourceLevel;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public WebhookRecordDetailDTO getWebhookRecordDetailDTO() {
+        return webhookRecordDetailDTO;
+    }
+
+    public void setWebhookRecordDetailDTO(WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        this.webhookRecordDetailDTO = webhookRecordDetailDTO;
+    }
+
+    private WebhookRecordDetailDTO webhookRecordDetailDTO;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getWebhookId() {
+        return webhookId;
+    }
+
+    public void setWebhookId(Long webhookId) {
+        this.webhookId = webhookId;
+    }
+
+    public Long getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
     }
 
     public String getContent() {
@@ -81,22 +160,6 @@ public class WebhookRecordVO {
 
     public void setFailedReason(String failedReason) {
         this.failedReason = failedReason;
-    }
-
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
     }
 
     public String getWebhookPath() {

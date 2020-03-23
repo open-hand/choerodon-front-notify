@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/notify",
   "routeName": "notify",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "",
   "main": "./lib/index.js",
   "dependencies": {
@@ -15,16 +15,12 @@
     "lib"
   ],
   "peerDependencies": {
-    "@choerodon/boot": "0.19.x",
-    "@choerodon/master": "0.20.0"
+    "@choerodon/boot": "0.21.0",
+    "@choerodon/master": "0.22.0"
   },
   "devDependencies": {
-    "@choerodon/boot": "0.19.x",
-    "@choerodon/master": "0.20.0",
-    "babel-preset-env": "^1.7.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.1",
-    "through2": "^2.0.3"
+    "@choerodon/boot": "0.21.0",
+    "@choerodon/master": "0.22.0"
   },
   "scripts": {
     "start": "choerodon-front-boot start --config ./react/config.js",

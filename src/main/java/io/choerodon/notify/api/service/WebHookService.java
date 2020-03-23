@@ -5,6 +5,7 @@ import io.choerodon.notify.api.dto.NoticeSendDTO;
 import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.SendSettingDTO;
 import io.choerodon.notify.infra.dto.WebHookDTO;
+import io.choerodon.notify.infra.dto.WebhookRecordDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Set;
@@ -29,7 +30,7 @@ public interface WebHookService {
      * @param params    模糊匹配字段
      * @return
      */
-    PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long projectId, WebHookDTO filterDTO, String params);
+    PageInfo<WebHookDTO> pagingWebHook(Pageable pageable, Long sourceId, String sourceLevel, WebHookDTO filterDTO, String params);
 
     /**
      * WebHook名称校验重复
@@ -46,7 +47,7 @@ public interface WebHookService {
      * @param projectId 项目ID
      * @return
      */
-    WebHookVO getById(Long projectId, Long webHookId);
+    WebHookVO getById(Long projectId, Long webHookId, String type);
 
     /**
      * 添加WebHook
@@ -55,7 +56,7 @@ public interface WebHookService {
      * @param createVO  webHook创建信息
      * @return
      */
-    WebHookVO create(Long projectId, WebHookVO createVO);
+    WebHookVO create(Long projectId, WebHookVO createVO, String source);
 
     /**
      * 更新WebHook
@@ -89,4 +90,8 @@ public interface WebHookService {
      * @return
      */
     WebHookDTO enabled(Long id);
+
+    void retry(Long recordId);
+
+    void failure(Long recordId);
 }

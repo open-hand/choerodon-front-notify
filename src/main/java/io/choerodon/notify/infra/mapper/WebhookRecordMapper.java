@@ -12,5 +12,13 @@ import java.util.List;
  * @date 2019/11/4
  */
 public interface WebhookRecordMapper extends Mapper<WebhookRecordDTO> {
-    List<WebhookRecordVO> fulltextSearch(@Param("webhookRecordVO") WebhookRecordVO webhookRecordVO, @Param("params") String params, @Param("ids") List<Long> ids);
+//    List<WebhookRecordVO> fulltextSearch(@Param("webhookRecordVO") WebhookRecordVO webhookRecordVO, @Param("params") String params, @Param("ids") List<Long> ids);
+
+    List<WebhookRecordVO> fulltextSearchPage(@Param("sourceId") Long sourceId,
+                                         @Param("webhookId") Long webhookId,
+                                         @Param("status") String status,
+                                         @Param("sendSettingCode") String sendSettingCode,
+                                         @Param("webhookType") String webhookType);
+
+    WebhookRecordVO queryRecordDetailById(@Param("id") Long id);
 }

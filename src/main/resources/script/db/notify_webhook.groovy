@@ -9,7 +9,7 @@ databaseChangeLog(logicalFilePath: 'script/db/notify_webhook.groovy') {
             column(name: 'ID', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表 ID，主键，单表时自增、步长为 1') {
                 constraints(primaryKey: true, primaryKeyName: 'PK_NOTIFY_WEBHOOK')
             }
-            column(name: 'WEBHOOK_NAME', type: 'varchar(255)', remarks: 'webhook 名称')
+            column(name: 'WEBHOOK_NAME', type: 'varchar(255)', remarks: 'webhook 名称', defaultValue: '')
             column(name: 'WEBHOOK_TYPE', type: 'varchar(255)', remarks: 'webhook 类型，钉钉') {
                 constraints(nullable: false)
             }
@@ -53,6 +53,20 @@ databaseChangeLog(logicalFilePath: 'script/db/notify_webhook.groovy') {
     changeSet(id: '2019-11-01-notify_webhook-add-column', author: 'longhe1996@icloud.com') {
         addColumn(tableName: 'NOTIFY_WEBHOOK') {
             column(name: 'SECRET', type: 'VARCHAR(255)', remarks: '钉钉的加签密钥（密钥，机器人安全设置页面，加签一栏下面显示的SEC开头的字符串）', afterColumn: 'WEBHOOK_PATH')
+        }
+    }
+    changeSet(id: '2020-3-18-notify_webhook-modify-column', author: '957038053@qq.com') {
+        sql(stripComments: true, splitStatements: false, endDelimiter: ';') {
+            "alter table NOTIFY_WEBHOOK change column PROJECT_ID SOURCE_ID BIGINT UNSIGNED;"
+        }
+        addColumn(tableName: 'NOTIFY_WEBHOOK') {
+            column(name: 'SOURCE_LEVEL', type: 'VARCHAR(255)', remarks: '层级', afterColumn: 'SOURCE_ID')
+        }
+    }
+
+    changeSet(id: '2020-3-20-notify_webhook-modify-column', author: '957038053@qq.com') {
+        sql(stripComments: true, splitStatements: false, endDelimiter: ';') {
+            "alter table NOTIFY_WEBHOOK  modify column `NAME` text;"
         }
     }
 }

@@ -3,10 +3,7 @@ package io.choerodon.notify.infra.dto;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -30,9 +27,63 @@ public class WebhookRecordDTO extends BaseDTO {
 
     private String failedReason;
 
-    private Long projectId;
+    private Long sourceId;
+
+    private String sourceLevel;
 
     private String webhookPath;
+
+    private Long webhookId;
+
+    private Date endTime;
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    @Transient
+    private WebhookRecordDetailDTO webhookRecordDetailDTO;
+
+    @Transient
+    private String name;
+    @Transient
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public WebhookRecordDetailDTO getWebhookRecordDetailDTO() {
+        return webhookRecordDetailDTO;
+    }
+
+    public void setWebhookRecordDetailDTO(WebhookRecordDetailDTO webhookRecordDetailDTO) {
+        this.webhookRecordDetailDTO = webhookRecordDetailDTO;
+    }
+
+    public Long getWebhookId() {
+        return webhookId;
+    }
+
+    public void setWebhookId(Long webhookId) {
+        this.webhookId = webhookId;
+    }
 
     public Long getId() {
         return id;
@@ -82,12 +133,20 @@ public class WebhookRecordDTO extends BaseDTO {
         this.failedReason = failedReason;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getSourceLevel() {
+        return sourceLevel;
+    }
+
+    public void setSourceLevel(String sourceLevel) {
+        this.sourceLevel = sourceLevel;
     }
 
     public String getWebhookPath() {
