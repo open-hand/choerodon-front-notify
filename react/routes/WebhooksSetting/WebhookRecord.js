@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react';
 import { Table, Modal } from 'choerodon-ui/pro';
 import { Action, StatusTag } from '@choerodon/boot';
 import WebhookRecordDetail from './WebhookRecordDetail';
-import Store from './Store';
 
 const { Column } = Table;
 
