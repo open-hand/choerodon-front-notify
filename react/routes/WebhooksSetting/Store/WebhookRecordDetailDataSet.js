@@ -1,0 +1,59 @@
+import moment from 'moment';
+
+export default () => {
+  function handleLoadTime(startTime, endTime) {
+    if (startTime && endTime) {
+      const releaseDate = moment(endTime);
+      const currentDate = moment(startTime);
+
+      const diff = releaseDate.diff(currentDate);
+      const diffDuration = moment.duration(diff);
+
+      const diffYears = diffDuration.years();
+      const diffMonths = diffDuration.months();
+      const diffDays = diffDuration.days();
+      const diffHours = diffDuration.hours();
+      const diffMinutes = diffDuration.minutes();
+      const diffSeconds = diffDuration.seconds();
+
+      return `${diffYears ? `${diffYears}年` : ''}${diffMonths ? `${diffMonths}月` : ''}${diffDays ? `${diffDays}日` : ''}${diffHours ? `${diffHours}小时` : ''}${diffMinutes ? `${diffMinutes}分钟` : ''}${diffSeconds ? `${diffSeconds}秒` : ''}`;
+    } else {
+      return '正在计算时间...';
+    }
+  }
+
+  return ({
+    transport: {
+      read: ({ dataSet }) => ({
+        url: dataSet.queryUrl,
+        method: 'get',
+        transformResponse(res) {
+          const data = JSON.parse(res);
+          if (res.sendTime && res.endTime) {
+            data.sendTime = handleLoadTime(res.sendTime, res.endTime);
+          } else {
+            data.sendTime = '无';
+          }
+          return data;
+        },
+      }),
+    },
+    fields: [{
+      name: 'name',
+      type: 'string',
+      label: '触发事件',
+    }, {
+      name: 'sendTime',
+      type: 'string',
+      label: '发送时间',
+    }, {
+      name: 'timeConsuming',
+      type: 'string',
+      label: '累计耗时',
+    }, {
+      name: 'webhookPath',
+      type: 'string',
+      label: 'Webhook地址',
+    }],
+  });
+};

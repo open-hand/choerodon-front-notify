@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Table, Button, Modal } from 'choerodon-ui/pro';
-import { message } from 'choerodon-ui';
-import { axios, Breadcrumb, Header, Content, StatusTag, Action } from '@choerodon/boot';
+import { message, Tooltip } from 'choerodon-ui';
+import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page } from '@choerodon/boot';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
+import WebhookRecord from './WebhookRecord';
 import Store from './Store';
 
 import './index.less';
@@ -12,7 +13,9 @@ const { Column } = Table;
 
 const WebhooksSetting = () => {
   const {
+    webhooksSettingUseStore,
     projectId,
+    webhookRecordTableDataSet,
     webhooksDataSet,
     createWebhooksFormDataSet,
     createTriggerEventsSettingDataSet,
@@ -22,6 +25,7 @@ const WebhooksSetting = () => {
     ENABLED_GREEN,
     DISABLED_GRAY,
     prefixCls,
+    AppState: { currentMenuType: { type, id, orgId } },
   } = useContext(Store);
 
   const handleCreateWebhooks = () => {
@@ -32,12 +36,13 @@ const WebhooksSetting = () => {
       style: {
         width: '51.39%',
       },
+      okText: '创建',
       children: (
         <CreateAndEditWebhooksForm dataSet={createWebhooksFormDataSet} triggerEventsSettingDataSet={createTriggerEventsSettingDataSet} />
       ),
       onOk: async () => {
         try {
-          const res = await axios.post(`/notify/v1/projects/${projectId}/web_hooks`, {
+          const res = await axios.post(`/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`, {
             ...createWebhooksFormDataSet.toJSONData()[0],
             sendSettingIdList: createTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
           });
@@ -68,7 +73,7 @@ const WebhooksSetting = () => {
       drawer: true,
       okText: '保存',
       style: {
-        width: '51.39%',
+        width: 740,
       },
       onOk: async () => {
         try {
@@ -104,7 +109,7 @@ const WebhooksSetting = () => {
 
   const toggleWebhooks = async (record) => {
     try {
-      const res = await axios.put(`notify/v1/projects/${projectId}/web_hooks/${record.get('id')}/${record.get('enableFlag') ? 'disabled' : 'enabled'}`);
+      const res = await axios.put(`notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/${record.get('enableFlag') ? 'disabled' : 'enabled'}`);
       if (res.failed) {
         message(res.message);
         throw Error();
@@ -118,15 +123,35 @@ const WebhooksSetting = () => {
     }
   };
 
+  const NameRenderer = ({ record }) => (
+    <Tooltip placement="top" title={record.get('name')}>
+      <p onClick={() => editWebhooks(record)}>{record.get('name')}</p>
+    </Tooltip>
+  );
+
   const ActionRenderer = ({ record }) => {
     const actionArr = [{
+      service: [],
+      text: record.get('enableFlag') ? '停用' : '启用',
+      action: () => toggleWebhooks(record),
+    }, {
       service: [],
       text: '删除',
       action: () => deleteWebhooks(record),
     }, {
       service: [],
-      text: record.get('enableFlag') ? '禁用' : '启用',
-      action: () => toggleWebhooks(record),
+      text: '查看执行记录',
+      action: () => Modal.open({
+        title: 'Webhook执行记录',
+        key: Modal.key(),
+        drawer: true,
+        style: {
+          width: 900,
+        },
+        okCancel: false,
+        okText: '取消',
+        children: <WebhookRecord webhookId={record.get('id')} ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
+      }),
     }];
     return <Action className="action-icon" data={actionArr} />;
   };
@@ -136,7 +161,7 @@ const WebhooksSetting = () => {
   const typeRenderer = ({ value }) => webhooksTypeMap[value];
 
   return (
-    <React.Fragment>
+    <Page>
       <Header>
         <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
       </Header>
@@ -145,9 +170,10 @@ const WebhooksSetting = () => {
         <Table dataSet={webhooksDataSet}>
           <Column
             name="name"
-            onCell={({ record }) => ({
-              onClick: () => editWebhooks(record),
-            })}
+            renderer={NameRenderer}
+            // onCell={({ record }) => ({
+            //   onClick: () => editWebhooks(record),
+            // })}
           />
           <Column renderer={ActionRenderer} width={48} />
           <Column name="webhookPath" />
@@ -155,7 +181,7 @@ const WebhooksSetting = () => {
           <Column name="enableFlag" renderer={StatusRenderer} />
         </Table>
       </Content>
-    </React.Fragment>
+    </Page>
   );
 };
 

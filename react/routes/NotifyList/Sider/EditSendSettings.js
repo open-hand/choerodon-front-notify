@@ -24,7 +24,8 @@ export default function ({ context, modal }) {
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
         <CheckBox name="emailEnabledFlag" />
         <CheckBox name="pmEnabledFlag" />
-        <CheckBox name="webhookEnabledFlag" />
+        <CheckBox name="webhookOtherEnabledFlag" />
+        <CheckBox name="webhookJsonEnabledFlag" />
         <CheckBox name="smsEnabledFlag" />
       </Form>
       <div className="c7n-notify-contentList-sider-label">是否允许配置接收</div>

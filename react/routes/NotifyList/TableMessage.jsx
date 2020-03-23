@@ -155,7 +155,7 @@ export default observer(() => {
     Modal.open({
       title: '修改发送设置',
       drawer: true,
-      style: { width: '3.8rem' },
+      style: { width: 740 },
       children: <EditSendSettings context={context} />,
     });
   }
@@ -176,7 +176,8 @@ export default observer(() => {
         <Button icon="mode_edit" onClick={editSendSettings}>修改发送设置</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('email', '修改邮件模板')}>修改邮件模板</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('pm', '修改站内信模板')}>修改站内信模板</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('webhook', '修改webhook模板')}>修改webhook模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('webhookJson', '修改webhook-Json模板')}>修改webhook-Json模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('webhookOther', '修改webhook-钉钉微信模板')}>修改webhook-钉钉微信模板</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('sms', '修改短信模板')}>修改短信模板</Button>
       </Header>
     );
