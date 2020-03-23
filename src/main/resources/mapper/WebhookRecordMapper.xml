@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.notify.infra.mapper.WebhookRecordMapper">
-    <resultMap type="io.choerodon.notify.api.dto.WebhookRecordVO" id="WebhookRecordDTOResultMap">
+    <resultMap type="io.choerodon.notify.api.dto.WebhookRecordVO" id="WebhookRecordVOResultMap">
         <id column="recordId" property="recordId"/>
         <result column="content" property="content"/>
         <result column="status" property="status"/>
@@ -22,7 +22,24 @@
         </association>
     </resultMap>
 
-    <select id="fulltextSearchPage" resultType="io.choerodon.notify.infra.dto.WebhookRecordDTO">
+    <resultMap type="io.choerodon.notify.infra.dto.WebhookRecordDTO" id="WebhookRecordDTOResultMap">
+        <id column="id" property="id"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="send_setting_code" property="sendSettingCode"/>
+        <result column="status" property="status"/>
+        <result column="webhook_path" property="webhookPath"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <!--<association property="webhookRecordDetailDTO" javaType="io.choerodon.notify.infra.dto.WebhookRecordDetailDTO">-->
+        <!--<result column="webhook_recordId" property="webhookRecordId"/>-->
+        <!--<result column="request_headers" property="requestHeaders"/>-->
+        <!--<result column="request_body" property="requestBody"/>-->
+        <!--<result column="response_headers" property="responseHeaders"/>-->
+        <!--<result column="response_body" property="responseBody"/>-->
+        <!--</association>-->
+    </resultMap>
+
+    <select id="fulltextSearchPage" resultMap="WebhookRecordDTOResultMap">
         SELECT
         nwr.ID as id,
         nss.`NAME`,
@@ -37,7 +54,7 @@
         JOIN notify_webhook nw
         ON nwr.WEBHOOK_ID =nw.ID
         where
-         nwr.SOURCE_ID=#{sourceId}
+        nwr.SOURCE_ID=#{sourceId}
         AND nwr.WEBHOOK_ID=#{webhookId}
         <if test="status != null">
             AND nwr.STATUS=#{status}
@@ -51,33 +68,33 @@
     </select>
 
     <!--<select id="fulltextSearch" resultType="io.choerodon.notify.infra.dto.WebhookRecordDTO">-->
-        <!--SELECT-->
-        <!--nss.`NAME`,-->
-        <!--nwr.SEND_TIME,-->
-        <!--nwr.SEND_SETTING_CODE,-->
-        <!--nwr.`STATUS`,-->
-        <!--nwr.WEBHOOK_PATH,-->
-        <!--nw.TYPE-->
-        <!--FROM notify_webhook_record nwr-->
-        <!--JOIN notify_send_setting nss-->
-        <!--ON nss.`CODE`=nwr.SEND_SETTING_CODE-->
-        <!--JOIN notify_webhook nw-->
-        <!--ON nwr.WEBHOOK_ID =nw.ID-->
-        <!--where-->
-        <!--nwr.SOURCE_ID=#{sourceId}-->
-        <!--AND nwr.webhookId=#{webhookId}-->
-        <!--<if test="status != null">-->
-            <!--AND nwr.STATUS=#{status}-->
-        <!--</if>-->
-        <!--<if test="sendSettingCode != null">-->
-            <!--AND nwr.SEND_SETTING_CODE=#{sendSettingCode}-->
-        <!--</if>-->
-        <!--<if test="webhookType != null">-->
-            <!--AND nw.TYPE=#{webhookType}-->
-        <!--</if>-->
+    <!--SELECT-->
+    <!--nss.`NAME`,-->
+    <!--nwr.SEND_TIME,-->
+    <!--nwr.SEND_SETTING_CODE,-->
+    <!--nwr.`STATUS`,-->
+    <!--nwr.WEBHOOK_PATH,-->
+    <!--nw.TYPE-->
+    <!--FROM notify_webhook_record nwr-->
+    <!--JOIN notify_send_setting nss-->
+    <!--ON nss.`CODE`=nwr.SEND_SETTING_CODE-->
+    <!--JOIN notify_webhook nw-->
+    <!--ON nwr.WEBHOOK_ID =nw.ID-->
+    <!--where-->
+    <!--nwr.SOURCE_ID=#{sourceId}-->
+    <!--AND nwr.webhookId=#{webhookId}-->
+    <!--<if test="status != null">-->
+    <!--AND nwr.STATUS=#{status}-->
+    <!--</if>-->
+    <!--<if test="sendSettingCode != null">-->
+    <!--AND nwr.SEND_SETTING_CODE=#{sendSettingCode}-->
+    <!--</if>-->
+    <!--<if test="webhookType != null">-->
+    <!--AND nw.TYPE=#{webhookType}-->
+    <!--</if>-->
     <!--</select>-->
 
-    <select id="queryRecordDetailById" resultMap="WebhookRecordDTOResultMap">
+    <select id="queryRecordDetailById" resultMap="WebhookRecordVOResultMap">
         SELECT
           nwr.ID AS recordId,
           nss.`NAME`,
