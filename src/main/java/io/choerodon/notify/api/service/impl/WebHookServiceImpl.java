@@ -266,7 +266,7 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setFailedReason(e.getMessage());
         webhookRecordDTO.setEndTime(new Date());
         webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
-        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().getAsString());
+        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
         if (!Objects.isNull(response)) {
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
             webhookRecordDetailDTO.setResponseBody(response.getBody());

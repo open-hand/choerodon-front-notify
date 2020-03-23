@@ -2,12 +2,8 @@ package io.choerodon.notify.infra.dto;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.data.annotation.Transient;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -51,6 +47,7 @@ public class WebhookRecordDTO extends BaseDTO {
 
     @Transient
     private WebhookRecordDetailDTO webhookRecordDetailDTO;
+
     @Transient
     private String name;
     @Transient
