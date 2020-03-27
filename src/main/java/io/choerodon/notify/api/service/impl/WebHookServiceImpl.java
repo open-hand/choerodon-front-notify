@@ -56,6 +56,7 @@ import io.choerodon.notify.infra.enums.RecordStatus;
 import io.choerodon.notify.infra.enums.SendingTypeEnum;
 import io.choerodon.notify.infra.enums.WebHookTypeEnum;
 import io.choerodon.web.util.PageableHelper;
+import tk.mybatis.mapper.util.StringUtil;
 
 @Service
 public class WebHookServiceImpl implements WebHookService {
@@ -529,10 +530,20 @@ public class WebHookServiceImpl implements WebHookService {
         }
         //1.更新WebHook
         WebHookDTO webHookDTO = checkExistedById(webHookVO.getId());
+
+        Set<Long> sendSettingIdList = webHookVO.getSendSettingIdList();
+        List<SendSettingDTO> sendSettingDTOS = new ArrayList<>();
+        if (CollectionUtils.isEmpty(sendSettingIdList)) {
+            webHookDTO.setName(null);
+        } else {
+            sendSettingIdList.stream().forEach(id -> {
+                sendSettingDTOS.add(sendSettingMapper.selectByPrimaryKey(id));
+            });
+            webHookDTO.setName(sendSettingDTOS.stream().map(SendSettingDTO::getName).collect(Collectors.joining(",")));
+        }
         webHookDTO.setObjectVersionNumber(webHookVO.getObjectVersionNumber());
         if (webHookMapper.updateByPrimaryKeySelective(webHookDTO
                 .setSecret(webHookVO.getSecret())
-                .setName(webHookVO.getName())
                 .setType(webHookVO.getType())
                 .setWebhookPath(webHookVO.getWebhookPath())) != 1) {
             throw new UpdateException("error.web.hook.update");
