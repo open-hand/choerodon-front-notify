@@ -39,7 +39,6 @@ public class WebHookProjectController {
     }
 
 
-
     @GetMapping("/web_hooks")
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook信息（分页接口）")
@@ -123,7 +122,7 @@ public class WebHookProjectController {
     public void retey(
             @PathVariable("project_id") Long projectId,
             @PathVariable("record_id") Long recordId) {
-        webHookService.retry(recordId);
+        webHookService.retry(projectId, recordId, PROJECT);
     }
 
     @Permission(type = ResourceType.PROJECT)
@@ -132,6 +131,16 @@ public class WebHookProjectController {
     public void failure(
             @PathVariable("project_id") Long projectId,
             @PathVariable("record_id") Long recordId) {
-        webHookService.failure(recordId);
+        webHookService.failure(projectId, recordId, PROJECT);
+    }
+
+    @Permission(type = ResourceType.PROJECT)
+    @ApiOperation(value = "根据ID查询webhook")
+    @GetMapping("/{web_hook_id}")
+    public ResponseEntity<WebHookVO> queryById(
+            @PathVariable("project_id") Long projectId,
+            @PathVariable("web_hook_id") Long webHookId,
+            @RequestParam(required = false) String type) {
+        return new ResponseEntity<>(webHookService.queryById(projectId, webHookId, type), HttpStatus.OK);
     }
 }

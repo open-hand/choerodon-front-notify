@@ -23,25 +23,27 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping(value = "/v1/project/{project_id}/web_hook_records")
 public class WebhookRecordProjectController {
+    private static final String PROJECT = "project";
+    private static final String ORGANIZATION = "organization";
     private WebhookRecordService webhookRecordService;
 
     public WebhookRecordProjectController(WebhookRecordService webhookRecordService) {
         this.webhookRecordService = webhookRecordService;
     }
 
-    @GetMapping("/{webhook_id}")
+    @GetMapping
     @Permission(type = ResourceType.PROJECT)
     @ApiOperation(value = "查询WebHook发送记录(分页接口)")
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebhookRecordDTO>> pagingByMessage(@ApiIgnore
                                                                       @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                                                       @PathVariable(name = "project_id") Long sourceId,
-                                                                      @PathVariable(name = "webhook_id") Long webhookId,
+                                                                      @RequestParam(name = "webhook_id", required = false) Long webhookId,
                                                                       @RequestParam(required = false) String status,
                                                                       @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
                                                                       @RequestParam(required = false, name = "webhook_type") String webhookType) {
 
-        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, sendSettingCode, webhookType), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, sendSettingCode, webhookType, PROJECT), HttpStatus.OK);
     }
 
     @ApiOperation(value = "项目层查询WebHook发送记录详情")
@@ -50,7 +52,7 @@ public class WebhookRecordProjectController {
     public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
             @PathVariable(name = "project_id") Long projectId,
             @PathVariable(name = "id") Long id) {
-        return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.queryById(projectId,id,PROJECT), HttpStatus.OK);
     }
 
 }

@@ -23,25 +23,27 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping(value = "/v1/organization/{organization_id}/web_hook_records")
 public class WebhookRecordOrganizationController {
+    private static final String PROJECT = "project";
+    private static final String ORGANIZATION = "organization";
     private WebhookRecordService webhookRecordService;
 
     public WebhookRecordOrganizationController(WebhookRecordService webhookRecordService) {
         this.webhookRecordService = webhookRecordService;
     }
 
-    @GetMapping("/{webhook_id}")
+    @GetMapping
     @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation(value = "查询WebHook发送记录(分页接口)")
     @CustomPageRequest
     public ResponseEntity<PageInfo<WebhookRecordDTO>> pagingByMessage(@ApiIgnore
-                                                                     @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                     @PathVariable(name = "organization_id") Long sourceId,
-                                                                     @PathVariable(name = "webhook_id") Long webhookId,
-                                                                     @RequestParam(required = false) String status,
-                                                                     @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
-                                                                     @RequestParam(required = false, name = "webhook_type") String webhookType) {
+                                                                      @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                      @PathVariable(name = "organization_id") Long sourceId,
+                                                                      @RequestParam(name = "webhook_id", required = false) Long webhookId,
+                                                                      @RequestParam(required = false) String status,
+                                                                      @RequestParam(required = false, name = "send_setting_code") String sendSettingCode,
+                                                                      @RequestParam(required = false, name = "webhook_type") String webhookType) {
 
-        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, sendSettingCode, webhookType), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, sendSettingCode, webhookType, ORGANIZATION), HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询WebHook发送记录详情")
@@ -50,7 +52,7 @@ public class WebhookRecordOrganizationController {
     public ResponseEntity<WebhookRecordVO> getWebhookRecordDeatils(
             @PathVariable(name = "organization_id") Long organizationId,
             @PathVariable(name = "id") Long id) {
-        return new ResponseEntity<>(webhookRecordService.queryById(id), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.queryById(organizationId, id, ORGANIZATION), HttpStatus.OK);
     }
 
 }

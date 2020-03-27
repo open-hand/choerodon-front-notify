@@ -22,6 +22,7 @@ import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.notify.api.dto.SendSettingVO;
 import io.choerodon.notify.api.dto.UserDTO;
+import io.choerodon.notify.api.validator.WebHookValidator;
 import io.choerodon.notify.infra.feign.BaseFeignClient;
 import io.choerodon.notify.infra.mapper.*;
 import org.apache.commons.lang.StringUtils;
@@ -74,6 +75,7 @@ public class WebHookServiceImpl implements WebHookService {
     private WebhookRecordDetailMapper webhookRecordDetailMapper;
     private WebHookMessageSettingMapper webHookMessageSettingMapper;
     private SendSettingMapper sendSettingMapper;
+    private WebHookValidator webHookValidator;
 
     public WebHookServiceImpl(WebHookMapper webHookMapper,
                               WebHookMessageSettingService webHookMessageSettingService,
@@ -84,7 +86,8 @@ public class WebHookServiceImpl implements WebHookService {
                               BaseFeignClient baseFeignClient,
                               WebhookRecordDetailMapper webhookRecordDetailMapper,
                               WebHookMessageSettingMapper webHookMessageSettingMapper,
-                              SendSettingMapper sendSettingMapper) {
+                              SendSettingMapper sendSettingMapper,
+                              WebHookValidator webHookValidator) {
         this.webHookMapper = webHookMapper;
         this.webHookMessageSettingService = webHookMessageSettingService;
         this.templateService = templateService;
@@ -95,6 +98,7 @@ public class WebHookServiceImpl implements WebHookService {
         this.webhookRecordDetailMapper = webhookRecordDetailMapper;
         this.webHookMessageSettingMapper = webHookMessageSettingMapper;
         this.sendSettingMapper = sendSettingMapper;
+        this.webHookValidator = webHookValidator;
     }
 
     @Override
@@ -228,13 +232,13 @@ public class WebHookServiceImpl implements WebHookService {
             request.put("markdown", markdown);
             //额外内容
             request.put("web_uri", uri);
-            com.google.gson.JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("requestBody", JSON.toJSONString(request));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("requestBody", JSON.toJSONString(request));
             webHookJsonSendDTO.setObjectAttributes(jsonObject);
             //5.发送请求
             webhookRecordDTO.setSendTime(new Date());
             webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
-            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
+            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").toString());
             response = template.postForEntity(uri, request, String.class);
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
             webhookRecordDetailDTO.setResponseBody(response.getBody());
@@ -266,7 +270,7 @@ public class WebHookServiceImpl implements WebHookService {
         webhookRecordDTO.setFailedReason(e.getMessage());
         webhookRecordDTO.setEndTime(new Date());
         webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
-        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
+        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").toString());
         if (!Objects.isNull(response)) {
             webhookRecordDetailDTO.setResponseHeaders(JSON.toJSONString(response.getHeaders()));
             webhookRecordDetailDTO.setResponseBody(response.getBody());
@@ -380,8 +384,8 @@ public class WebHookServiceImpl implements WebHookService {
         request.put("markdown", markdown);
         WebhookRecordDTO webhookRecordDTO = fillWebhookRecordDTO(code, hook, content);
         webhookRecordDTO.setEndTime(new Date());
-        com.google.gson.JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("requestBody", JSON.toJSONString(request));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("requestBody", JSON.toJSONString(request));
         webHookJsonSendDTO.setObjectAttributes(jsonObject);
 
         ResponseEntity<String> response = null;
@@ -393,7 +397,7 @@ public class WebHookServiceImpl implements WebHookService {
             }
         }
         try {
-            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
+            webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").toString());
 
             response = template.postForEntity(hook.getWebhookPath(), request, String.class);
 
@@ -416,8 +420,8 @@ public class WebHookServiceImpl implements WebHookService {
         Map<String, Object> retryData = new HashMap<>();
         retryData.put("dto", dto);
         webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
-        com.google.gson.JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("requestBody", JSON.toJSONString(dto));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("requestBody", JSON.toJSONString(dto));
         webHookJsonSendDTO.setObjectAttributes(jsonObject);
 
         RestTemplate template = new RestTemplate();
@@ -428,7 +432,7 @@ public class WebHookServiceImpl implements WebHookService {
         ResponseEntity<String> response = null;
         WebhookRecordDTO updateRecordDTO = new WebhookRecordDTO();
 
-        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").getAsString());
+        webhookRecordDetailDTO.setRequestBody(webHookJsonSendDTO.getObjectAttributes().get("requestBody").toString());
         //如果是重试，查出记录
         if (!Objects.isNull(webhookRecordDetailDTO.getWebhookRecordId())) {
             if (webhookRecordMapper.selectByPrimaryKey(webhookRecordDetailDTO.getWebhookRecordId()) != null) {
@@ -483,17 +487,7 @@ public class WebHookServiceImpl implements WebHookService {
     public WebHookVO create(Long sourceId, WebHookVO webHookVO, String source) {
         Long userId = DetailsHelper.getUserDetails().getUserId();
         //校验管理员权限
-        if (PROJECT.equals(source)) {
-            if (!baseFeignClient.checkIsProjectOwner(userId, sourceId).getBody()) {
-                throw new CommonException("user.not.project.owner");
-            }
-        }
-        if (ORGANIZATION.equals(source)) {
-            if (!baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
-                throw new CommonException("user.not.org.root");
-            }
-        }
-
+        webHookValidator.isOrgRootOrProjectOwner(userId, sourceId, source);
         webHookVO.setSourceId(sourceId);
         //校验type
         if (!WebHookTypeEnum.isInclude(webHookVO.getType())) {
@@ -586,7 +580,9 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     @Override
-    public void retry(Long recordId) {
+    public void retry(Long sourceId, Long recordId, String source) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        webHookValidator.isOrgRootOrProjectOwner(userId, sourceId, source);
         WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
         if (Objects.isNull(webhookRecordDTO)) {
             throw new CommonException("error.retry.webhook");
@@ -626,7 +622,9 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     @Override
-    public void failure(Long recordId) {
+    public void failure(Long sourceId, Long recordId, String source) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        webHookValidator.isOrgRootOrProjectOwner(userId, sourceId, source);
         WebhookRecordDTO webhookRecordDTO = webhookRecordMapper.selectByPrimaryKey(recordId);
         if (Objects.isNull(webhookRecordDTO) || !RecordStatus.RUNNING.getValue().equals(webhookRecordDTO.getStatus())) {
             throw new CommonException("error.project.force.failure");
@@ -635,6 +633,12 @@ public class WebHookServiceImpl implements WebHookService {
         if (webhookRecordMapper.updateByPrimaryKeySelective(webhookRecordDTO) != 1) {
             throw new CommonException("error.project.force.failure");
         }
+    }
+
+    @Override
+    public WebHookVO queryById(Long projectId, Long webHookId, String type) {
+        WebHookVO webHookVO = getById(projectId, webHookId, type);
+        return webHookVO;
     }
 
     /**
