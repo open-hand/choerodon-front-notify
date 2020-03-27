@@ -16,7 +16,8 @@ public interface WebHookMapper extends Mapper<WebHookDTO> {
      * @return
      */
     Set<WebHookDTO> selectBySendSetting(@Param("sourceId") Long sourceId,
-                                        @Param("send_setting_id") Long sendSettingId);
+                                        @Param("send_setting_id") Long sendSettingId,
+                                        @Param("source_level") String sourceLevel);
 
     /**
      * WebHook全表过滤搜索

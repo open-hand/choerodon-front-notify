@@ -11,6 +11,7 @@
         wms.SEND_SETTING_ID = #{send_setting_id}
         AND wh.SOURCE_ID =#{sourceId}
         AND wh.enable_flag=1
+        AND wh.source_level=#{source_level}
     </select>
 
     <select id="doFTR" resultType="io.choerodon.notify.infra.dto.WebHookDTO">

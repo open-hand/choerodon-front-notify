@@ -113,30 +113,47 @@ public class WebHookServiceImpl implements WebHookService {
             LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> Missing project information.");
             return;
         }
-
-        //1. 获取该发送设置的WebHook模版
-        Template template = null;
-        try {
-            template = templateService.getOne(new Template()
-                    .setSendingType(SendingTypeEnum.WH.getValue())
-                    .setSendSettingCode(sendSetting.getCode()));
-        } catch (Exception e) {
-            LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> No valid templates available.", e);
-            return;
-        }
-
         //2. 获取项目下配置该发送设置的WebHook
-        Set<WebHookDTO> hooks = webHookMapper.selectBySendSetting(dto.getSourceId(), sendSetting.getId());
+        Set<WebHookDTO> hooks = webHookMapper.selectBySendSetting(dto.getSourceId(), sendSetting.getId(), sendSetting.getLevel());
         if (CollectionUtils.isEmpty(hooks)) {
             LOGGER.info(">>>CANCEL_SENDING_WEBHOOK>>> The send settings have not been associated with webhook.");
             return;
         }
+
+        //1. 获取该发送设置的WebHook模版
+        Template template = null;
+
+
         //3. 发送WebHook
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         WebhookRecordDetailDTO webhookRecordDetailDTO = new WebhookRecordDetailDTO();
         for (WebHookDTO hook : hooks) {
             Map<String, Object> userParams = dto.getParams();
             String content = null;
+            //获取模板
+            if (WebHookTypeEnum.WECHAT.getValue().equals(hook.getType()) || WebHookTypeEnum.DINGTALK.getValue().equals(hook.getType())) {
+                try {
+                    template = templateService.getOne(new Template()
+                            .setSendingType(SendingTypeEnum.WHO.getValue())
+                            .setSendSettingCode(sendSetting.getCode()));
+                } catch (Exception e) {
+                    LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> No valid templates available.", e);
+                    return;
+                }
+            }
+            if (WebHookTypeEnum.JSON.getValue().equals(hook.getType())) {
+                try {
+                    template = templateService.getOne(new Template()
+                            .setSendingType(SendingTypeEnum.WHJ.getValue())
+                            .setSendSettingCode(sendSetting.getCode()));
+                } catch (Exception e) {
+                    LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> No valid templates available.", e);
+                    return;
+                }
+            }
+            if (Objects.isNull(template)) {
+                return;
+            }
             try {
                 content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
             } catch (IOException e) {

@@ -14,6 +14,7 @@ import java.util.Map;
 public class TemplateRender {
 
     private static final String ERROR_TEMPLATERENDER_RENDERERROR = "error.templateRender.renderError";
+
     enum TemplateType {
         CONTENT("content"),
         TITLE("title");
@@ -47,7 +48,9 @@ public class TemplateRender {
                     content = template.getTitle();
                 } else if (SendingTypeEnum.PM.getValue().equals(messageType)) {
                     content = template.getTitle();
-                } else if (SendingTypeEnum.WH.getValue().equals(messageType)) {
+                } else if (SendingTypeEnum.WHO.getValue().equals(messageType)) {
+                    content = template.getTitle();
+                } else if (SendingTypeEnum.WHJ.getValue().equals(messageType)) {
                     content = template.getTitle();
                 } else {
                     throw new CommonException(ERROR_TEMPLATERENDER_RENDERERROR);
@@ -58,7 +61,9 @@ public class TemplateRender {
                     content = template.getContent();
                 } else if (SendingTypeEnum.PM.getValue().equals(messageType)) {
                     content = template.getContent();
-                } else if (SendingTypeEnum.WH.getValue().equals(messageType)) {
+                } else if (SendingTypeEnum.WHJ.getValue().equals(messageType)) {
+                    content = template.getContent();
+                } else if (SendingTypeEnum.WHO.getValue().equals(messageType)) {
                     content = template.getContent();
                 } else if (SendingTypeEnum.SMS.getValue().equals(messageType)) {
                     content = template.getContent();
