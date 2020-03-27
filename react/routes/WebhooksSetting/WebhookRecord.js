@@ -7,7 +7,7 @@ const { Column } = Table;
 
 const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore }) => {
   useEffect(() => {
-    ds.queryUrl = `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hook_records/${webhookId}`;
+    ds.queryUrl = `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hook_records${webhookId ? `?webhook_id=${webhookId}` : ''}`;
     // ds.setQueryParameter('webhookId', webhookId);
 
     ds.query();
