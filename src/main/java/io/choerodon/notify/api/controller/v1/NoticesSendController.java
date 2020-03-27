@@ -1,5 +1,6 @@
 package io.choerodon.notify.api.controller.v1;
 
+import com.alibaba.fastjson.JSON;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.FeignException;
@@ -43,6 +44,7 @@ public class NoticesSendController {
     @ApiOperation(value = "发送消息")
     @Permission(type = ResourceType.SITE)
     public void postNotice(@RequestBody NoticeSendDTO dto) {
+        LOGGER.info(">>>>>>>>>>>>SNED NOTICESENDDTO :" + JSON.toJSONString(dto) + "<<<<<<<<<<<<");
         if (StringUtils.isEmpty(dto.getCode())) {
             throw new FeignException("error.postNotify.codeEmpty");
         }
@@ -69,7 +71,7 @@ public class NoticesSendController {
     @ApiOperation(value = "发送定时邮件，定时站内信，定时短信")
     @Permission(type = ResourceType.SITE)
     public void postScheduleNotice(@RequestBody NoticeSendDTO dto,
-                                   @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date date,
+                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date,
                                    @RequestParam String scheduleNoticeCode) {
         if (StringUtils.isEmpty(dto.getCode())) {
             throw new FeignException("error.postNotify.codeEmpty");
@@ -83,17 +85,17 @@ public class NoticesSendController {
         if (dto.getParams() == null) {
             dto.setParams(new HashMap<>(0));
         }
-        noticesSendService.sendScheduleNotice(dto,date, scheduleNoticeCode);
+        noticesSendService.sendScheduleNotice(dto, date, scheduleNoticeCode);
     }
 
     @PutMapping("/schedule")
     @ApiOperation(value = "修改定时消息发送时间")
     @Permission(type = ResourceType.SITE)
     public void updateScheduleNotice(@RequestBody(required = false) NoticeSendDTO noticeSendDTO,
-                                     @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")  Date date,
+                                     @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date,
                                      @RequestParam String scheduleNoticeCode,
                                      @RequestParam Boolean isNewNotice) {
-       noticesSendService.updateScheduleNotice(scheduleNoticeCode, date, noticeSendDTO, isNewNotice);
+        noticesSendService.updateScheduleNotice(scheduleNoticeCode, date, noticeSendDTO, isNewNotice);
     }
 
     @DeleteMapping("/schdule")
