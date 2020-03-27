@@ -148,17 +148,19 @@ public class NoticesSendServiceImpl implements NoticesSendService {
             LOGGER.warn(">>>CANCEL_SENDING>>> The send setting has been disabled OR all sending types for this send setting have been disabled.[INFO:send_setting_code:'{}']", noticeSendDTO.getCode());
             return;
         }
-        // 0.3 校验发送对象不为空 : 如发送对象为空，则取消此次发送
-        if (ObjectUtils.isEmpty(noticeSendDTO.getTargetUsers())) {
+        // 0.3 校验发送对象不为空 : 如发送对象为空，并且webhook json 为空，则取消此次发送
+        if (ObjectUtils.isEmpty(noticeSendDTO.getTargetUsers()) && Objects.isNull(noticeSendDTO.getWebHookJsonSendDTO())) {
             LOGGER.warn(">>>CANCEL_SENDING>>> No sending receiver is specified");
             return;
         }
         // 1.获取发送对象
-        Set<UserDTO> users = getNeedSendUsers(noticeSendDTO);
-
+        Set<UserDTO> users = new HashSet<>();
+        if (!CollectionUtils.isEmpty(noticeSendDTO.getTargetUsers())) {
+            users = getNeedSendUsers(noticeSendDTO);
+        }
         // 2.获取是否启用自定义发送类型
         boolean customizedSendingTypesFlag = !CollectionUtils.isEmpty(noticeSendDTO.getCustomizedSendingTypes());
-        LOGGER.info(">>>WHETHER_TO_CUSTOMIZE_THE_CONFIGURATION>>>{}>>>email:{}>>>pm:{}>>>sms:{}>>>wb:{}", customizedSendingTypesFlag, noticeSendDTO.isSendingEmail(), noticeSendDTO.isSendingSiteMessage(), noticeSendDTO.isSendingSMS(), noticeSendDTO.isSendingWebHookOther(),noticeSendDTO.isSendingWebHookJson());
+        LOGGER.info(">>>WHETHER_TO_CUSTOMIZE_THE_CONFIGURATION>>>{}>>>email:{}>>>pm:{}>>>sms:{}>>>wb:{}", customizedSendingTypesFlag, noticeSendDTO.isSendingEmail(), noticeSendDTO.isSendingSiteMessage(), noticeSendDTO.isSendingSMS(), noticeSendDTO.isSendingWebHookOther(), noticeSendDTO.isSendingWebHookJson());
         //项目层的设置
         MessageSettingVO messageSettingVO = messageSettingService.getSettingByCode(noticeSendDTO.getSourceId(), noticeSendDTO.getNotifyType(), noticeSendDTO.getCode(), noticeSendDTO.getEnvId(), noticeSendDTO.getEventName());
         // 3.1.发送邮件
@@ -207,7 +209,7 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         //是否需要发送webhook
 
         //自定义发送，并且要发送webhook，且平台层发送，非自定义发送，平台层开启则发
-        if ((customizedSendingTypesFlag && (noticeSendDTO.isSendingWebHookOther()||noticeSendDTO.isSendingWebHookJson()) && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag())) ||
+        if ((customizedSendingTypesFlag && (noticeSendDTO.isSendingWebHookOther() || noticeSendDTO.isSendingWebHookJson()) && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag())) ||
                 (!customizedSendingTypesFlag && (sendSettingDTO.getWebhookOtherEnabledFlag() || sendSettingDTO.getWebhookJsonEnabledFlag()))) {
             siteLevelWebhookVerification = true;
         }
