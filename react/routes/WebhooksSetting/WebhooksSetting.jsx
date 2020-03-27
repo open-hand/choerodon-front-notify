@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useRef, useCallback, useEffect } from 'react';
 import { Table, Button, Modal } from 'choerodon-ui/pro';
-import { message, Tooltip } from 'choerodon-ui';
+import { message, Popover, Icon } from 'choerodon-ui';
+import { useMeasure } from 'react-use';
 import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page } from '@choerodon/boot';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import WebhookRecord from './WebhookRecord';
@@ -27,6 +28,8 @@ const WebhooksSetting = () => {
     prefixCls,
     AppState: { currentMenuType: { type, id, orgId } },
   } = useContext(Store);
+
+  const [ref, { width }] = useMeasure();
 
   const handleCreateWebhooks = () => {
     Modal.open({
@@ -65,7 +68,7 @@ const WebhooksSetting = () => {
   };
 
   const editWebhooks = (record) => {
-    editWebhooksFormDataSet.queryUrl = `/notify/v1/projects/${projectId}/web_hooks/${record.get('id')}`;
+    editWebhooksFormDataSet.queryUrl = `/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/${record.get('id')}`;
     editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
@@ -77,7 +80,7 @@ const WebhooksSetting = () => {
       },
       onOk: async () => {
         try {
-          const res = await axios.put(`/notify/v1/projects/${projectId}/web_hooks/${record.get('id')}`, {
+          const res = await axios.put(`/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}`, {
             ...editWebhooksFormDataSet.toData()[0],
             sendSettingIdList: editTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
             triggerEventSelection: undefined,
@@ -123,14 +126,104 @@ const WebhooksSetting = () => {
     }
   };
 
+  useEffect(() => {
+    const items = document.getElementsByClassName('webhook_nameRenderContent');
+    if (items.length && items.length > 0) {
+      items.forEach((i, iIndex) => {
+        if (i.scrollWidth > i.clientWidth) {
+          webhooksDataSet.records[iIndex].set('isScrolling', true);
+        }
+      });
+    }
+  }, [width]);
+
+  const popoverCotent = (record) => {
+    if (record && record.get('name')) {
+      return (
+        <div style={{ width: 360, display: 'flex', flexWrap: 'wrap' }}>
+          {record.get('name').split(',').map(r => (
+            <span
+              className="webhook_nameRenderSpan"
+              style={{
+                background: 'rgba(0, 0, 0, 0.08)',
+                borderRadius: 10,
+                padding: '0 8px 0 8px',
+                marginLeft: '8px',
+                marginTop: '8px',
+              }}
+            >{r}
+            </span>
+          ))}
+        </div>
+      );
+    }
+  };
+
   const NameRenderer = ({ record }) => (
-    <Tooltip placement="top" title={record.get('name')}>
-      <p onClick={() => editWebhooks(record)}>{record.get('name')}</p>
-    </Tooltip>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+      // onClick={() => editWebhooks(record)}
+    >
+      <div
+        className="webhook_nameRenderContent"
+        ref={ref}
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {
+            record.get('name').split(',').map(r => (
+              <span
+                className="webhook_nameRenderSpan"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.08)',
+                  borderRadius: 10,
+                  padding: '0 8px 0 8px',
+                  marginLeft: '8px',
+                }}
+              >{r}
+              </span>
+            ))
+          }
+      </div>
+      <Popover placement="bottom" content={popoverCotent(record)}>
+        <Icon
+          style={{
+            marginLeft: 8,
+            display: record.get('isScrolling') ? 'block' : 'none',
+          }}
+          type="expand_more"
+        />
+      </Popover>
+    </div>
   );
+
+  const handleAllWebhookRecord = () => {
+    Modal.open({
+      title: 'Webhook执行记录',
+      key: Modal.key(),
+      drawer: true,
+      style: {
+        width: 900,
+      },
+      okCancel: false,
+      okText: '取消',
+      children: <WebhookRecord ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
+    });
+  };
 
   const ActionRenderer = ({ record }) => {
     const actionArr = [{
+      service: [],
+      text: '修改',
+      action: () => {
+        editWebhooks(record);
+      },
+    }, {
       service: [],
       text: record.get('enableFlag') ? '停用' : '启用',
       action: () => toggleWebhooks(record),
@@ -164,12 +257,14 @@ const WebhooksSetting = () => {
     <Page>
       <Header>
         <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
+        <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
       </Header>
       <Breadcrumb />
       <Content className={`${prefixCls}-content`}>
         <Table dataSet={webhooksDataSet}>
           <Column
             name="name"
+            width="60%"
             renderer={NameRenderer}
             // onCell={({ record }) => ({
             //   onClick: () => editWebhooks(record),

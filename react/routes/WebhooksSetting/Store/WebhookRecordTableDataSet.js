@@ -34,16 +34,18 @@ export default (id, type, orgId) => {
             Json: 'JSON',
           };
           const data = JSON.parse(res);
-          const newList = data.list.map(d => {
-            if (d.sendTime && d.endTime) {
-              d.sendTime = handleLoadTime(d.sendTime, d.endTime);
-            } else {
-              d.sendTime = '无';
-            }
-            d.type = obj[d.type];
-            return d;
-          });
-          data.list = newList;
+          if (res.list) {
+            const newList = data.list.map(d => {
+              if (d.sendTime && d.endTime) {
+                d.sendTime = handleLoadTime(d.sendTime, d.endTime);
+              } else {
+                d.sendTime = '无';
+              }
+              d.type = obj[d.type];
+              return d;
+            });
+            data.list = newList;
+          }
           return data;
         },
       }),
