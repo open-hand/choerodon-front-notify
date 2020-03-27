@@ -50,7 +50,9 @@
         ON nwr.WEBHOOK_ID =nw.ID
         where
         nwr.SOURCE_ID=#{sourceId}
-        AND nwr.WEBHOOK_ID=#{webhookId}
+        <if test="webhookId !=null">
+            AND nwr.WEBHOOK_ID=#{webhookId}
+        </if>
         <if test="status != null">
             AND nwr.STATUS=#{status}
         </if>

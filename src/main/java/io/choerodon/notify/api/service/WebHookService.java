@@ -91,7 +91,9 @@ public interface WebHookService {
      */
     WebHookDTO enabled(Long id);
 
-    void retry(Long recordId);
+    void retry(Long sourceId, Long recordId, String source);
 
-    void failure(Long recordId);
+    void failure(Long sourceId, Long recordId, String source);
+
+    WebHookVO queryById(Long sourceId, Long webHookId, String type);
 }

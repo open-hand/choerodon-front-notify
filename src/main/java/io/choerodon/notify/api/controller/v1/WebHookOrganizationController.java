@@ -118,15 +118,26 @@ public class WebHookOrganizationController {
     public void retey(
             @PathVariable("organization_id") Long organizationId,
             @PathVariable("record_id") Long recordId) {
-        webHookService.retry(recordId);
+        webHookService.retry(organizationId, recordId, ORGANIZATION);
     }
 
     @Permission(type = ResourceType.ORGANIZATION)
-    @ApiOperation(value = "项目层强制失败")
+    @ApiOperation(value = "组织层强制失败")
     @GetMapping("/{record_id}/force/failure")
     public void failure(
             @PathVariable("organization_id") Long organizationId,
             @PathVariable("record_id") Long recordId) {
-        webHookService.failure(recordId);
+        webHookService.failure(organizationId, recordId, ORGANIZATION);
     }
+
+    @Permission(type = ResourceType.ORGANIZATION)
+    @ApiOperation(value = "根据ID查询webhook")
+    @GetMapping("/{web_hook_id}")
+    public ResponseEntity<WebHookVO> queryById(
+            @PathVariable("organization_id") Long organizationId,
+            @PathVariable("web_hook_id") Long webHookId,
+            @RequestParam(required = false) String type) {
+        return new ResponseEntity<>(webHookService.queryById(organizationId, webHookId, type), HttpStatus.OK);
+    }
+
 }
