@@ -10,30 +10,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @author lrc
- * @since 2019/10/29
+ * User: Mr.Wang
+ * Date: 2020/3/27
  */
 @RestController
-@RequestMapping("/v1/projects/{project_id}/send_settings")
-public class SendSettingProjectController {
-
+@RequestMapping("/v1/organization/{organization_id}/send_settings")
+public class SendSettingOrganizationController {
     private static final String PROJECT = "project";
     private static final String ORGANIZATION = "organization";
     private SendSettingService sendSettingService;
 
-    public SendSettingProjectController(SendSettingService sendSettingService) {
+    public SendSettingOrganizationController(SendSettingService sendSettingService) {
         this.sendSettingService = sendSettingService;
     }
 
     @GetMapping
-    @Permission(type = ResourceType.PROJECT)
+    @Permission(type = ResourceType.ORGANIZATION)
     @ApiOperation("查询项目下可选的发送设置（用于WebHook）")
-    public ResponseEntity<WebHookVO.SendSetting> getSendSettings(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<WebHookVO.SendSetting> getSendSettings(@PathVariable("organization_id") Long organizationId,
                                                                  @RequestParam(name = "name", required = false) String name,
                                                                  @RequestParam(name = "description", required = false) String description,
                                                                  @RequestParam(name = "type", required = false) String type) {
-        return new ResponseEntity<>(sendSettingService.getUnderProject(projectId, PROJECT, name, description, type), HttpStatus.OK);
+        return new ResponseEntity<>(sendSettingService.getUnderProject(organizationId, ORGANIZATION, name, description, type), HttpStatus.OK);
     }
-
-
 }

@@ -79,7 +79,7 @@ public class WebHookOrganizationController {
         if (!WebHookTypeEnum.isInclude(webHookVO.getType())) {
             throw new CommonException("error.web.hook.type.invalid");
         }
-        return new ResponseEntity<>(webHookService.update(organizationId, webHookVO), HttpStatus.OK);
+        return new ResponseEntity<>(webHookService.update(organizationId, ORGANIZATION, webHookVO), HttpStatus.OK);
     }
 
 
@@ -137,7 +137,7 @@ public class WebHookOrganizationController {
             @PathVariable("organization_id") Long organizationId,
             @PathVariable("web_hook_id") Long webHookId,
             @RequestParam(required = false) String type) {
-        return new ResponseEntity<>(webHookService.queryById(organizationId, webHookId, type), HttpStatus.OK);
+        return new ResponseEntity<>(webHookService.queryById(organizationId,ORGANIZATION, webHookId, type), HttpStatus.OK);
     }
 
 }

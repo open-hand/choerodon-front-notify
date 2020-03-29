@@ -1,6 +1,7 @@
 package io.choerodon.notify.infra.feign.fallback;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.notify.api.dto.ProjectDTO;
 import io.choerodon.notify.api.dto.UserDTO;
 import io.choerodon.notify.infra.feign.BaseFeignClient;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +29,10 @@ public class BaseFeignClientFallback implements BaseFeignClient {
     @Override
     public ResponseEntity<Boolean> checkIsProjectOwner(Long id, Long projectId) {
         throw new CommonException("error.checkout.project.owner");
+    }
+
+    @Override
+    public ResponseEntity<ProjectDTO> queryProjectById(Long projectId) {
+        throw new CommonException("error.query.project");
     }
 }

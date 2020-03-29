@@ -47,7 +47,7 @@ public interface WebHookService {
      * @param projectId 项目ID
      * @return
      */
-    WebHookVO getById(Long projectId, Long webHookId, String type);
+    WebHookVO getById(Long sourceId, String source, Long webHookId, String type);
 
     /**
      * 添加WebHook
@@ -65,7 +65,7 @@ public interface WebHookService {
      * @param updateVO  webHook更新信息
      * @return
      */
-    WebHookVO update(Long projectId, WebHookVO updateVO);
+    WebHookVO update(Long projectId, String source, WebHookVO updateVO);
 
     /**
      * 删除WebHook
@@ -95,5 +95,5 @@ public interface WebHookService {
 
     void failure(Long sourceId, Long recordId, String source);
 
-    WebHookVO queryById(Long sourceId, Long webHookId, String type);
+    WebHookVO queryById(Long sourceId, String source, Long webHookId, String type);
 }

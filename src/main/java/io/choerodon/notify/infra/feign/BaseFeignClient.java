@@ -1,5 +1,6 @@
 package io.choerodon.notify.infra.feign;
 
+import io.choerodon.notify.api.dto.ProjectDTO;
 import io.choerodon.notify.api.dto.UserDTO;
 import io.choerodon.notify.infra.feign.fallback.BaseFeignClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -28,4 +29,9 @@ public interface BaseFeignClient {
     @GetMapping("/v1/users/{id}/projects/{project_id}/check_is_owner")
     ResponseEntity<Boolean> checkIsProjectOwner(@PathVariable("id") Long id,
                                                 @PathVariable("project_id") Long projectId);
+
+    @GetMapping("/v1/projects/{project_id}")
+    ResponseEntity<ProjectDTO> queryProjectById(@PathVariable("project_id") Long projectId);
+
+
 }
