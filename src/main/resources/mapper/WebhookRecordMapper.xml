@@ -42,7 +42,8 @@
         nwr.SEND_SETTING_CODE,
         nwr.`STATUS`,
         nwr.WEBHOOK_PATH,
-        nw.TYPE
+        nw.TYPE,
+        nwr.STATUS
         FROM notify_webhook_record nwr
         JOIN notify_send_setting nss
         ON nss.`CODE`=nwr.SEND_SETTING_CODE
