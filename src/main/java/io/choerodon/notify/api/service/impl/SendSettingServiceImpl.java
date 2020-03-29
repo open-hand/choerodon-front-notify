@@ -16,17 +16,20 @@ import io.choerodon.notify.api.vo.WebHookVO;
 import io.choerodon.notify.infra.dto.*;
 import io.choerodon.notify.infra.enums.LevelType;
 import io.choerodon.notify.infra.enums.WebHookTypeEnum;
+import io.choerodon.notify.infra.feign.BaseFeignClient;
 import io.choerodon.notify.infra.mapper.*;
 import io.choerodon.swagger.notify.NotifyBusinessTypeScanData;
 import io.choerodon.web.util.PageableHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SendSettingServiceImpl implements SendSettingService {
@@ -34,20 +37,33 @@ public class SendSettingServiceImpl implements SendSettingService {
     public static final String SEND_SETTING_DOES_NOT_EXIST = "error.send.setting.not.exist";
     public static final String SEND_SETTING_UPDATE_EXCEPTION = "error.send.setting.update";
     public static final String RESOURCE_DELETE_CONFIRMATION = "resourceDeleteConfirmation";
+    private static final String PROJECT = "project";
+    private static final String AGILE = "AGILE";
+    private static final String ADD_OR_IMPORT_USER = "add-or-import-user";
+    private static final String ISSUE_STATUS_CHANGE_NOTICE = "issue-status-change-notice";
+    private static final String PRO_MANAGEMENT = "pro-management";
     private SendSettingMapper sendSettingMapper;
     private SendSettingCategoryMapper sendSettingCategoryMapper;
     private TemplateMapper templateMapper;
     private MessageSettingMapper messageSettingMapper;
     private MessageSettingTargetUserMapper messageSettingTargetUserMapper;
     private MessageSettingService messageSettingService;
+    private BaseFeignClient baseFeignClient;
 
-    public SendSettingServiceImpl(SendSettingMapper sendSettingMapper, SendSettingCategoryMapper sendSettingCategoryMapper, TemplateMapper templateMapper, MessageSettingMapper messageSettingMapper, MessageSettingTargetUserMapper messageSettingTargetUserMapper, MessageSettingService messageSettingService) {
+    public SendSettingServiceImpl(SendSettingMapper sendSettingMapper,
+                                  SendSettingCategoryMapper sendSettingCategoryMapper,
+                                  TemplateMapper templateMapper,
+                                  MessageSettingMapper messageSettingMapper,
+                                  MessageSettingTargetUserMapper messageSettingTargetUserMapper,
+                                  MessageSettingService messageSettingService,
+                                  BaseFeignClient baseFeignClient) {
         this.sendSettingMapper = sendSettingMapper;
         this.sendSettingCategoryMapper = sendSettingCategoryMapper;
         this.templateMapper = templateMapper;
         this.messageSettingMapper = messageSettingMapper;
         this.messageSettingTargetUserMapper = messageSettingTargetUserMapper;
         this.messageSettingService = messageSettingService;
+        this.baseFeignClient = baseFeignClient;
     }
 
     @Override
@@ -343,11 +359,11 @@ public class SendSettingServiceImpl implements SendSettingService {
     }
 
     @Override
-    public WebHookVO.SendSetting getUnderProject(String name, String description, String type) {
+    public WebHookVO.SendSetting getUnderProject(Long sourceId, String sourceLevel, String name, String description, String type) {
         WebHookVO.SendSetting sendSetting = new WebHookVO.SendSetting();
         //1.获取WebHook 发送设置可选集合(启用,且启用WebHook的发送设置)
         SendSettingDTO condition = new SendSettingDTO();
-        condition.setLevel(ResourceType.PROJECT.value());
+        condition.setLevel(sourceLevel);
         condition.setName(name);
         condition.setDescription(description);
         condition.setEnabled(true);
@@ -363,6 +379,26 @@ public class SendSettingServiceImpl implements SendSettingService {
         }
         //2.获取发送设置类别集合
         Set<SendSettingCategoryDTO> sendSettingCategorySelection = sendSettingCategoryMapper.selectByCodeSet(sendSettingSelection.stream().map(SendSettingDTO::getCategoryCode).collect(Collectors.toSet()));
+        //普通敏捷项目只保留三类通知
+        List<SendSettingDTO> settingDTOS = new ArrayList<>();
+        Set<SendSettingCategoryDTO> sendSettingCategoryDTOS = new HashSet<>();
+
+        if (PROJECT.equals(sourceLevel)) {
+            ProjectDTO projectDTO = baseFeignClient.queryProjectById(sourceId).getBody();
+            if (!Objects.isNull(projectDTO) && AGILE.equals(projectDTO.getCategory())) {
+                Set<SendSettingCategoryDTO> settingCategoryDTOS = sendSettingCategorySelection.stream().filter(sendSettingCategoryDTO ->
+                        ADD_OR_IMPORT_USER.equals(sendSettingCategoryDTO.getCode())
+                                || ISSUE_STATUS_CHANGE_NOTICE.equals(sendSettingCategoryDTO.getCode())
+                                || PRO_MANAGEMENT.equals(sendSettingCategoryDTO.getCode())
+
+                ).collect(Collectors.toSet());
+                List<SendSettingDTO> sendSettingDTOS = sendSettingSelection.stream().filter(sendSettingDTO ->
+                        ADD_OR_IMPORT_USER.equals(sendSettingDTO.getCategoryCode())
+                                || ISSUE_STATUS_CHANGE_NOTICE.equals(sendSettingDTO.getCategoryCode()) ||
+                                PRO_MANAGEMENT.equals(sendSettingDTO.getCategoryCode())).collect(Collectors.toList());
+                return sendSetting.setSendSettingSelection(new HashSet<>(sendSettingDTOS)).setSendSettingCategorySelection(new HashSet<>(settingCategoryDTOS));
+            }
+        }
         //3.构造返回数据
         return sendSetting.setSendSettingSelection(new HashSet<>(sendSettingSelection)).setSendSettingCategorySelection(new HashSet<>(sendSettingCategorySelection));
     }

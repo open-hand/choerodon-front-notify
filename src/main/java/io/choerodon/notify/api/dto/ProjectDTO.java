@@ -34,6 +34,17 @@ public class ProjectDTO {
     @ApiModelProperty(value = "项目图标url")
     private String imageUrl;
 
+    @ApiModelProperty(value = "项目类型（遗留旧字段，一对一）:AGILE(敏捷项目),GENERAL(普通应用项目),PROGRAM(普通项目群)")
+    private String category;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public Long getId() {
         return id;
     }

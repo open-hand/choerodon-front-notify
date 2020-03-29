@@ -483,15 +483,15 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     @Override
-    public WebHookVO getById(Long projectId, Long id, String type) {
+    public WebHookVO getById(Long sourceId, String source, Long webHookId, String type) {
         //1.查询WebHookVO
-        WebHookDTO webHookDTO = checkExistedById(id);
+        WebHookDTO webHookDTO = checkExistedById(webHookId);
         WebHookVO webHookVO = new WebHookVO();
         BeanUtils.copyProperties(webHookDTO, webHookVO);
         //2.查询可选的发送设置
-        webHookVO.setTriggerEventSelection(sendSettingService.getUnderProject(null, null, type));
+        webHookVO.setTriggerEventSelection(sendSettingService.getUnderProject(sourceId, source, null, null, type));
         //3.查询已选的发送设置主键
-        List<WebHookMessageSettingDTO> byWebHookId = webHookMessageSettingService.getByWebHookId(id);
+        List<WebHookMessageSettingDTO> byWebHookId = webHookMessageSettingService.getByWebHookId(webHookId);
         webHookVO.setSendSettingIdList(CollectionUtils.isEmpty(byWebHookId) ? null : byWebHookId.stream().map(WebHookMessageSettingDTO::getSendSettingId).collect(Collectors.toSet()));
         return webHookVO;
     }
@@ -531,12 +531,12 @@ public class WebHookServiceImpl implements WebHookService {
         //2.新增WebHook的发送设置配置
         webHookMessageSettingService.update(webHookVO.getId(), webHookVO.getSendSettingIdList());
         //3.返回数据
-        return getById(sourceId, webHookVO.getId(), webHookVO.getType());
+        return getById(sourceId, source, webHookVO.getId(), webHookVO.getType());
     }
 
     @Override
     @Transactional
-    public WebHookVO update(Long projectId, WebHookVO webHookVO) {
+    public WebHookVO update(Long sourceId, String source, WebHookVO webHookVO) {
         //0.校验web hook path
         if (!checkPath(webHookVO.getId(), webHookVO.getWebhookPath())) {
             throw new CommonException("error.web.hook.path.duplicate");
@@ -564,7 +564,7 @@ public class WebHookServiceImpl implements WebHookService {
         //2.更新WebHook的发送设置配置
         webHookMessageSettingService.update(webHookDTO.getId(), webHookVO.getSendSettingIdList());
         //3.返回更新数据
-        return getById(projectId, webHookDTO.getId(), webHookVO.getType());
+        return getById(sourceId, source, webHookDTO.getId(), webHookVO.getType());
     }
 
 
@@ -667,8 +667,8 @@ public class WebHookServiceImpl implements WebHookService {
     }
 
     @Override
-    public WebHookVO queryById(Long projectId, Long webHookId, String type) {
-        WebHookVO webHookVO = getById(projectId, webHookId, type);
+    public WebHookVO queryById(Long projectId, String source, Long webHookId, String type) {
+        WebHookVO webHookVO = getById(projectId, source, webHookId, type);
         return webHookVO;
     }
 

@@ -85,7 +85,7 @@ public class WebHookProjectController {
         if (!WebHookTypeEnum.isInclude(webHookVO.getType())) {
             throw new CommonException("error.web.hook.type.invalid");
         }
-        return new ResponseEntity<>(webHookService.update(projectId, webHookVO), HttpStatus.OK);
+        return new ResponseEntity<>(webHookService.update(projectId, PROJECT, webHookVO), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT)
@@ -141,6 +141,6 @@ public class WebHookProjectController {
             @PathVariable("project_id") Long projectId,
             @PathVariable("web_hook_id") Long webHookId,
             @RequestParam(required = false) String type) {
-        return new ResponseEntity<>(webHookService.queryById(projectId, webHookId, type), HttpStatus.OK);
+        return new ResponseEntity<>(webHookService.queryById(projectId, PROJECT, webHookId, type), HttpStatus.OK);
     }
 }
