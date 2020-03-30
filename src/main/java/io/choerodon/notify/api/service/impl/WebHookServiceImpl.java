@@ -644,11 +644,12 @@ public class WebHookServiceImpl implements WebHookService {
         }
         if (WebHookTypeEnum.JSON.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
-            Map<String, Object> retryData = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRetryData());
-            NoticeSendDTO dto = (NoticeSendDTO) retryData.get("dto");
+            Map<String, Object> retryData = (Map<String, Object>) JSON.parse(webhookRecordDetailDTO.getRetryData());
+            JSONObject dto = (JSONObject) retryData.get("dto");
+            NoticeSendDTO noticeSendDTO = JSON.toJavaObject(dto, NoticeSendDTO.class);
             String loginName = (String) retryData.get("loginName");
             String userName = (String) retryData.get("userName");
-            sendJson(webHookDTO, dto, loginName, userName, webhookRecordDetailDTO);
+            sendJson(webHookDTO, noticeSendDTO, loginName, userName, webhookRecordDetailDTO);
         }
     }
 
