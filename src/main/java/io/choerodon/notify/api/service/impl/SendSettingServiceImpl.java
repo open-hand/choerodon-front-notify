@@ -38,6 +38,8 @@ public class SendSettingServiceImpl implements SendSettingService {
     public static final String SEND_SETTING_UPDATE_EXCEPTION = "error.send.setting.update";
     public static final String RESOURCE_DELETE_CONFIRMATION = "resourceDeleteConfirmation";
     private static final String PROJECT = "project";
+    private static final String ORGANIZATION = "organization";
+    private static final String ORG_MANAGEMENT = "org-management";
     private static final String AGILE = "AGILE";
     private static final String ADD_OR_IMPORT_USER = "add-or-import-user";
     private static final String ISSUE_STATUS_CHANGE_NOTICE = "issue-status-change-notice";
@@ -395,6 +397,14 @@ public class SendSettingServiceImpl implements SendSettingService {
                                 PRO_MANAGEMENT.equals(sendSettingDTO.getCategoryCode())).collect(Collectors.toList());
                 return sendSetting.setSendSettingSelection(new HashSet<>(sendSettingDTOS)).setSendSettingCategorySelection(new HashSet<>(settingCategoryDTOS));
             }
+        }
+        if (ORGANIZATION.equals(sourceLevel)) {
+            //只展示项目层的消息
+            Set<SendSettingCategoryDTO> settingCategoryDTOS = sendSettingCategorySelection.stream().filter(sendSettingCategoryDTO ->
+                    PRO_MANAGEMENT.equals(sendSettingCategoryDTO.getCode())).collect(Collectors.toSet());
+            List<SendSettingDTO> sendSettingDTOS = sendSettingSelection.stream().filter(sendSettingDTO ->
+                    PRO_MANAGEMENT.equals(sendSettingDTO.getCategoryCode())).collect(Collectors.toList());
+            return sendSetting.setSendSettingSelection(new HashSet<>(sendSettingDTOS)).setSendSettingCategorySelection(new HashSet<>(settingCategoryDTOS));
         }
         //3.构造返回数据
         return sendSetting.setSendSettingSelection(new HashSet<>(sendSettingSelection)).setSendSettingCategorySelection(new HashSet<>(sendSettingCategorySelection));
