@@ -56,8 +56,8 @@
         <if test="status != null">
             AND nwr.STATUS=#{status}
         </if>
-        <if test="sendSettingName != null ">
-            AND nss.`NAME` LIKE concat(concat('%', #{params}), '%')
+        <if test="sendSettingName != null and sendSettingName!=''">
+            AND nss.`NAME` LIKE concat(concat('%', #{sendSettingName}), '%')
         </if>
         <if test="webhookType != null">
             AND nw.TYPE=#{webhookType}

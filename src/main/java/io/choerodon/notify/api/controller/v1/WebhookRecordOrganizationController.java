@@ -40,10 +40,10 @@ public class WebhookRecordOrganizationController {
                                                                       @PathVariable(name = "organization_id") Long sourceId,
                                                                       @RequestParam(name = "webhook_id", required = false) Long webhookId,
                                                                       @RequestParam(required = false) String status,
-                                                                      @RequestParam(required = false, name = "eventName") String sendSettingName,
+                                                                      @RequestParam(required = false, name = "name") String eventName,
                                                                       @RequestParam(required = false, name = "webhook_type") String webhookType) {
 
-        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, sendSettingName, webhookType, ORGANIZATION), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, eventName, webhookType, ORGANIZATION), HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询WebHook发送记录详情")
