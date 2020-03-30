@@ -17,7 +17,7 @@ public interface WebhookRecordMapper extends Mapper<WebhookRecordDTO> {
     List<WebhookRecordVO> fulltextSearchPage(@Param("sourceId") Long sourceId,
                                          @Param("webhookId") Long webhookId,
                                          @Param("status") String status,
-                                         @Param("sendSettingCode") String sendSettingCode,
+                                         @Param("sendSettingName") String sendSettingName,
                                          @Param("webhookType") String webhookType);
 
     WebhookRecordVO queryRecordDetailById(@Param("id") Long id);
