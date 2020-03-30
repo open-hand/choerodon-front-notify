@@ -45,8 +45,8 @@ export default observer(({ context, modal, type }) => {
         </div>
       );
     case 'webhook':
-    case 'webhookJson':
-    case 'webhookOther':
+    case 'webHookJson':
+    case 'webHookOther':
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
