@@ -32,11 +32,11 @@ public class WebhookRecordServiceImpl implements WebhookRecordService {
     }
 
     @Override
-    public PageInfo<WebhookRecordDTO> pagingWebHookRecord(Pageable pageable, Long sourceId, Long webhookId, String status, String sendSettingCode, String webhookType, String source) {
+    public PageInfo<WebhookRecordDTO> pagingWebHookRecord(Pageable pageable, Long sourceId, Long webhookId, String status, String sendSettingName, String webhookType, String source) {
         Long userId = DetailsHelper.getUserDetails().getUserId();
         webHookValidator.isOrgRootOrProjectOwner(userId, sourceId, source);
         PageInfo<WebhookRecordDTO> pageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize(), PageableHelper.getSortSql(pageable.getSort())).
-                doSelectPageInfo(() -> webhookRecordMapper.fulltextSearchPage(sourceId, webhookId, status, sendSettingCode, webhookType));
+                doSelectPageInfo(() -> webhookRecordMapper.fulltextSearchPage(sourceId, webhookId, status, sendSettingName, webhookType));
 
         return pageInfo;
     }

@@ -42,8 +42,7 @@
         nwr.SEND_SETTING_CODE,
         nwr.`STATUS`,
         nwr.WEBHOOK_PATH,
-        nw.TYPE,
-        nwr.STATUS
+        nw.TYPE
         FROM notify_webhook_record nwr
         JOIN notify_send_setting nss
         ON nss.`CODE`=nwr.SEND_SETTING_CODE
@@ -57,8 +56,8 @@
         <if test="status != null">
             AND nwr.STATUS=#{status}
         </if>
-        <if test="sendSettingCode != null">
-            AND nwr.SEND_SETTING_CODE=#{sendSettingCode}
+        <if test="sendSettingName != null ">
+            AND nss.`NAME` LIKE concat(concat('%', #{params}), '%')
         </if>
         <if test="webhookType != null">
             AND nw.TYPE=#{webhookType}
