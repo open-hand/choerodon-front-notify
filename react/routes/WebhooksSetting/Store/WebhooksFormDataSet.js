@@ -86,14 +86,26 @@ export default function (type, id, children, orgId, orgType) {
     },
     events: {
       load: ({ dataSet }) => {
+        let categoryCodesList = [];
         if (children) {
           children.forEach((item) => {
+            if (item.isSelected) {
+              item.isSelected = false;
+            }
             if (dataSet.current.get('sendSettingIdList').find(selectId => selectId === item.get('id'))) {
+              // if (item.get('categoryCode')) {
+              //   children.find(l => l.get('code') === item.get('categoryCode')).isSelected = true;
+              // }
               if (item.get('categoryCode')) {
-                children.find(l => l.get('code') === item.get('categoryCode')).isSelected = true;
+                categoryCodesList = [...categoryCodesList, item.get('categoryCode')];
               }
               item.isSelected = true;
             }
+          });
+        }
+        if (categoryCodesList.length > 0) {
+          categoryCodesList.forEach(c => {
+            children.find(l => l.get('code') === c).isSelected = true;
           });
         }
       },

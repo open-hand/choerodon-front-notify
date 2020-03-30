@@ -67,9 +67,9 @@ const WebhooksSetting = () => {
     });
   };
 
-  const editWebhooks = (record) => {
+  const editWebhooks = async (record) => {
     editWebhooksFormDataSet.queryUrl = `/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/${record.get('id')}`;
-    editWebhooksFormDataSet.query();
+    await editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
       key: ModalKey,
@@ -102,7 +102,9 @@ const WebhooksSetting = () => {
       children: (
         <CreateAndEditWebhooksForm dataSet={editWebhooksFormDataSet} triggerEventsSettingDataSet={editTriggerEventsSettingDataSet} />
       ),
-      afterClose: () => editWebhooksFormDataSet.reset(),
+      afterClose: () => {
+        editWebhooksFormDataSet.reset();
+      },
     });
   };
 
