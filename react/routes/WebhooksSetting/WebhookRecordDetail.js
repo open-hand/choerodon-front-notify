@@ -23,7 +23,7 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
   }, []);
 
   const handleRetry = async () => {
-    await useStore.handleForceFailure(type, id, orgId, webhookRecordDetailDataSet.current.get('recordId'));
+    await useStore.handleRetryRecord(type, id, orgId, webhookRecordDetailDataSet.current.get('recordId'));
     webhookRecordDetailDataSet.query();
   };
 

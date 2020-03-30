@@ -89,6 +89,9 @@ export default function (type, id, children, orgId, orgType) {
         if (children) {
           children.forEach((item) => {
             if (dataSet.current.get('sendSettingIdList').find(selectId => selectId === item.get('id'))) {
+              if (item.get('categoryCode')) {
+                children.find(l => l.get('code') === item.get('categoryCode')).isSelected = true;
+              }
               item.isSelected = true;
             }
           });

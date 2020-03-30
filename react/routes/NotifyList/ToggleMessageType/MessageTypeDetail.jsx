@@ -87,7 +87,7 @@ const MessageTypeDetail = observer(() => {
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'pm')} showTheme />
         </TabPane>
         <TabPane tab={(<span>webhook-JSON模板 {getIcon('webhookJson')}</span>)} key="3">
-          <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'webhookJson')} showTheme />
+          <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'webHookJson')} showTheme />
         </TabPane>
         <TabPane tab={(<span>webhook-钉钉微信模板 {getIcon('webhookOther')}</span>)} key="4">
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'webhookOther')} showTheme />

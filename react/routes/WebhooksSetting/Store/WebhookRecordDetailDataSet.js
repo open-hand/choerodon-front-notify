@@ -29,10 +29,10 @@ export default () => {
         method: 'get',
         transformResponse(res) {
           const data = JSON.parse(res);
-          if (res.sendTime && res.endTime) {
-            data.sendTime = handleLoadTime(res.sendTime, res.endTime);
+          if (data.sendTime && data.endTime) {
+            data.timeConsuming = handleLoadTime(data.sendTime, data.endTime) || '0秒';
           } else {
-            data.sendTime = '无';
+            data.timeConsuming = '无';
           }
           return data;
         },
