@@ -97,6 +97,9 @@
         nss.FD_LEVEL=#{sendSettingDTO.level}
         AND
         nss.IS_ENABLED=#{sendSettingDTO.enabled}
-
+        AND
+        nss.WEBHOOK_OTHER_ENABLED_FLAG=#{sendSettingDTO.webhookOtherEnabledFlag}
+        AND
+        nss.WEBHOOK_JSON_ENABLED_FLAG=#{sendSettingDTO.webhookJsonEnabledFlag}
     </select>
 </mapper>
