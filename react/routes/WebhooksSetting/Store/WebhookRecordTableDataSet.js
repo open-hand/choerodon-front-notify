@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { DataSet } from 'choerodon-ui/pro';
 
 export default (id, type, orgId) => {
   function handleLoadTime(startTime, endTime) {
@@ -21,6 +22,25 @@ export default (id, type, orgId) => {
       return '正在计算时间...';
     }
   }
+
+  const statusDataSet = new DataSet({
+    selection: 'single',
+    fields: [{
+      name: 'text', type: 'string',
+    }, {
+      name: 'value', type: 'string',
+    }],
+  });
+
+  const typeDataSet = new DataSet({
+    selection: 'single',
+    fields: [{
+      name: 'text', type: 'string',
+    }, {
+      name: 'value', type: 'string',
+    }],
+  });
+
   return ({
     selection: false,
     transport: {
@@ -28,24 +48,43 @@ export default (id, type, orgId) => {
         url: dataSet.queryUrl,
         method: 'get',
         transformResponse(res) {
+          const selectValues = {
+            COMPLETED: {
+              name: '成功',
+            },
+            FAILED: {
+              name: '失败',
+            },
+            RUNNING: {
+              name: '执行中',
+            },
+          };
           const obj = {
             DingTalk: '钉钉',
             WeChat: '企业微信',
             Json: 'JSON',
           };
           const data = JSON.parse(res);
-          if (res.list) {
+          if (data.list) {
             const newList = data.list.map(d => {
               if (d.sendTime && d.endTime) {
                 d.sendTime = handleLoadTime(d.sendTime, d.endTime);
               } else {
                 d.sendTime = '无';
               }
-              d.type = obj[d.type];
+              d.typeString = obj[d.type];
               return d;
             });
             data.list = newList;
           }
+          statusDataSet.loadData(Array.from(new Set(data.list.map(l => l.status))).map(a => ({
+            value: a,
+            text: selectValues[a].name,
+          })));
+          typeDataSet.loadData(Array.from(new Set(data.list.map(d => d.type))).map(l => ({
+            value: l,
+            text: obj[l],
+          })));
           return data;
         },
       }),
@@ -64,7 +103,7 @@ export default (id, type, orgId) => {
       type: 'string',
     }, {
       label: 'Webhook类型',
-      name: 'type',
+      name: 'typeString',
       type: 'string',
     }, {
       label: '发送时间',
@@ -81,11 +120,17 @@ export default (id, type, orgId) => {
         label: '查询执行状态',
         name: 'status',
         type: 'string',
+        textField: 'text',
+        valueField: 'value',
+        options: statusDataSet,
       },
       {
         label: '查询webhook类型',
         name: 'type',
         type: 'string',
+        textField: 'text',
+        valueField: 'value',
+        options: typeDataSet,
       },
     ],
   });
