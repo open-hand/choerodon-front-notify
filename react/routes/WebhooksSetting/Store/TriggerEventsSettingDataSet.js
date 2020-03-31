@@ -4,7 +4,7 @@
  * @return DataSet
  */
 export default (type, id, orgType, orgId) => ({
-  autoQuery: true,
+  autoQuery: false,
   parentField: 'categoryCode',
   idField: 'code',
   queryFields: [
@@ -30,6 +30,7 @@ export default (type, id, orgType, orgId) => ({
       },
       params: {
         ...params,
+        type: data.type,
         name: data.name,
         description: data.description,
       },
