@@ -3,7 +3,7 @@
  * @param id
  * @return DataSet
  */
-export default (type, id) => ({
+export default (type, id, orgType, orgId) => ({
   autoQuery: true,
   parentField: 'categoryCode',
   idField: 'code',
@@ -21,7 +21,7 @@ export default (type, id) => ({
   ],
   transport: {
     read: ({ data, params }) => ({
-      url: `notify/v1/projects/${id}/send_settings`,
+      url: `notify/v1/${orgType === 'project' ? `projects/${id}` : `organization/${orgId}`}/send_settings`,
       method: 'get',
       transformResponse(JSONData) {
         const { sendSettingCategorySelection, sendSettingSelection } = JSON.parse(JSONData);
