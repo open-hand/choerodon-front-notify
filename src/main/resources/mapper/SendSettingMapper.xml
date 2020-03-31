@@ -84,22 +84,32 @@
     </select>
     <select id="pageSendSettingByCondition" resultType="io.choerodon.notify.infra.dto.SendSettingDTO">
         SELECT
-         *
+        nss.*
         FROM notify_send_setting nss
+        JOIN notify_template nt
+        ON nss.`CODE` = nt.SEND_SETTING_CODE
         WHERE 1=1
+
         <if test="sendSettingDTO.name != null">
             AND nss.`NAME` LIKE concat(concat('%', #{sendSettingDTO.name}), '%')
         </if>
         <if test="sendSettingDTO.description != null">
             AND nss.DESCRIPTION LIKE concat(concat('%', #{sendSettingDTO.description}), '%')
         </if>
+        <if test="sendSettingDTO.webhookOtherEnabledFlag !=null">
+            AND
+            nss.WEBHOOK_OTHER_ENABLED_FLAG=#{sendSettingDTO.webhookOtherEnabledFlag}
+        </if>
+        <if test="sendSettingDTO.webhookJsonEnabledFlag">
+            AND
+            nss.WEBHOOK_JSON_ENABLED_FLAG=#{sendSettingDTO.webhookJsonEnabledFlag}
+        </if>
+        <if test="type != null ">
+            AND nt.SENDING_TYPE=#{type}
+        </if>
         AND
         nss.FD_LEVEL=#{sendSettingDTO.level}
         AND
         nss.IS_ENABLED=#{sendSettingDTO.enabled}
-        AND
-        nss.WEBHOOK_OTHER_ENABLED_FLAG=#{sendSettingDTO.webhookOtherEnabledFlag}
-        AND
-        nss.WEBHOOK_JSON_ENABLED_FLAG=#{sendSettingDTO.webhookJsonEnabledFlag}
     </select>
 </mapper>
