@@ -385,10 +385,15 @@ public class SendSettingServiceImpl implements SendSettingService {
         condition.setName(name);
         condition.setDescription(description);
         condition.setEnabled(true);
-        condition.setWebhookOtherEnabledFlag(true);
-        condition.setWebhookJsonEnabledFlag(true);
-
-        List<SendSettingDTO> sendSettingSelection = sendSettingMapper.pageSendSettingByCondition(condition);
+        if (!Objects.isNull(type)) {
+            if (WebHookTypeEnum.DINGTALK.getValue().equals(type) || WebHookTypeEnum.WECHAT.getValue().equals(type)) {
+                condition.setWebhookOtherEnabledFlag(true);
+            }
+            if (WebHookTypeEnum.JSON.getValue().equals(type)) {
+                condition.setWebhookJsonEnabledFlag(true);
+            }
+        }
+        List<SendSettingDTO> sendSettingSelection = sendSettingMapper.pageSendSettingByCondition(condition, type);
         if (CollectionUtils.isEmpty(sendSettingSelection)) {
             return sendSetting;
         }
