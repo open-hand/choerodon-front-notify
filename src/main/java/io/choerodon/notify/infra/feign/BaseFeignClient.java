@@ -33,5 +33,7 @@ public interface BaseFeignClient {
     @GetMapping("/v1/projects/{project_id}")
     ResponseEntity<ProjectDTO> queryProjectById(@PathVariable("project_id") Long projectId);
 
+    @GetMapping("/v1/users/{id}/check_is_root")
+    ResponseEntity<Boolean> checkIsRoot(@PathVariable("id") Long id);
 
 }

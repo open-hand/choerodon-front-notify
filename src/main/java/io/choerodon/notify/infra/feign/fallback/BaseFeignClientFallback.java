@@ -35,4 +35,9 @@ public class BaseFeignClientFallback implements BaseFeignClient {
     public ResponseEntity<ProjectDTO> queryProjectById(Long projectId) {
         throw new CommonException("error.query.project");
     }
+
+    @Override
+    public ResponseEntity<Boolean> checkIsRoot(Long id) {
+        throw new CommonException("error.check.root");
+    }
 }

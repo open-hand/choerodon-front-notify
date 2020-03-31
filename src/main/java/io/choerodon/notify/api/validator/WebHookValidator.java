@@ -13,11 +13,19 @@ public class WebHookValidator {
     private static final String PROJECT = "project";
     private static final String ORGANIZATION = "organization";
     private BaseFeignClient baseFeignClient;
+
     public WebHookValidator(BaseFeignClient baseFeignClient) {
         this.baseFeignClient = baseFeignClient;
     }
+
     public void isOrgRootOrProjectOwner(Long userId, Long sourceId, String source) {
+        if (baseFeignClient.checkIsRoot(userId).getBody()) {
+            return;
+        }
         if (PROJECT.equals(source)) {
+            if (baseFeignClient.checkIsOrgRoot(sourceId, userId).getBody()) {
+                return;
+            }
             if (!baseFeignClient.checkIsProjectOwner(userId, sourceId).getBody()) {
                 throw new CommonException("user.not.project.owner");
             }
