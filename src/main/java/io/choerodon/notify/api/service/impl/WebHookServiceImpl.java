@@ -107,7 +107,7 @@ public class WebHookServiceImpl implements WebHookService {
         LOGGER.info(">>>START_SENDING_WEB_HOOK>>> Send a web hook.[INFO:send_setting_code:'{}']", sendSetting.getCode());
         //0. 若发送设置非项目层 / 发送信息未指定项目Id 则取消发送
         if (!(ResourceLevel.PROJECT.value().equalsIgnoreCase(sendSetting.getLevel())
-                || !ResourceLevel.ORGANIZATION.value().equalsIgnoreCase(sendSetting.getLevel()))
+                || ResourceLevel.ORGANIZATION.value().equalsIgnoreCase(sendSetting.getLevel()))
                 || ObjectUtils.isEmpty(dto.getSourceId())
                 || dto.getSourceId().equals(0L)) {
             LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> Missing project information.");
@@ -122,8 +122,6 @@ public class WebHookServiceImpl implements WebHookService {
 
         //1. 获取该发送设置的WebHook模版
         Template template = null;
-
-
         //3. 发送WebHook
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         WebhookRecordDetailDTO webhookRecordDetailDTO = new WebhookRecordDetailDTO();
