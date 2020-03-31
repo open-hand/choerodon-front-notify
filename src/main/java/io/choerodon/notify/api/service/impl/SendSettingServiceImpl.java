@@ -86,7 +86,7 @@ public class SendSettingServiceImpl implements SendSettingService {
         template.setSendSettingCode(code);
         //如果这个消息为部署资源通知，则还要加上json的的模板
         SendSettingCategoryDTO condition = new SendSettingCategoryDTO();
-        condition.setCode(code);
+        condition.setCode(sendSettingDTO.getCategoryCode());
         SendSettingCategoryDTO sendSettingCategoryDTO = sendSettingCategoryMapper.selectOne(condition);
         List<Template> templateList = new ArrayList<>();
         List<Template> otherTemplateList = templateMapper.select(template);
@@ -96,7 +96,7 @@ public class SendSettingServiceImpl implements SendSettingService {
             List<Template> jsonTemplates = templateMapper.select(template);
             templateList.addAll(jsonTemplates);
         }
-        sendSetting.setTemplates(templateMapper.select(template));
+        sendSetting.setTemplates(templateList);
         return sendSetting;
     }
 
@@ -417,9 +417,9 @@ public class SendSettingServiceImpl implements SendSettingService {
         if (ORGANIZATION.equals(sourceLevel)) {
             //只展示项目层的消息
             Set<SendSettingCategoryDTO> settingCategoryDTOS = sendSettingCategorySelection.stream().filter(sendSettingCategoryDTO ->
-                    PRO_MANAGEMENT.equals(sendSettingCategoryDTO.getCode())).collect(Collectors.toSet());
+                    ORG_MANAGEMENT.equals(sendSettingCategoryDTO.getCode())).collect(Collectors.toSet());
             List<SendSettingDTO> sendSettingDTOS = sendSettingSelection.stream().filter(sendSettingDTO ->
-                    PRO_MANAGEMENT.equals(sendSettingDTO.getCategoryCode())).collect(Collectors.toList());
+                    ORG_MANAGEMENT.equals(sendSettingDTO.getCategoryCode())).collect(Collectors.toList());
             return sendSetting.setSendSettingSelection(new HashSet<>(sendSettingDTOS)).setSendSettingCategorySelection(new HashSet<>(settingCategoryDTOS));
         }
         //3.构造返回数据
