@@ -16,8 +16,8 @@ export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
     const { AppState: { currentMenuType: { type, id, orgId } }, intl, children } = props;
     const webhooksDataSet = useMemo(() => new DataSet(WebhooksDataSet(id, type, orgId)), []);
-    const createTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('create', id)), []);
-    const editTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('edit', id)), []);
+    const createTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('create', id, type, orgId)), []);
+    const editTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('edit', id, type, orgId)), []);
     const editWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('edit', id, editTriggerEventsSettingDataSet, orgId, type)), []);
     const createWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('create', id, undefined, orgId, type)), []);
     const webhookRecordTableDataSet = useMemo(() => new DataSet(WebhookRecordTableDataSet(id, type, orgId)), []);
