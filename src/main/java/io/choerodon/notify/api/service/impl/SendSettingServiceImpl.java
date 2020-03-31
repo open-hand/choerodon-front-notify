@@ -40,10 +40,14 @@ public class SendSettingServiceImpl implements SendSettingService {
     private static final String PROJECT = "project";
     private static final String ORGANIZATION = "organization";
     private static final String ORG_MANAGEMENT = "org-management";
+    private static final String DEPLOYMENT_RESOURCES_NOTICE = "deployment-resources-notice";
     private static final String AGILE = "AGILE";
     private static final String ADD_OR_IMPORT_USER = "add-or-import-user";
     private static final String ISSUE_STATUS_CHANGE_NOTICE = "issue-status-change-notice";
     private static final String PRO_MANAGEMENT = "pro-management";
+    //资源相关通知
+    private static final String CREATE_RESOURCE_FAILED = "createResourceFailed";
+
     private SendSettingMapper sendSettingMapper;
     private SendSettingCategoryMapper sendSettingCategoryMapper;
     private TemplateMapper templateMapper;
@@ -80,6 +84,18 @@ public class SendSettingServiceImpl implements SendSettingService {
         BeanUtils.copyProperties(sendSettingDTO, sendSetting);
         Template template = new Template();
         template.setSendSettingCode(code);
+        //如果这个消息为部署资源通知，则还要加上json的的模板
+        SendSettingCategoryDTO condition = new SendSettingCategoryDTO();
+        condition.setCode(code);
+        SendSettingCategoryDTO sendSettingCategoryDTO = sendSettingCategoryMapper.selectOne(condition);
+        List<Template> templateList = new ArrayList<>();
+        List<Template> otherTemplateList = templateMapper.select(template);
+        templateList.addAll(otherTemplateList);
+        if (DEPLOYMENT_RESOURCES_NOTICE.equals(sendSettingCategoryDTO.getCode())) {
+            template.setSendSettingCode(CREATE_RESOURCE_FAILED);
+            List<Template> jsonTemplates = templateMapper.select(template);
+            templateList.addAll(jsonTemplates);
+        }
         sendSetting.setTemplates(templateMapper.select(template));
         return sendSetting;
     }
