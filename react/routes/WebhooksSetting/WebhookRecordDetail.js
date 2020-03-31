@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useMemo, useState } from 'react';
 import { Form, DataSet, TextField, Output, Button } from 'choerodon-ui/pro';
+import { Icon } from 'choerodon-ui';
 import WebhookRecordDetailDataSet from './Store/WebhookRecordDetailDataSet';
 
 const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
@@ -33,8 +34,10 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
         <Output colSpan={1} name="name" />
         <Output style={{ whiteSpace: 'nowrap' }} colSpan={1} name="sendTime" />
         <Output colSpan={1} name="timeConsuming" />
-        <Output colSpan={2} name="webhookPath" />
-        <Button onClick={() => handleRetry()} icon="refresh" colSpan={1}>重新执行</Button>
+        <Output style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} colSpan={2} name="webhookPath" />
+        <div labelWidth={0}>
+          <Button style={{ color: '#3F51B5', position: 'relative', right: '100px' }} onClick={() => handleRetry()} icon="refresh" colSpan={1}>重新执行</Button>
+        </div>
       </Form>
       <p>Request headers</p>
       <div className="webhookRecordDetail_content">
@@ -42,11 +45,19 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
       </div>
       <p>Request body</p>
       <div className="webhookRecordDetail_content">
-        {requestBody}
+        {requestBody && (
+          <pre>
+            <code>{JSON.stringify(JSON.parse(requestBody), null, 4)}</code>
+          </pre>
+        )}
       </div>
       <p>Response headers</p>
       <div className="webhookRecordDetail_content">
-        {responseHeaders}
+        {responseHeaders && (
+          <pre>
+            <code>{JSON.stringify(JSON.parse(responseHeaders), null, 4)}</code>
+          </pre>
+        )}
       </div>
       <p>Response Body</p>
       <div className="webhookRecordDetail_content">
