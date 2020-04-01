@@ -186,6 +186,11 @@ const WebhooksSetting = () => {
                   borderRadius: 10,
                   padding: '0 8px 0 8px',
                   marginLeft: '8px',
+                  fontSize: '12px',
+                  fontFamily: 'PingFangSC-Regular, PingFang SC',
+                  fontWeight: 400,
+                  color: 'rgba(0, 0, 0, 1)',
+                  lineHeight: '20px',
                 }}
               >{r}
               </span>
@@ -253,7 +258,8 @@ const WebhooksSetting = () => {
 
   const StatusRenderer = ({ value }) => <StatusTag name={value ? '启用' : '停用'} color={value ? ENABLED_GREEN : DISABLED_GRAY} />;
 
-  const typeRenderer = ({ value }) => webhooksTypeMap[value];
+  const typeRenderer = ({ value }) => <span className="webhookRecord_cantLinkText">{webhooksTypeMap[value]}</span>;
+  const PathRenderer = ({ value }) => <span className="webhookRecord_cantLinkText">{value}</span>;
 
   return (
     <Page>
@@ -273,7 +279,7 @@ const WebhooksSetting = () => {
             // })}
           />
           <Column renderer={ActionRenderer} width={48} />
-          <Column name="webhookPath" />
+          <Column name="webhookPath" renderer={PathRenderer} />
           <Column name="type" renderer={typeRenderer} />
           <Column name="enableFlag" renderer={StatusRenderer} />
         </Table>

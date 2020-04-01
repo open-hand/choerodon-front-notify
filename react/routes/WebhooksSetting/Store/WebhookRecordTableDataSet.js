@@ -17,7 +17,7 @@ export default (id, type, orgId) => {
       const diffMinutes = diffDuration.minutes();
       const diffSeconds = diffDuration.seconds();
 
-      return `${diffYears ? `${diffYears}年` : ''}${diffMonths ? `${diffMonths}月` : ''}${diffDays ? `${diffDays}日` : ''}${diffHours ? `${diffHours}小时` : ''}${diffMinutes ? `${diffMinutes}分钟` : ''}${diffSeconds ? `${diffSeconds}秒` : ''}`;
+      return `${diffYears ? `${diffYears}年` : ''}${diffMonths ? `${diffMonths}月` : ''}${diffDays ? `${diffDays}天` : ''}${diffHours ? `${diffHours}小时` : ''}${diffMinutes ? `${diffMinutes}分钟` : ''}${diffSeconds ? `${diffSeconds}秒` : ''}`;
     } else {
       return '正在计算时间...';
     }
@@ -67,10 +67,10 @@ export default (id, type, orgId) => {
           const data = JSON.parse(res);
           if (data.list) {
             const newList = data.list.map(d => {
-              if (d.sendTime && d.endTime) {
-                d.sendTime = handleLoadTime(d.sendTime, d.endTime);
+              if (d.sendTime) {
+                d.sendTimeAround = `${handleLoadTime(d.sendTime, moment().format('YYYY-MM-DD HH:mm:ss'))}前`;
               } else {
-                d.sendTime = '无';
+                d.sendTimeAround = '无';
               }
               d.typeString = obj[d.type];
               return d;
@@ -107,7 +107,7 @@ export default (id, type, orgId) => {
       type: 'string',
     }, {
       label: '发送时间',
-      name: 'sendTime',
+      name: 'sendTimeAround',
       type: 'string',
     }],
     queryFields: [
