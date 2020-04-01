@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Table, Modal } from 'choerodon-ui/pro';
+import { Table, Modal, Tooltip } from 'choerodon-ui/pro';
 import { Action, StatusTag } from '@choerodon/boot';
 import WebhookRecordDetail from './WebhookRecordDetail';
 
@@ -74,6 +74,18 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore }) => {
 
   const nameRender = ({ record, value }) => <p className="webhookRecord_table_name" onClick={() => handleClickName(record)}>{value}</p>;
 
+  const handleRenderSendTime = ({ record, value }) => (
+    <Tooltip placement="top" title={record.get('sendTime')}>
+      <span>{value}</span>
+    </Tooltip>
+  );
+
+  const handleRenderWebhookPath = ({ value }) => (
+    <Tooltip placement="top" title={value}>
+      <p style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{value}</p>
+    </Tooltip>
+  );
+
 
   return (
     <Table
@@ -83,10 +95,10 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore }) => {
     >
       <Column name="name" renderer={nameRender} />
       <Column renderer={ActionRenderer} width={48} />
-      <Column name="webhookPath" />
+      <Column name="webhookPath" renderer={handleRenderWebhookPath} />
       <Column name="status" renderer={statusRenderer} />
       <Column name="typeString" />
-      <Column name="sendTime" />
+      <Column name="sendTimeAround" renderer={handleRenderSendTime} />
     </Table>
   );
 };
