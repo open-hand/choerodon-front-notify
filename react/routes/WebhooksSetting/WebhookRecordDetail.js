@@ -30,20 +30,20 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
 
   return (
     <React.Fragment>
-      <Form labelLayout="horizontal" columns={3} dataSet={webhookRecordDetailDataSet}>
+      <Form className="webhookRecordDetail_form" labelLayout="horizontal" columns={3} dataSet={webhookRecordDetailDataSet}>
         <Output colSpan={1} name="name" />
         <Output style={{ whiteSpace: 'nowrap' }} colSpan={1} name="sendTime" />
         <Output colSpan={1} name="timeConsuming" />
         <Output style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} colSpan={2} name="webhookPath" />
         <div labelWidth={0}>
-          <Button style={{ color: '#3F51B5', position: 'relative', right: '100px', bottom: '10px' }} onClick={() => handleRetry()} icon="refresh" funcType="flat" colSpan={1}>重新执行</Button>
+          <Button style={{ color: '#3F51B5', position: 'relative', right: '100px', bottom: '10px', padding: 0 }} onClick={() => handleRetry()} icon="refresh" funcType="flat" colSpan={1}>重新执行</Button>
         </div>
       </Form>
-      <p>Request headers</p>
+      <p className="webhookRecordDetail_pHeader">Request headers</p>
       <div className="webhookRecordDetail_content">
         {requestHeaders}
       </div>
-      <p>Request body</p>
+      <p className="webhookRecordDetail_pHeader">Request body</p>
       <div className="webhookRecordDetail_content">
         {requestBody && (
           <pre>
@@ -51,7 +51,7 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
           </pre>
         )}
       </div>
-      <p>Response headers</p>
+      <p className="webhookRecordDetail_pHeader">Response headers</p>
       <div className="webhookRecordDetail_content">
         {responseHeaders && (
           <pre>
@@ -59,7 +59,7 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
           </pre>
         )}
       </div>
-      <p>Response Body</p>
+      <p className="webhookRecordDetail_pHeader">Response Body</p>
       <div className="webhookRecordDetail_content">
         {responseBody}
       </div>
