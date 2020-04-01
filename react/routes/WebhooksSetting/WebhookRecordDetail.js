@@ -36,7 +36,7 @@ const WebhookRecordDetail = ({ recordId, type, id, orgId, useStore }) => {
         <Output colSpan={1} name="timeConsuming" />
         <Output style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} colSpan={2} name="webhookPath" />
         <div labelWidth={0}>
-          <Button style={{ color: '#3F51B5', position: 'relative', right: '100px' }} onClick={() => handleRetry()} icon="refresh" colSpan={1}>重新执行</Button>
+          <Button style={{ color: '#3F51B5', position: 'relative', right: '100px', bottom: '10px' }} onClick={() => handleRetry()} icon="refresh" funcType="flat" colSpan={1}>重新执行</Button>
         </div>
       </Form>
       <p>Request headers</p>
