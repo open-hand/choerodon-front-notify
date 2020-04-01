@@ -31,6 +31,7 @@
         <result column="webhook_path" property="webhookPath"/>
         <result column="name" property="name"/>
         <result column="type" property="type"/>
+        <result column="end_time" property="endTime"/>
 
     </resultMap>
 
@@ -42,7 +43,8 @@
         nwr.SEND_SETTING_CODE,
         nwr.`STATUS`,
         nwr.WEBHOOK_PATH,
-        nw.TYPE
+        nw.TYPE,
+        nwr.END_TIME
         FROM notify_webhook_record nwr
         JOIN notify_send_setting nss
         ON nss.`CODE`=nwr.SEND_SETTING_CODE
