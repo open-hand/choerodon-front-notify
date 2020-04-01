@@ -63,6 +63,8 @@ public class WebHookServiceImpl implements WebHookService {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebHookServiceImpl.class);
     private static final String PROJECT = "project";
     private static final String ORGANIZATION = "organization";
+    private static final String WEBHOOKOTHER = "webHookOther";
+    private static final String WEBHOOKJSON = "webHookJson";
 
     private static final String REQUEST_HEADER = "Content-Type:application/json";
 
@@ -119,9 +121,6 @@ public class WebHookServiceImpl implements WebHookService {
             LOGGER.info(">>>CANCEL_SENDING_WEBHOOK>>> The send settings have not been associated with webhook.");
             return;
         }
-
-        //1. 获取该发送设置的WebHook模版
-        Template template = null;
         //3. 发送WebHook
         WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
         WebhookRecordDetailDTO webhookRecordDetailDTO = new WebhookRecordDetailDTO();
@@ -129,37 +128,45 @@ public class WebHookServiceImpl implements WebHookService {
             Map<String, Object> userParams = dto.getParams();
             String content = null;
             //获取模板
+            Map<String, Template> templateMap = new HashMap<>();
             if (WebHookTypeEnum.WECHAT.getValue().equals(hook.getType()) || WebHookTypeEnum.DINGTALK.getValue().equals(hook.getType())) {
                 try {
-                    template = templateService.getOne(new Template()
+                    Template template = templateService.getOne(new Template()
                             .setSendingType(SendingTypeEnum.WHO.getValue())
                             .setSendSettingCode(sendSetting.getCode()));
+                    templateMap.put(WEBHOOKOTHER, template);
                 } catch (Exception e) {
-                    LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> No valid templates available.", e);
-                    return;
+                    LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> WebHookOther no valid templates available.", e);
                 }
             }
+
             if (WebHookTypeEnum.JSON.getValue().equals(hook.getType())) {
                 try {
-                    template = templateService.getOne(new Template()
+                    Template template = templateService.getOne(new Template()
                             .setSendingType(SendingTypeEnum.WHJ.getValue())
                             .setSendSettingCode(sendSetting.getCode()));
+                    templateMap.put(WEBHOOKJSON, template);
                 } catch (Exception e) {
-                    LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> No valid templates available.", e);
-                    return;
+                    LOGGER.warn(">>>CANCEL_SENDING_WEBHOOK>>> WebHookJson no valid templates available.", e);
                 }
             }
-            if (Objects.isNull(template)) {
-                return;
+            //如果没有一个模板就返回
+            if (CollectionUtils.isEmpty(templateMap)) {
+                continue;
             }
-            try {
-                content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage());
-            } catch (TemplateException e) {
-                LOGGER.error(e.getMessage());
-            }
+
             if (WebHookTypeEnum.DINGTALK.getValue().equalsIgnoreCase(hook.getType())) {
+                Template template = templateMap.get(WEBHOOKOTHER);
+                if (Objects.isNull(template)) {
+                    return;
+                }
+                try {
+                    content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage());
+                } catch (TemplateException e) {
+                    LOGGER.error(e.getMessage());
+                }
                 webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
                 webhookRecordDTO.setSourceId(hook.getSourceId());
                 webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
@@ -175,6 +182,17 @@ public class WebHookServiceImpl implements WebHookService {
                 }
                 sendDingTalk(hook, content, title, mobiles, dto.getCode(), dto.getWebHookJsonSendDTO().getUser().getLoginName(), dto.getWebHookJsonSendDTO().getUser().getUserName(), webhookRecordDetailDTO);
             } else if (WebHookTypeEnum.WECHAT.getValue().equalsIgnoreCase(hook.getType())) {
+                Template template = templateMap.get(WEBHOOKOTHER);
+                if (Objects.isNull(template)) {
+                    return;
+                }
+                try {
+                    content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage());
+                } catch (TemplateException e) {
+                    LOGGER.error(e.getMessage());
+                }
                 webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
                 webhookRecordDTO.setSourceId(hook.getSourceId());
                 webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
@@ -182,6 +200,17 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDTO.setSendSettingCode(dto.getCode());
                 sendWeChat(hook, content, dto.getCode(), dto.getWebHookJsonSendDTO().getUser().getLoginName(), dto.getWebHookJsonSendDTO().getUser().getUserName(), webhookRecordDetailDTO);
             } else if (WebHookTypeEnum.JSON.getValue().equalsIgnoreCase(hook.getType())) {
+                Template template = templateMap.get(WEBHOOKJSON);
+                if (Objects.isNull(template)) {
+                    return;
+                }
+                try {
+                    content = templateRender.renderTemplate(template, userParams, TemplateRender.TemplateType.CONTENT);
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage());
+                } catch (TemplateException e) {
+                    LOGGER.error(e.getMessage());
+                }
                 webhookRecordDTO.setWebhookPath(hook.getWebhookPath());
                 webhookRecordDTO.setSourceId(hook.getSourceId());
                 webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
