@@ -48,7 +48,7 @@
         FROM notify_webhook_record nwr
         JOIN notify_send_setting nss
         ON nss.`CODE`=nwr.SEND_SETTING_CODE
-        JOIN notify_webhook nw
+        LEFT JOIN notify_webhook nw
         ON nwr.WEBHOOK_ID =nw.ID
         where
         nwr.SOURCE_ID=#{sourceId}

@@ -180,7 +180,7 @@ public class WebHookServiceImpl implements WebHookService {
                 } catch (TemplateException e) {
                     LOGGER.error(e.getMessage());
                 }
-                sendDingTalk(hook, content, title, mobiles, dto.getCode(), dto.getWebHookJsonSendDTO().getUser().getLoginName(), dto.getWebHookJsonSendDTO().getUser().getUserName(), webhookRecordDetailDTO);
+                sendDingTalk(hook, content, title, mobiles, dto.getCode(), null, null, webhookRecordDetailDTO);
             } else if (WebHookTypeEnum.WECHAT.getValue().equalsIgnoreCase(hook.getType())) {
                 Template template = templateMap.get(WEBHOOKOTHER);
                 if (Objects.isNull(template)) {
@@ -198,7 +198,7 @@ public class WebHookServiceImpl implements WebHookService {
                 webhookRecordDTO.setSourceLevel(hook.getSourceLevel());
                 webhookRecordDTO.setContent(content);
                 webhookRecordDTO.setSendSettingCode(dto.getCode());
-                sendWeChat(hook, content, dto.getCode(), dto.getWebHookJsonSendDTO().getUser().getLoginName(), dto.getWebHookJsonSendDTO().getUser().getUserName(), webhookRecordDetailDTO);
+                sendWeChat(hook, content, dto.getCode(), null, null, webhookRecordDetailDTO);
             } else if (WebHookTypeEnum.JSON.getValue().equalsIgnoreCase(hook.getType())) {
                 Template template = templateMap.get(WEBHOOKJSON);
                 if (Objects.isNull(template)) {
@@ -240,8 +240,6 @@ public class WebHookServiceImpl implements WebHookService {
         retryData.put("title", title);
         retryData.put("mobiles", mobiles);
         retryData.put("code", code);
-        retryData.put("loginName", loginName);
-        retryData.put("userName", userName);
         webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
 
         RestTemplate template = new RestTemplate();
@@ -410,8 +408,6 @@ public class WebHookServiceImpl implements WebHookService {
         Map<String, Object> retryData = new HashMap<>();
         retryData.put("content", content);
         retryData.put("code", code);
-        retryData.put("loginName", loginName);
-        retryData.put("userName", userName);
 
         webhookRecordDetailDTO.setRetryData(JSON.toJSONString(retryData));
         webhookRecordDetailDTO.setRequestHeaders(REQUEST_HEADER);
@@ -656,18 +652,14 @@ public class WebHookServiceImpl implements WebHookService {
             }
             String code = (String) retryData.get("code");
             Long id = (Long) retryData.get("userId");
-            String loginName = (String) retryData.get("loginName");
-            String userName = (String) retryData.get("userName");
-            sendDingTalk(webHookDTO, text, title, mobiles, code, loginName, userName, webhookRecordDetailDTO);
+            sendDingTalk(webHookDTO, text, title, mobiles, code, null, null, webhookRecordDetailDTO);
         }
         if (WebHookTypeEnum.WECHAT.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
             Map<String, Object> retryData = (Map<String, Object>) JSONObject.parse(webhookRecordDetailDTO.getRetryData());
             String content = (String) retryData.get("content");
             String code = (String) retryData.get("code");
-            String loginName = (String) retryData.get("loginName");
-            String userName = (String) retryData.get("userName");
-            sendWeChat(webHookDTO, content, code, loginName, userName, webhookRecordDetailDTO);
+            sendWeChat(webHookDTO, content, code, null, null, webhookRecordDetailDTO);
         }
         if (WebHookTypeEnum.JSON.getValue().equals(webHookDTO.getType())) {
             WebhookRecordDetailDTO webhookRecordDetailDTO = webhookRecordDTO.getWebhookRecordDetailDTO();
