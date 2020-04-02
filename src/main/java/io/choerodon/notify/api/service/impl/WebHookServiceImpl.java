@@ -122,9 +122,9 @@ public class WebHookServiceImpl implements WebHookService {
             return;
         }
         //3. 发送WebHook
-        WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
-        WebhookRecordDetailDTO webhookRecordDetailDTO = new WebhookRecordDetailDTO();
         for (WebHookDTO hook : hooks) {
+            WebhookRecordDTO webhookRecordDTO = new WebhookRecordDTO();
+            WebhookRecordDetailDTO webhookRecordDetailDTO = new WebhookRecordDetailDTO();
             Map<String, Object> userParams = dto.getParams();
             String content = null;
             //获取模板
@@ -418,7 +418,7 @@ public class WebHookServiceImpl implements WebHookService {
         markdown.put("content", content);
         request.put("markdown", markdown);
         WebhookRecordDTO webhookRecordDTO = fillWebhookRecordDTO(code, hook, content);
-        webhookRecordDTO.setEndTime(new Date());
+        webhookRecordDTO.setSendTime(new Date());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("requestBody", JSON.toJSONString(request));
         webHookJsonSendDTO.setObjectAttributes(jsonObject);
