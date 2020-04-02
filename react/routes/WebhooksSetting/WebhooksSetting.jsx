@@ -191,6 +191,7 @@ const WebhooksSetting = () => {
                   fontWeight: 400,
                   color: 'rgba(0, 0, 0, 1)',
                   lineHeight: '20px',
+                  display: 'inline-block',
                 }}
               >{r}
               </span>
