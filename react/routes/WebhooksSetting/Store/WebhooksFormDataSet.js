@@ -55,7 +55,6 @@ export default function (type, id, children, orgId, orgType) {
         dynamicProps: ({ record, name }) => ({
           label: record.get('type') === 'DingTalk' ? '钉钉加签密钥' : '密钥',
         }),
-        required: true,
       },
       { name: 'webhookPath', type: 'string', label: 'Webhooks地址', validator: validateWebhooksPath, required: true },
       { name: 'id', type: 'number' },
