@@ -23,7 +23,7 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
         if (item.isSelected) {
           item.isSelected = false;
         }
-        if (dataSet.current.get('sendSettingIdList').find(selectId => selectId === item.get('id'))) {
+        if (dataSet.current.get('sendSettingIdList') && dataSet.current.get('sendSettingIdList').find(selectId => selectId === item.get('id'))) {
           // if (item.get('categoryCode')) {
           //   children.find(l => l.get('code') === item.get('categoryCode')).isSelected = true;
           // }
@@ -67,8 +67,21 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
     <React.Fragment>
       <Form dataSet={dataSet} style={{ width: '5.12rem' }}>
         <SelectBox onChange={(value) => handleQueryTriggerEvent(value)} name="type" />
-        {dataSet.current && ['DingTalk', 'Json'].includes(dataSet.current.get('type')) && <TextArea name="secret" />}
         <TextArea name="webhookPath" />
+        {/* { */}
+        {/* (function () { */}
+        {/*  if (dataSet.current) { */}
+        {/*    if (['DingTalk', 'Json'].includes(dataSet.current.get('type'))) { */}
+        {/*      return <TextArea name="secret" />; */}
+        {/*    } */}
+        {/*  } */}
+        {/* }()) */}
+        {/* } */}
+        {
+          dataSet.current
+          && ['DingTalk', 'Json'].includes(dataSet.current.get('type'))
+          && <TextArea name="secret" />
+        }
       </Form>
       <div className="c7n-org-webhook-divider" />
       <p
