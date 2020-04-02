@@ -148,16 +148,9 @@ public class NoticesSendServiceImpl implements NoticesSendService {
             LOGGER.warn(">>>CANCEL_SENDING>>> The send setting has been disabled OR all sending types for this send setting have been disabled.[INFO:send_setting_code:'{}']", noticeSendDTO.getCode());
             return;
         }
-        // 0.3 校验发送对象不为空 : 如发送对象为空，并且webhook json 为空，则取消此次发送
-        if (ObjectUtils.isEmpty(noticeSendDTO.getTargetUsers()) && Objects.isNull(noticeSendDTO.getWebHookJsonSendDTO())) {
-            LOGGER.warn(">>>CANCEL_SENDING>>> No sending receiver is specified");
-            return;
-        }
         // 1.获取发送对象
         Set<UserDTO> users = new HashSet<>();
-        if (!CollectionUtils.isEmpty(noticeSendDTO.getTargetUsers())) {
-            users = getNeedSendUsers(noticeSendDTO);
-        }
+        users = getNeedSendUsers(noticeSendDTO);
         // 2.获取是否启用自定义发送类型
         boolean customizedSendingTypesFlag = !CollectionUtils.isEmpty(noticeSendDTO.getCustomizedSendingTypes());
         LOGGER.info(">>>WHETHER_TO_CUSTOMIZE_THE_CONFIGURATION>>>{}>>>email:{}>>>pm:{}>>>sms:{}>>>wb:{}", customizedSendingTypesFlag, noticeSendDTO.isSendingEmail(), noticeSendDTO.isSendingSiteMessage(), noticeSendDTO.isSendingSMS(), noticeSendDTO.isSendingWebHookOther(), noticeSendDTO.isSendingWebHookJson());
@@ -175,10 +168,20 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         if (SenderType.PROJECT.value().equals(sendSettingDTO.getLevel()) && !Objects.isNull(messageSettingVO)) {
             isRequiredProjectLevelEmailPmVerification = true;
         }
+        end_flag:
         if (siteLevelEmailVerification && !isRequiredProjectLevelEmailPmVerification) {
+            if (CollectionUtils.isEmpty(users)) {
+                LOGGER.warn(">>>CANCEL_SENDING>>>Email No sending receiver is specified");
+                break end_flag;
+            }
             trySendEmail(noticeSendDTO, sendSettingDTO, users);
         }
+        end_flag:
         if (siteLevelEmailVerification && isRequiredProjectLevelEmailPmVerification && messageSettingVO.getEmailEnable()) {
+            if (CollectionUtils.isEmpty(users)) {
+                LOGGER.warn(">>>CANCEL_SENDING>>> Email No sending receiver is specified");
+                break end_flag;
+            }
             trySendEmail(noticeSendDTO, sendSettingDTO, users);
         }
 
@@ -194,10 +197,20 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         if (SenderType.PROJECT.value().equals(sendSettingDTO.getLevel()) && !Objects.isNull(messageSettingVO)) {
             isRequiredProjectLevelPmVerification = true;
         }
+        end_flag:
         if (siteLevelPmVerification && !isRequiredProjectLevelPmVerification) {
+            if (CollectionUtils.isEmpty(users)) {
+                LOGGER.warn(">>>CANCEL_SENDING>>> PM No sending receiver is specified");
+                break end_flag;
+            }
             trySendSiteMessage(noticeSendDTO, sendSettingDTO, users);
         }
+        end_flag:
         if (siteLevelPmVerification && isRequiredProjectLevelPmVerification && messageSettingVO.getPmEnable()) {
+            if (CollectionUtils.isEmpty(users)) {
+                LOGGER.warn(">>>CANCEL_SENDING>>> PM No sending receiver is specified");
+                break end_flag;
+            }
             trySendSiteMessage(noticeSendDTO, sendSettingDTO, users);
         }
 
@@ -389,6 +402,9 @@ public class NoticesSendServiceImpl implements NoticesSendService {
     private Set<UserDTO> getNeedSendUsers(final NoticeSendDTO dto) {
         Set<UserDTO> users = new HashSet<>();
         // 取得User中id不为空的id，将发起feign调用
+        if (CollectionUtils.isEmpty(dto.getTargetUsers())) {
+            return users;
+        }
         Set<Long> needQueryUserIds = dto.getTargetUsers().stream().filter(user -> user.getId() != null).map(NoticeSendDTO.User::getId).collect(Collectors.toSet());
         if (!needQueryUserIds.isEmpty()) {
             Long[] userIds = needQueryUserIds.toArray(new Long[0]);
