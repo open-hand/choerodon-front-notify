@@ -41,9 +41,9 @@ public class WebhookRecordProjectController {
                                                                       @RequestParam(name = "webhook_id", required = false) Long webhookId,
                                                                       @RequestParam(required = false) String status,
                                                                       @RequestParam(required = false, name = "name") String eventName,
-                                                                      @RequestParam(required = false, name = "webhook_type") String webhookType) {
+                                                                      @RequestParam(required = false, name = "type") String type) {
 
-        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, eventName, webhookType, PROJECT), HttpStatus.OK);
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, sourceId, webhookId, status, eventName, type, PROJECT), HttpStatus.OK);
     }
 
     @ApiOperation(value = "项目层查询WebHook发送记录详情")
