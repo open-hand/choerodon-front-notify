@@ -2,15 +2,19 @@ import React, { useContext, useEffect } from 'react';
 import { Table, Modal, Tooltip } from 'choerodon-ui/pro';
 import { Action, StatusTag } from '@choerodon/boot';
 import WebhookRecordDetail from './WebhookRecordDetail';
+import TimePopover from '../../components/timePopover/TimePopover';
 
 const { Column } = Table;
 
-const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore }) => {
+const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
   useEffect(() => {
     ds.queryUrl = `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hook_records${webhookId ? `?webhook_id=${webhookId}` : ''}`;
     // ds.setQueryParameter('webhookId', webhookId);
 
     ds.query();
+    modal.update({
+      okText: '关闭',
+    });
   }, []);
 
   const handleAction = async (record) => {
@@ -52,7 +56,7 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore }) => {
       },
       RUNNING: {
         name: '执行中',
-        color: 'rgb(22, 183, 149)',
+        color: '#4D90FE',
       },
     };
     return <StatusTag name={statusKeyValue[value].name} color={statusKeyValue[value].color} />;
@@ -68,16 +72,14 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore }) => {
       style: {
         width: 740,
       },
-      children: <WebhookRecordDetail recordId={record.get('id')} type={type} id={id} orgId={orgId} useStore={useStore} />,
+      children: <WebhookRecordDetail ds={ds} recordId={record.get('id')} itemType={record.get('status')} type={type} id={id} orgId={orgId} useStore={useStore} />,
     });
   };
 
   const nameRender = ({ record, value }) => <p className="webhookRecord_table_name" onClick={() => handleClickName(record)}>{value}</p>;
 
   const handleRenderSendTime = ({ record, value }) => (
-    <Tooltip placement="top" title={record.get('sendTime')}>
-      <span>{value}</span>
-    </Tooltip>
+    <TimePopover content={record.get('sendTime')} />
   );
 
   const handleRenderWebhookPath = ({ value }) => (

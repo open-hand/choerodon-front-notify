@@ -9,7 +9,6 @@ import Store from './Store';
 
 import './index.less';
 
-const ModalKey = Modal.key();
 const { Column } = Table;
 
 const WebhooksSetting = () => {
@@ -34,7 +33,7 @@ const WebhooksSetting = () => {
   const handleCreateWebhooks = () => {
     Modal.open({
       title: '添加Webhook',
-      key: ModalKey,
+      key: Modal.key(),
       drawer: true,
       style: {
         width: '51.39%',
@@ -72,7 +71,7 @@ const WebhooksSetting = () => {
     await editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
-      key: ModalKey,
+      key: Modal.key(),
       drawer: true,
       okText: '保存',
       style: {
@@ -215,11 +214,11 @@ const WebhooksSetting = () => {
       title: 'Webhook执行记录',
       key: Modal.key(),
       drawer: true,
+      okText: '关闭',
+      okCancel: false,
       style: {
         width: 900,
       },
-      okCancel: false,
-      okText: '取消',
       children: <WebhookRecord ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
     });
   };
@@ -260,7 +259,11 @@ const WebhooksSetting = () => {
   const StatusRenderer = ({ value }) => <StatusTag name={value ? '启用' : '停用'} color={value ? ENABLED_GREEN : DISABLED_GRAY} />;
 
   const typeRenderer = ({ value }) => <span className="webhookRecord_cantLinkText">{webhooksTypeMap[value]}</span>;
-  const PathRenderer = ({ value }) => <span className="webhookRecord_cantLinkText">{value}</span>;
+  const PathRenderer = ({ value }) => (
+    <Popover content={value} placement="top">
+      <span className="webhookRecord_cantLinkText">{value}</span>
+    </Popover>
+  );
 
   return (
     <Page>

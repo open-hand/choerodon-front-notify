@@ -30,7 +30,7 @@ export default () => {
         transformResponse(res) {
           const data = JSON.parse(res);
           if (data.sendTime && data.endTime) {
-            data.timeConsuming = handleLoadTime(data.sendTime, data.endTime) || '0秒';
+            data.timeConsuming = handleLoadTime(data.sendTime, data.endTime) || '0.00秒';
           } else {
             data.timeConsuming = '无';
           }
