@@ -65,4 +65,11 @@
         WHERE id = #{id}
     </update>
 
+    <delete id="cleanEmailSendRecord">
+        delete
+        from
+        notify_mailing_record
+        where cast(CREATION_DATE  as datetime) >= #{timeLine}
+    </delete>
+
 </mapper>

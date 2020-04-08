@@ -25,6 +25,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,7 @@ public class NoticesSendServiceImpl implements NoticesSendService {
     private MessageSettingService messageSettingService;
     private WebHookMapper webHookMapper;
     private WebHookMessageSettingMapper webHookMessageSettingMapper;
+    private MailingRecordMapper mailingRecordMapper;
 
 
     public NoticesSendServiceImpl(EmailSendService emailSendService,
@@ -57,7 +61,8 @@ public class NoticesSendServiceImpl implements NoticesSendService {
                                   NotifyScheduleRecordMapper notifyScheduleRecordMapper,
                                   MessageSettingService messageSettingService,
                                   WebHookMapper webHookMapper,
-                                  WebHookMessageSettingMapper webHookMessageSettingMapper) {
+                                  WebHookMessageSettingMapper webHookMessageSettingMapper,
+                                  MailingRecordMapper mailingRecordMapper) {
         this.emailSendService = emailSendService;
         this.webSocketSendService = webSocketSendService;
         this.webHookService = webHookService;
@@ -70,7 +75,7 @@ public class NoticesSendServiceImpl implements NoticesSendService {
         this.messageSettingService = messageSettingService;
         this.webHookMapper = webHookMapper;
         this.webHookMessageSettingMapper = webHookMessageSettingMapper;
-
+        this.mailingRecordMapper = mailingRecordMapper;
     }
 
     //单元测试
@@ -478,6 +483,23 @@ public class NoticesSendServiceImpl implements NoticesSendService {
             return webHookMapper.selectByPrimaryKey(id);
         }).collect(Collectors.toList());
         return hookDTOS;
+    }
+
+    /**
+     * 清除平台半年前的邮件发送记录
+     *
+     * @param data
+     * @return
+     */
+    @JobTask(code = "cleanEmailSendRecord",
+            maxRetryCount = 2, params = {},description = "清除平台半年前的邮件发送记录")
+    public Map<String, Object> cleanEmailSendRecord(Map<String, Object> data) {
+        LOGGER.info(">>>>>>>>Start cleaning up mail half a year ago<<<<<<<<<");
+        LocalDateTime localDateTime = LocalDateTime.now().minusMonths(6);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String strNowLocalDateTime = localDateTime.format(formatter);
+        mailingRecordMapper.cleanEmailSendRecord(strNowLocalDateTime);
+        return data;
     }
 
 }
