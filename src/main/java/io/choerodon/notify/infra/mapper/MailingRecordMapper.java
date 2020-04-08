@@ -25,4 +25,6 @@ public interface MailingRecordMapper extends Mapper<MailingRecordDTO> {
 
     List<MailingRecordDTO> selectByDate(@Param("startTime") java.sql.Date startTime,
                                         @Param("endTime") java.sql.Date endTime);
+
+    void cleanEmailSendRecord(@Param("timeLine") String timeLine);
 }
