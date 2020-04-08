@@ -69,7 +69,7 @@
         delete
         from
         notify_mailing_record
-        where cast(CREATION_DATE  as datetime) >= #{timeLine}
+        where cast(CREATION_DATE  as datetime) <![CDATA[ <= ]]> #{timeLine}
     </delete>
 
 </mapper>
