@@ -26,7 +26,7 @@ function MsgWebhook() {
           <Column align="left" name="sendTime" />
           <Column align="left" width={100} name="status" renderer={StatusCard} />
           <Column name="failedReason" />
-          <Column name="projectName" />
+          <Column name="sourceName" />
           <Column name="webhookPath" />
         </Table>
       </Content>
