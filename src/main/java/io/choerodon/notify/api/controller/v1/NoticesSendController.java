@@ -5,6 +5,7 @@ import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.FeignException;
 import io.choerodon.notify.api.dto.NoticeSendDTO;
+import io.choerodon.notify.api.service.EmailSendService;
 import io.choerodon.notify.api.service.NoticesSendService;
 import io.choerodon.notify.api.service.WebSocketSendService;
 import io.choerodon.notify.infra.dto.NotifyScheduleRecordDTO;
@@ -30,10 +31,14 @@ public class NoticesSendController {
 
     private WebSocketSendService webSocketSendService;
 
+    private EmailSendService emailSendService;
+
     public NoticesSendController(NoticesSendService noticesSendService,
-                                 WebSocketSendService webSocketSendService) {
+                                 WebSocketSendService webSocketSendService,
+                                 EmailSendService emailSendService) {
         this.noticesSendService = noticesSendService;
         this.webSocketSendService = webSocketSendService;
+        this.emailSendService = emailSendService;
     }
 
     /**
@@ -117,6 +122,13 @@ public class NoticesSendController {
         } else {
             webSocketSendService.sendWebSocket(code, id, message);
         }
+    }
+
+    @GetMapping("/mail/retry")
+    @ApiOperation("平台层重试邮件发送记录")
+    @Permission(type = ResourceType.SITE)
+    public void retryMailSend(@RequestParam("record_id") Long recordId) {
+        emailSendService.retryMailSend(recordId);
     }
 
 }
