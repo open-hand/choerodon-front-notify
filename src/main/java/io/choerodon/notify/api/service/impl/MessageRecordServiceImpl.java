@@ -49,9 +49,6 @@ public class MessageRecordServiceImpl implements MessageRecordService {
     @Override
     public Record manualRetrySendEmail(long recordId) {
         Record record = getRecord(recordId);
-        if (!RecordStatus.FAILED.getValue().equals(record.getStatus())) {
-            throw new CommonException("error.record.retryNotFailed");
-        }
 
         Template template = templateMapper.selectByPrimaryKey(record.getTemplateId());
         if (template == null) {
