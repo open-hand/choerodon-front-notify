@@ -41,7 +41,7 @@ function MsgEmail(props) {
       text: <FormattedMessage id="msgrecord.resend" />,
       action: () => retry(record),
     }];
-    return record.get('status') === 'FAILED' && record.get('isManualRetry') && <Action className="action-icon" data={actionArr} />;
+    return <Action className="action-icon" data={actionArr} />;
   };
 
   const renderMouseOver = ({ value }) => (
