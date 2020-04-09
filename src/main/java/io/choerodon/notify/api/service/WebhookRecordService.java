@@ -15,4 +15,6 @@ public interface WebhookRecordService {
 
     PageInfo<WebhookRecordDTO> pagingWebHookRecord(Pageable pageable, Long sourceId, Long webhookId, String status, String sendSettingName, String webhookType, String source);
 
+    PageInfo<WebhookRecordDTO> pagingWebHookRecord(Pageable pageable, WebhookRecordVO webhookRecordVO, String projectOrg);
+
 }

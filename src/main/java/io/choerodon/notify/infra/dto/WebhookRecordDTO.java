@@ -52,6 +52,16 @@ public class WebhookRecordDTO extends BaseDTO {
     private String name;
     @Transient
     private String type;
+    @Transient
+    private String sourceName;
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
 
     public String getType() {
         return type;

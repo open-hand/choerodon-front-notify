@@ -124,11 +124,11 @@ public class NoticesSendController {
         }
     }
 
-    @GetMapping("/mail/retry")
-    @ApiOperation("平台层重试邮件发送记录")
-    @Permission(type = ResourceType.SITE)
-    public void retryMailSend(@RequestParam("record_id") Long recordId) {
-        emailSendService.retryMailSend(recordId);
-    }
+//    @GetMapping("/mail/retry")
+//    @ApiOperation("平台层重试邮件发送记录")
+//    @Permission(type = ResourceType.SITE)
+//    public void retryMailSend(@RequestParam("record_id") Long recordId) {
+//        emailSendService.retryMailSend(recordId);
+//    }
 
 }
