@@ -19,4 +19,5 @@ public interface EmailSendService {
 
     void testEmailConnect(EmailConfigDTO config);
 
+    void retryMailSend(Long recordId);
 }

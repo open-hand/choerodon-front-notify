@@ -1,5 +1,7 @@
 package io.choerodon.notify.api.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.template.TemplateException;
 import io.choerodon.core.exception.CommonException;
@@ -13,6 +15,7 @@ import io.choerodon.notify.api.service.TemplateService;
 import io.choerodon.notify.domain.Record;
 import io.choerodon.notify.infra.cache.ConfigCache;
 import io.choerodon.notify.infra.dto.Config;
+import io.choerodon.notify.infra.dto.MailingRecordDTO;
 import io.choerodon.notify.infra.dto.SendSettingDTO;
 import io.choerodon.notify.infra.dto.Template;
 import io.choerodon.notify.infra.enums.DefaultAutowiredField;
@@ -21,6 +24,7 @@ import io.choerodon.notify.infra.enums.RecordStatus;
 import io.choerodon.notify.infra.enums.SendingTypeEnum;
 import io.choerodon.notify.infra.mapper.MailingRecordMapper;
 import io.choerodon.notify.infra.utils.ConvertUtils;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,10 +42,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -65,6 +66,8 @@ public class EmailSendServiceImpl implements EmailSendService {
     private final EmailQueueObservable emailQueueObservable;
 
     private final Executor executor;
+
+    private ModelMapper modelMapper = new ModelMapper();
 
 
     public EmailSendServiceImpl(TemplateService templateService,
@@ -93,7 +96,7 @@ public class EmailSendServiceImpl implements EmailSendService {
                     .setSendingType(SendingTypeEnum.EMAIL.getValue())
                     .setSendSettingCode(sendSettingDTO.getCode()));
         } catch (Exception e) {
-            LOGGER.warn(">>>CANCEL_SENDING_EMAIL>>> No valid templates available.",e);
+            LOGGER.warn(">>>CANCEL_SENDING_EMAIL>>> No valid templates available.", e);
             return;
         }
         Template template = tmp;
@@ -238,5 +241,35 @@ public class EmailSendServiceImpl implements EmailSendService {
         return mailSender;
     }
 
-
+    @Override
+    public void retryMailSend(Long recordId) {
+        MailingRecordDTO mailingRecordDTO = mailingRecordMapper.selectByPrimaryKey(recordId);
+        Record record = modelMapper.map(mailingRecordDTO, Record.class);
+        if (Objects.isNull(mailingRecordDTO)) {
+            return;
+        }
+        //1. 获取该发送设置的邮件模版
+        Template tmp = null;
+        try {
+            tmp = templateService.getOne(new Template()
+                    .setSendingType(SendingTypeEnum.EMAIL.getValue())
+                    .setSendSettingCode(mailingRecordDTO.getSendSettingCode()));
+        } catch (Exception e) {
+            LOGGER.warn(">>>CANCEL_SENDING_EMAIL>>> No valid templates available.", e);
+            return;
+        }
+        //2.将json对象转换为map
+        JSONObject jsonObject = JSON.parseObject(mailingRecordDTO.getVariables());
+        //map对象
+        Map<String, Object> data = new HashMap<>();
+        //循环转换
+        Iterator it = jsonObject.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
+            data.put(entry.getKey(), entry.getValue());
+        }
+        RecordSendData recordSendData = new RecordSendData(tmp, data, createEmailSender(), mailingRecordDTO.getRetryCount());
+        record.setSendData(recordSendData);
+        sendRecord(record, true);
+    }
 }
