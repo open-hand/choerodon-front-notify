@@ -4,8 +4,11 @@ import com.github.pagehelper.PageInfo;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.notify.api.dto.RecordListDTO;
+import io.choerodon.notify.api.dto.WebhookRecordVO;
 import io.choerodon.notify.api.service.MessageRecordService;
+import io.choerodon.notify.api.service.WebhookRecordService;
 import io.choerodon.notify.domain.Record;
+import io.choerodon.notify.infra.dto.WebhookRecordDTO;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +26,12 @@ public class MessageRecordSiteController {
 
     private MessageRecordService messageRecordService;
 
-    public MessageRecordSiteController(MessageRecordService messageRecordService) {
+    private WebhookRecordService webhookRecordService;
+
+    public MessageRecordSiteController(MessageRecordService messageRecordService,
+                                       WebhookRecordService webhookRecordService) {
         this.messageRecordService = messageRecordService;
+        this.webhookRecordService = webhookRecordService;
     }
 
     @Permission(type = ResourceType.SITE)
@@ -48,4 +55,15 @@ public class MessageRecordSiteController {
         return messageRecordService.manualRetrySendEmail(id);
     }
 
+    @Permission(type = ResourceType.SITE)
+    @PostMapping("/web_hook_records")
+    @ApiOperation(value = "查询WebHook发送记录(分页接口)")
+    @CustomPageRequest
+    public ResponseEntity<PageInfo<WebhookRecordDTO>> pagingByMessage(@ApiIgnore
+                                                                      @SortDefault(value = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                      @RequestBody WebhookRecordVO webhookRecordVO,
+                                                                      @RequestParam(required = false, name = "project_org") String projectOrg) {
+
+        return new ResponseEntity<>(webhookRecordService.pagingWebHookRecord(pageable, webhookRecordVO, projectOrg), HttpStatus.OK);
+    }
 }
