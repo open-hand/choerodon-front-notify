@@ -18,7 +18,8 @@ class MsgRecordStore {
     { current, pageSize },
     { status, email, templateType, failedReason, retryStatus },
     { columnKey = 'id', order = 'descend' },
-    params, appType, orgId) {
+    params, appType, orgId,
+  ) {
     const queryObj = {
       page: current,
       size: pageSize,
@@ -38,13 +39,13 @@ class MsgRecordStore {
       queryObj.sort = sorter.join(',');
     }
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.get(`/notify/v1/records/emails${path}?${querystring.stringify(queryObj)}`);
+    return axios.get(`/hmsg/choerodon/v1/records/emails${path}?${querystring.stringify(queryObj)}`);
   }
 
   retry = (id, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
     const method = appType === 'site' ? 'post' : 'get';
-    return axios[method](`/notify/v1/records/emails/${id}/retry${path}`);
+    return axios[method](`/hmsg/choerodon/v1/records/emails/${id}/retry${path}`);
   }
 }
 

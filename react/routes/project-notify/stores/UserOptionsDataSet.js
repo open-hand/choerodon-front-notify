@@ -4,7 +4,7 @@ export default (projectId) => ({
   paging: false,
   transport: {
     read: {
-      url: `/base/v1/projects/${projectId}/users/search_by_name`,
+      url: `/iam/choerodon/v1/projects/${projectId}/users/search_by_name`,
       method: 'get',
     },
   },

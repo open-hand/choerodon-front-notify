@@ -20,7 +20,7 @@ const MessageTypeTable = () => {
     if (status) {
       disableModal.close();
     }
-    const url = `/notify/v1/notices/send_settings/${status ? 'disabled' : 'enabled'}?code=${code}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/${status ? 'disabled' : 'enabled'}?code=${code}`;
     const res = await axios.put(url);
     messageTypeTableDataSet.query();
   }
@@ -39,7 +39,7 @@ const MessageTypeTable = () => {
   async function changeReceive() {
     const config = messageTypeTableDataSet.current.get('allowConfig');
     const id = messageTypeTableDataSet.current.get('id');
-    const url = `/notify/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
     const res = await axios.put(url);
     messageTypeTableDataSet.query();
   }

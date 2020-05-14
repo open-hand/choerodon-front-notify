@@ -22,11 +22,11 @@ export default (intl, intlPrefix) => {
     ],
     transport: {
       read: {
-        url: 'notify/v1/notices/configs/email',
+        url: 'hmsg/choerodon/v1/notices/configs/email',
         method: 'get',
       },
       submit: ({ data }) => ({
-        url: 'notify/v1/notices/configs/email',
+        url: 'hmsg/choerodon/v1/notices/configs/email',
         method: 'put',
         data: data[0],
       }),

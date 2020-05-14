@@ -44,7 +44,7 @@ const WebhooksSetting = () => {
       ),
       onOk: async () => {
         try {
-          const res = await axios.post(`/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`, {
+          const res = await axios.post(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`, {
             ...createWebhooksFormDataSet.toJSONData()[0],
             sendSettingIdList: createTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
           });
@@ -67,7 +67,7 @@ const WebhooksSetting = () => {
   };
 
   const editWebhooks = async (record) => {
-    editWebhooksFormDataSet.queryUrl = `/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/${record.get('id')}`;
+    editWebhooksFormDataSet.queryUrl = `/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/${record.get('id')}`;
     await editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
@@ -79,7 +79,7 @@ const WebhooksSetting = () => {
       },
       onOk: async () => {
         try {
-          const res = await axios.put(`/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}`, {
+          const res = await axios.put(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}`, {
             ...editWebhooksFormDataSet.toData()[0],
             sendSettingIdList: editTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
             triggerEventSelection: undefined,
@@ -113,7 +113,7 @@ const WebhooksSetting = () => {
 
   const toggleWebhooks = async (record) => {
     try {
-      const res = await axios.put(`notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/${record.get('enableFlag') ? 'disabled' : 'enabled'}`);
+      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/${record.get('enableFlag') ? 'disabled' : 'enabled'}`);
       if (res.failed) {
         message(res.message);
         throw Error();

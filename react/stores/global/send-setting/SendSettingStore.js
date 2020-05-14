@@ -88,17 +88,17 @@ class SendSettingStore {
       queryObj.sort = sorter.join(',');
     }
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.get(`/notify/v1/notices/send_settings${path}?${querystring.stringify(queryObj)}`);
+    return axios.get(`/hmsg/choerodon/v1/notices/send_settings${path}?${querystring.stringify(queryObj)}`);
   }
 
   loadCurrentRecord = (id, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.get(`/notify/v1/notices/send_settings/${id}${path}`);
+    return axios.get(`/hmsg/choerodon/v1/notices/send_settings/${id}${path}`);
   };
 
   loadTemplate = (appType, orgId, businessType) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    axios.get(`notify/v1/notices/emails/templates/names${path}?business_type=${businessType}`).then((data) => {
+    axios.get(`hmsg/choerodon/v1/notices/emails/templates/names${path}?business_type=${businessType}`).then((data) => {
       if (data.failed) {
         Choerodon.prompt(data.message);
       } else {
@@ -109,7 +109,7 @@ class SendSettingStore {
 
   loadPmTemplate = (appType, orgId, businessType) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    axios.get(`notify/v1/notices/letters/templates/names${path}?business_type=${businessType}`).then((data) => {
+    axios.get(`hmsg/choerodon/v1/notices/letters/templates/names${path}?business_type=${businessType}`).then((data) => {
       if (data.failed) {
         Choerodon.prompt(data.message);
       } else {
@@ -120,7 +120,7 @@ class SendSettingStore {
 
   loadSmsTemplate = (appType, orgId, businessType) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    axios.get(`notify/v1/notices/sms/templates/names${path}?business_type=${businessType}`).then((data) => {
+    axios.get(`hmsg/choerodon/v1/notices/sms/templates/names${path}?business_type=${businessType}`).then((data) => {
       if (data.failed) {
         Choerodon.prompt(data.message);
       } else {
@@ -131,10 +131,10 @@ class SendSettingStore {
 
   modifySetting = (id, body, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.put(`notify/v1/notices/send_settings/${id}${path}`, JSON.stringify(body));
+    return axios.put(`hmsg/choerodon/v1/notices/send_settings/${id}${path}`, JSON.stringify(body));
   };
 
-  deleteSettingById = id => axios.delete(`notify/v1/notices/send_settings/${id}`);
+  deleteSettingById = id => axios.delete(`hmsg/choerodon/v1/notices/send_settings/${id}`);
 }
 
 const sendSettingStore = new SendSettingStore();

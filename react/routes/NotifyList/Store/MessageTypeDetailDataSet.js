@@ -24,12 +24,12 @@ export default function (templateDataSet) {
     ],
     transport: {
       read: {
-        url: '/notify/v1/notices/send_settings/detail',
+        url: '/hmsg/choerodon/v1/notices/send_settings/detail',
         method: 'get',
       },
       update: ({ data: [data] }) => (
         {
-          url: `/notify/v1/notices/send_settings/${data.id}/send_setting`,
+          url: `/hmsg/choerodon/v1/notices/send_settings/${data.id}/send_setting`,
           method: 'put',
           data,
         }

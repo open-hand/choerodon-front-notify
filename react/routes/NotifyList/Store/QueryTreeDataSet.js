@@ -20,7 +20,7 @@ export default function ({ setCurrentPageType, store }) {
     ],
     transport: {
       read: {
-        url: 'notify/v1/notices/send_settings/tree',
+        url: 'hmsg/choerodon/v1/notices/send_settings/tree',
         method: 'get',
       },
     },

@@ -13,7 +13,7 @@ const WebhookRecordDetail = ({ ds, recordId, itemType, type, id, orgId, useStore
 
   useEffect(() => {
     async function init() {
-      webhookRecordDetailDataSet.queryUrl = `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hook_records/deatils/${recordId}`;
+      webhookRecordDetailDataSet.queryUrl = `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hook_records/deatils/${recordId}`;
       await webhookRecordDetailDataSet.query();
       setRequestHeaders(webhookRecordDetailDataSet.current.get('webhookRecordDetailVO').requestHeaders);
       setRequestBody(webhookRecordDetailDataSet.current.get('webhookRecordDetailVO').requestBody);

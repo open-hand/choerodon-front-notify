@@ -27,11 +27,11 @@ export default (intl, intlPrefix) => {
     ],
     transport: {
       read: {
-        url: '/notify/v1/sms/config?organization_id=0',
+        url: '/hmsg/choerodon/v1/sms/config?organization_id=0',
         method: 'get',
       },
       submit: ({ data }) => ({
-        url: `/notify/v1/sms/config/${data[0].id || 0}`,
+        url: `/hmsg/choerodon/v1/sms/config/${data[0].id || 0}`,
         method: 'put',
         data: data[0],
       }),

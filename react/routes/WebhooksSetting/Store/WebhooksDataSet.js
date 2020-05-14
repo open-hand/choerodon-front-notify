@@ -14,7 +14,7 @@ export default (id, type, orgId) => ({
   ],
   transport: {
     read: {
-      url: `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`,
+      url: `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`,
       method: 'get',
       params: {
         sourceLevel: type,
@@ -34,7 +34,7 @@ export default (id, type, orgId) => ({
       },
     },
     destroy: ({ data: [record, ...etc] }) => ({
-      url: `notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.id}`,
+      url: `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.id}`,
       method: 'delete',
       data: undefined,
     }),

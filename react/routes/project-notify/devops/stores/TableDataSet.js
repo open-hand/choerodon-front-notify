@@ -39,7 +39,7 @@ export default ({ formatMessage, intlPrefix, projectId }) => ({
   primaryKey: 'key',
   transport: {
     read: {
-      url: `/notify/v1/projects/${projectId}/message_settings/devops`,
+      url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/devops`,
       method: 'get',
       transformResponse(response) {
         try {
@@ -66,7 +66,7 @@ export default ({ formatMessage, intlPrefix, projectId }) => ({
         }
       });
       return ({
-        url: `/notify/v1/projects/${projectId}/message_settings/devops/batch`,
+        url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/devops/batch`,
         method: 'put',
         data: res,
       });

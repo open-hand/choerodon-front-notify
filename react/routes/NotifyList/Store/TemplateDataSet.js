@@ -13,16 +13,16 @@ export default function () {
     ],
     transport: {
       read: {
-        url: '/notify/v1/notices/send_settings',
+        url: '/hmsg/choerodon/v1/notices/send_settings',
         method: 'get',
       },
       create: ({ data: [data] }) => ({
-        url: '/notify/v1/templates',
+        url: '/hmsg/choerodon/v1/templates',
         method: 'post',
         data,
       }),
       update: ({ data: [data] }) => ({
-        url: '/notify/v1/templates',
+        url: '/hmsg/choerodon/v1/templates',
         method: 'post',
         data,
       }),

@@ -41,7 +41,7 @@ export default (id, businessType, type, datasetType, intl, intlPrefix) => {
       { name: 'predefined', type: 'boolean', label: predefined },
       {
         name: 'current',
-        type: 'string', 
+        type: 'string',
         label: intl.formatMessage({ id: `${intlPrefix}.current` }),
         // textField: 'emailTemplateTitle',
         // valueField: 'emailTemplateId',
@@ -64,11 +64,11 @@ export default (id, businessType, type, datasetType, intl, intlPrefix) => {
 
     transport: {
       read: ({ params }) => ({
-        url: `notify/v1/templates?businessType=${businessType}&messageType=${type}`,
+        url: `hmsg/choerodon/v1/templates?businessType=${businessType}&messageType=${type}`,
         method: 'get',
       }),
       submit: ({ data }) => ({
-        url: `notify/v1/templates/${type}?set_to_the_current=${data[0].defaultTemplate.split(',')[1] ? data[0].defaultTemplate.split(',')[1] : data[0].defaultTemplate}`,
+        url: `hmsg/choerodon/v1/templates/${type}?set_to_the_current=${data[0].defaultTemplate.split(',')[1] ? data[0].defaultTemplate.split(',')[1] : data[0].defaultTemplate}`,
         method: 'post',
         data: {
           ...data[0],

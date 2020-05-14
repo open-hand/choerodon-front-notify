@@ -42,7 +42,7 @@ export default (id, type, businessType, isCurrent, intl, intlPrefix) => {
     ],
     transport: {
       read: {
-        url: `notify/v1/templates/${id}`,
+        url: `hmsg/choerodon/v1/templates/${id}`,
         method: 'get',
         transformResponse(data) {
           return ({
@@ -52,7 +52,7 @@ export default (id, type, businessType, isCurrent, intl, intlPrefix) => {
         },
       },
       submit: ({ data }) => ({
-        url: `notify/v1/templates/${type}/${id}?set_to_the_current=${reqCurrentData(data[0].current)}`,
+        url: `hmsg/choerodon/v1/templates/${type}/${id}?set_to_the_current=${reqCurrentData(data[0].current)}`,
         method: 'put',
         data: {
           ...data[0],

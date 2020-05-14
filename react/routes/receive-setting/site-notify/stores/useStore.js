@@ -14,7 +14,7 @@ export default function useStore() {
 
     async loadReceiveData() {
       try {
-        const res = await axios.get('notify/v1/notices/receive_setting?source_type=site');
+        const res = await axios.get('hmsg/choerodon/v1/notices/receive_setting?source_type=site');
         if (res && res.failed) {
           Choerodon.prompt(res.message);
         } else {

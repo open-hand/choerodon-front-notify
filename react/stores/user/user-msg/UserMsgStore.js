@@ -219,7 +219,7 @@ class UserMsgStore {
   @action
   readMsg(data) {
     data = data === undefined ? [...this.selectMsg] : data;
-    return axios.put(`/notify/v1/notices/sitemsgs/batch_read?user_id=${this.userInfo.id}`, data);
+    return axios.put(`/hmsg/choerodon/v1/notices/sitemsgs/batch_read?user_id=${this.userInfo.id}`, data);
   }
 
   /**
@@ -230,7 +230,7 @@ class UserMsgStore {
   @action
   deleteMsg(data) {
     data = data === undefined ? [...this.selectMsg] : data;
-    return axios.put(`/notify/v1/notices/sitemsgs/batch_delete?user_id=${this.userInfo.id}`, JSON.stringify(data));
+    return axios.put(`/hmsg/choerodon/v1/notices/sitemsgs/batch_delete?user_id=${this.userInfo.id}`, JSON.stringify(data));
   }
 
   /**
@@ -254,7 +254,7 @@ class UserMsgStore {
     }
     this.filters = filters;
     this.params = params;
-    return axios.get(`/notify/v1/notices/sitemsgs?${queryString.stringify({
+    return axios.get(`/hmsg/choerodon/v1/notices/sitemsgs?${queryString.stringify({
       user_id: this.userInfo.id,
       read: showAll ? null : false,
       page: pagination.current,
@@ -265,7 +265,7 @@ class UserMsgStore {
   }
 
   @action loadAnnouncement(pagination = this.pagination, filters, sort, params = this.params) {
-    return axios.get(`/notify/v1/system_notice/completed?${queryString.stringify({
+    return axios.get(`/hmsg/choerodon/v1/system_notice/completed?${queryString.stringify({
       page: pagination.current,
       size: pagination.pageSize,
     })}`);

@@ -51,10 +51,10 @@ export default observer(() => {
     if (record.get('enabled')) {
       // 停用
       disableModal.close();
-      await axios.put(`/notify/v1/notices/send_settings/disabled?code=${code}`);
+      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/disabled?code=${code}`);
     } else {
       // 启用
-      await axios.put(`/notify/v1/notices/send_settings/enabled?code=${code}`);
+      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/enabled?code=${code}`);
     }
     await queryTreeDataSet.query();
     const { currentCode, currentSelectedType } = currentPageType;

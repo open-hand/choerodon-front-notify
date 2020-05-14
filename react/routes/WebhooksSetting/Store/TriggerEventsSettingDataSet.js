@@ -21,7 +21,7 @@ export default (type, id, orgType, orgId) => ({
   ],
   transport: {
     read: ({ data, params }) => ({
-      url: `notify/v1/${orgType === 'project' ? `projects/${id}` : `organization/${orgId}`}/send_settings`,
+      url: `hmsg/choerodon/v1/${orgType === 'project' ? `projects/${id}` : `organization/${orgId}`}/send_settings`,
       method: 'get',
       transformResponse(JSONData) {
         const { sendSettingCategorySelection, sendSettingSelection } = JSON.parse(JSONData);

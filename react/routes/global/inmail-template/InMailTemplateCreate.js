@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { Button, Select, Form, Input, Popover, Icon } from 'choerodon-ui';
@@ -82,7 +83,7 @@ export default class InMailTemplateCreate extends Component {
    */
   checkCode = (rule, value, callback) => {
     const { intl } = this.props;
-    axios.post('notify/v1/notices/letters/templates/check', value).then((mes) => {
+    axios.post('hmsg/choerodon/v1/notices/letters/templates/check', value).then((mes) => {
       if (mes.failed) {
         callback(intl.formatMessage({ id: 'inmailtemplate.code.exist' }));
       } else {

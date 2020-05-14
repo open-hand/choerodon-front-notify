@@ -20,7 +20,7 @@ function MsgEmail(props) {
     return axios({
       // url: `/notify/v1/records/emails/${record.get('id')}/retry${getTypePath()}`,
       // method: type === 'site' ? 'post' : 'get',
-      url: `/notify/v1/records/emails/${record.get('id')}/retry`,
+      url: `/hmsg/choerodon/v1/records/emails/${record.get('id')}/retry`,
       method: 'post',
     }).then((data) => {
       let msg = intl.formatMessage({ id: 'msgrecord.send.success' });

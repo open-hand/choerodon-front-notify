@@ -24,7 +24,7 @@ export default function Tab() {
   async function changeMake() {
     const status = sendSettingDataSet.current.get('enabled');
     const id = sendSettingDataSet.current.get('id');
-    const url = `/notify/v1/notices/send_settings/${id}/${status ? 'disabled' : 'enabled'}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/${status ? 'disabled' : 'enabled'}`;
     const res = await axios.put(url);
     sendSettingDataSet.query();
   }
@@ -32,7 +32,7 @@ export default function Tab() {
   async function changeReceive() {
     const config = sendSettingDataSet.current.get('allowConfig');
     const id = sendSettingDataSet.current.get('id');
-    const url = `/notify/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
     const res = await axios.put(url);
     sendSettingDataSet.query();
   }

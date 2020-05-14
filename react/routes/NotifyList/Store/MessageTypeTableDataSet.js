@@ -77,7 +77,7 @@ export default function (optionDs) {
     }],
     transport: {
       read: (props) => ({
-        url: '/notify/v1/notices/send_settings',
+        url: '/hmsg/choerodon/v1/notices/send_settings',
         method: 'get',
       }),
     },

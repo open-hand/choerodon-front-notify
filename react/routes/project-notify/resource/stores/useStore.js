@@ -25,7 +25,7 @@ export default function useStore() {
     async checkEnabled() {
       this.setLoading(true);
       try {
-        const res = await axios.get('/notify/v1/notices/send_settings/codes/resourceDeleteConfirmation/check_enabled');
+        const res = await axios.get('/hmsg/choerodon/v1/notices/send_settings/codes/resourceDeleteConfirmation/check_enabled');
         this.setLoading(false);
         if (res && res.failed) {
           Choerodon.prompt(res.message);

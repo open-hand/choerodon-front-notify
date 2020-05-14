@@ -83,7 +83,7 @@ class SmsTemplateStore {
 
   loadTemplateType = (appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.get(`/notify/v1/notices/send_settings/names${path}`);
+    return axios.get(`/hmsg/choerodon/v1/notices/send_settings/names${path}`);
   };
 
   createTemplate = (data, appType, orgId) => axios.post('sms/v1/templates', JSON.stringify({ ...data, messageType: 'sms' }));

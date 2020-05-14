@@ -4,7 +4,7 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
   paging: false,
   transport: {
     read: {
-      url: `/notify/v1/projects/${projectId}/message_settings/agile`,
+      url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/agile`,
       method: 'get',
       transformResponse(response) {
         try {
@@ -31,7 +31,7 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
         res.push(item);
       });
       return ({
-        url: `/notify/v1/projects/${projectId}/message_settings/agile/batch`,
+        url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/agile/batch`,
         method: 'put',
         data: res,
       });

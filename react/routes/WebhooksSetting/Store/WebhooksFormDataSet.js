@@ -22,7 +22,7 @@ const typeOptionDataSet = new DataSet({
 export default function (type, id, children, orgId, orgType) {
   const validateWebhooksPath = async (value) => {
     try {
-      const res = await axios.get(`notify/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
+      const res = await axios.get(`hmsg/choerodon/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
         params: {
           id,
           path: value,
@@ -75,7 +75,7 @@ export default function (type, id, children, orgId, orgType) {
         },
       }),
       update: ({ data }) => ({
-        url: `notify/v1/projects/${id}/web_hooks/${data[0].id}`,
+        url: `hmsg/choerodon/v1/projects/${id}/web_hooks/${data[0].id}`,
         method: 'put',
         data: {
           ...data[0],

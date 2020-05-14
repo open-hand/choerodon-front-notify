@@ -20,11 +20,11 @@ export default (intl, intlPrefix) => {
     ],
     transport: {
       read: {
-        url: 'notify/v1/system_notice/all',
+        url: 'hmsg/choerodon/v1/system_notice/all',
         method: 'get',
       },
       submit: ({ data }) => ({
-        url: 'notify/v1/system_notice/create',
+        url: 'hmsg/choerodon/v1/system_notice/create',
         method: 'post',
         data: data[0],
       }),

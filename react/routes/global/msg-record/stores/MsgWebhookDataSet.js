@@ -3,7 +3,7 @@ export default () => ({
   selection: false,
   transport: {
     read: {
-      url: '/notify/v1/records/web_hook_records',
+      url: '/hmsg/choerodon/v1/records/web_hook_records',
       method: 'post',
     },
   },

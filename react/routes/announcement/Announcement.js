@@ -49,7 +49,7 @@ class AnnouncementType {
     this.values = { name: name || 'Choerodon' };
     this.type = type;
     this.orgId = id;
-    this.apiPrefix = '/notify/v1/system_notice';
+    this.apiPrefix = '/hmsg/choerodon/v1/system_notice';
     this.intlPrefix = `${codePrefix}.announcement`;
     this.intlValue = type === 'organization' ? name : AppState.getSiteInfo.systemName || 'Choerodon';
   }
@@ -247,7 +247,7 @@ export default class Announcement extends Component {
             {text}
           </MouseOverWrapper>
         ),
-      }, 
+      },
     ];
   }
 
@@ -542,7 +542,7 @@ export default class Announcement extends Component {
             onChange={(value) => {
               AnnouncementStore.setEditorContent(value);
             }}
-          /> 
+          />
         </Modal>
       </div>
     );
