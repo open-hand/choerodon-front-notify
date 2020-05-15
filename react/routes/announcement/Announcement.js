@@ -587,16 +587,9 @@ export default class Announcement extends Component {
     const { intlPrefix } = this.announcementType;
     const { AnnouncementStore: { selectType } } = this.props;
     return (
-      <Page
-        service={[
-          'notify-service.system-announcement.pagingQuery',
-          'notify-service.system-announcement.create',
-          'notify-service.system-announcement.update',
-          'notify-service.system-announcement.delete',
-        ]}
-      >
+      <Page>
         <Header>
-          <Permission service={['notify-service.system-announcement.create']}>
+          <Permission>
             <Button
               onClick={() => this.handleOpen('create')}
               icon="playlist_add"

@@ -14,9 +14,7 @@ function MsgWebhook() {
   const StatusCard = ({ value }) => (<StatusTag name={<FormattedMessage id={value.toLowerCase()} />} color={value !== 'FAILED' ? ENABLED_GREEN : DISABLED_GRAY} />);
 
   return (
-    <TabPage
-      service={['notify-service.webhook-record.pagingByMessage']}
-    >
+    <TabPage>
       <Breadcrumb />
       <Content
         values={{ name: AppState.getSiteInfo.systemName || 'Choerodon' }}

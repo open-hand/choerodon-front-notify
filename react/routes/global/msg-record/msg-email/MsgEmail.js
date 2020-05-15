@@ -57,9 +57,7 @@ function MsgEmail(props) {
 
   function render() {
     return (
-      <TabPage
-        service={permissions}
-      >
+      <TabPage>
         <Breadcrumb />
         <Content
           values={{ name: AppState.getSiteInfo.systemName || 'Choerodon' }}
