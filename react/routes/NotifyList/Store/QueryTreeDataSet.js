@@ -22,6 +22,15 @@ export default function ({ setCurrentPageType, store }) {
       read: {
         url: 'hmsg/choerodon/v1/notices/send_settings/tree',
         method: 'get',
+        transformResponse: (data) => {
+          const newData = JSON.parse(data);
+          return newData.map(d => {
+            if (!d.name) {
+              d.name = '';
+            }
+            return d;
+          });
+        },
       },
     },
     events: {

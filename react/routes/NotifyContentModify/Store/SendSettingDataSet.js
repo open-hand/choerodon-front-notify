@@ -27,6 +27,7 @@ export default (id, businessType, type, intl, intlPrefix, templateDataSet) => {
         method: 'get',
         transformResponse(data) {
           return ({
+            list: JSON.parse(data).content,
             ...JSON.parse(data),
             // sendInstantly: data.sendInstantly ? data.sendInstantly : false,
             // manualRetry: data.manualRetry ? data.manualRetry : false,

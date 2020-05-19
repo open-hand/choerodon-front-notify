@@ -79,6 +79,12 @@ export default function (optionDs) {
       read: (props) => ({
         url: '/hmsg/choerodon/v1/notices/send_settings',
         method: 'get',
+        transformResponse(data) {
+          return ({
+            list: JSON.parse(data).content,
+            ...JSON.parse(data),
+          });
+        },
       }),
     },
   };

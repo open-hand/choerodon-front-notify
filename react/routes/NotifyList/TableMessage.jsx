@@ -30,7 +30,7 @@ export default observer(() => {
   let disableModal;
 
   function getTitle(record) {
-    const name = record.get('name').toLowerCase();
+    const name = record.get('name') && record.get('name').toLowerCase();
     const searchValue = inputValue.toLowerCase();
     const index = name.indexOf(searchValue);
     const beforeStr = name.substr(0, index).toLowerCase();
