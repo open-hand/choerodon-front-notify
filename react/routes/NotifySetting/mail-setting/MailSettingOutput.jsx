@@ -11,7 +11,7 @@ export default (props) => {
   const context = useContext(store);
   const { mailSettingDataSet } = context;
 
-  const testConnection = async () => axios.post('hmsg/choerodon/v1/notices/configs/email/test', mailSettingDataSet.current && mailSettingDataSet.current.toData()).then((data) => {
+  const testConnection = async () => axios.get('hmsg/choerodon/v1/notices/configs/email/test', mailSettingDataSet.current && mailSettingDataSet.current.toData()).then((data) => {
     if (data.failed) {
       Choerodon.prompt(data.message);
     } else {
