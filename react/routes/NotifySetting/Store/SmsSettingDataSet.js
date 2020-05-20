@@ -27,7 +27,7 @@ export default (intl, intlPrefix) => {
     ],
     transport: {
       read: {
-        url: '/hmsg/choerodon/v1/sms/config?organization_id=0',
+        url: '/hmsg/choerodon/v1/notices/configs/sms?organization_id=0',
         method: 'get',
       },
       submit: ({ data }) => ({
