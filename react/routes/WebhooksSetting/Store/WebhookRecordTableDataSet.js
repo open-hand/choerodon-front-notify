@@ -65,8 +65,8 @@ export default (id, type, orgId) => {
             Json: 'JSON',
           };
           const data = JSON.parse(res);
-          if (data.list) {
-            const newList = data.list.map(d => {
+          if (data.content) {
+            const newList = data.content.map(d => {
               if (d.sendTime) {
                 d.sendTimeAround = `${handleLoadTime(d.sendTime, moment().format('YYYY-MM-DD HH:mm:ss'))}前`;
               } else {

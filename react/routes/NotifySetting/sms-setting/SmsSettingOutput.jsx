@@ -54,7 +54,7 @@ export default observer((props) => {
           onClick={() => openSideBar()}
           icon="mode_edit"
         >
-          {'修改'}
+          修改
         </Button>
       </Header>
       <Breadcrumb />
@@ -63,18 +63,20 @@ export default observer((props) => {
         className="msg-config"
       >
         <Spin dataSet={smsSettingDataSet}>
-          <Form className="c7n-smssetting-form" pristine dataSet={smsSettingDataSet} labelLayout="horizontal" labelAlign="left" labelWidth={120}>
-            <Output name="signature" />
-            <Output name="hostAddress" />
-            <Output name="hostPort" renderer={OutputEmptyValue} />
-            <Output
-              name="sendType"
-              renderer={({ value }) => (
-                <span>{singleSendApiMap.get(value)}</span>
-              )}
-            />
-            <Output name={`${sendType}SendApi`} renderer={OutputEmptyValue} />
-            <Output renderer={() => '••••••'} name="secretKey" />
+          <Form
+            className="c7n-smssetting-form"
+            pristine
+            dataSet={smsSettingDataSet}
+            labelLayout="horizontal"
+            labelAlign="left"
+            labelWidth={150}
+          >
+            <Output name="serverCode" />
+            <Output name="signName" />
+            <Output name="serverTypeCode" />
+            <Output name="endPoint" />
+            <Output name="accessKey" />
+            <Output name="accessKeySecret" renderer={() => '••••••'} />
           </Form>
         </Spin>
       </Content>

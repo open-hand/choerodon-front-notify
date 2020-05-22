@@ -16,9 +16,6 @@ export default (id, type, orgId) => ({
     read: {
       url: `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`,
       method: 'get',
-      params: {
-        sourceLevel: type,
-      },
       transformResponse(res) {
         let newRes;
         try {
@@ -26,7 +23,7 @@ export default (id, type, orgId) => ({
         } catch (e) {
           newRes = res;
         }
-        newRes.list = newRes.list.map((l) => {
+        newRes.list = newRes.content.map((l) => {
           l.isScrolling = false;
           return l;
         });

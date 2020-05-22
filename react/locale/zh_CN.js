@@ -237,7 +237,11 @@ const pageDetail = {
   'global.notifySetting.smssetting.batchSendApi': '批量调用地址',
   'global.notifySetting.smssetting.singleSendApi': '单体调用地址',
   'global.notifySetting.smssetting.asyncSendApi': '异步调用地址',
-  'global.notifySetting.smssetting.secretKey': '短信服务器密钥',
+  'global.notifySetting.smssetting.accessKey': 'AccessKey',
+  'global.notifySetting.smssetting.accessKeySecret': 'AccessKeySecret',
+  'global.notifySetting.smssetting.endPoint': 'EndPoint',
+  'global.notifySetting.smssetting.code': '账号代码',
+  'global.notifySetting.smssetting.serviceType': '服务类型',
 
   // 事务定义
   'global.saga.title': '平台"{name}"的事务定义',

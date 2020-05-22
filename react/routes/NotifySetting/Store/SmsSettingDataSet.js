@@ -1,14 +1,10 @@
-const SendApiDynamicProps = ({ record, name }) => (`${record.get('sendType')}SendApi` === name ? { ignore: 'never' } : { ignore: 'always' });
-
-export default (intl, intlPrefix) => {
+export default (intl, intlPrefix, serverTypeDs) => {
   const signature = intl.formatMessage({ id: `${intlPrefix}.signature` });
-  const hostAddress = intl.formatMessage({ id: `${intlPrefix}.hostAddress` });
-  const hostPort = intl.formatMessage({ id: `${intlPrefix}.hostPort` });
-  const sendType = intl.formatMessage({ id: `${intlPrefix}.sendType` });
-  const singleSendApi = intl.formatMessage({ id: `${intlPrefix}.singleSendApi` });
-  const batchSendApi = intl.formatMessage({ id: `${intlPrefix}.batchSendApi` });
-  const asyncSendApi = intl.formatMessage({ id: `${intlPrefix}.asyncSendApi` });
-  const secretKey = intl.formatMessage({ id: `${intlPrefix}.secretKey` });
+  const accessKeySecret = intl.formatMessage({ id: `${intlPrefix}.accessKeySecret` });
+  const accessKey = intl.formatMessage({ id: `${intlPrefix}.accessKey` });
+  const endPoint = intl.formatMessage({ id: `${intlPrefix}.endPoint` });
+  const code = intl.formatMessage({ id: `${intlPrefix}.code` });
+  const serviceType = intl.formatMessage({ id: `${intlPrefix}.serviceType` });
   return {
     autoQuery: true,
     selection: false,
@@ -16,14 +12,12 @@ export default (intl, intlPrefix) => {
     dataKey: false,
     fields: [
       { name: 'id', type: 'string' },
-      { name: 'signature', type: 'string', label: signature, required: true },
-      { name: 'hostAddress', type: 'url', label: hostAddress, required: true },
-      { name: 'hostPort', type: 'number', min: 1, max: 65535, label: hostPort },
-      { name: 'sendType', type: 'string', label: sendType },
-      { name: 'singleSendApi', type: 'string', label: singleSendApi, dynamicProps: SendApiDynamicProps },
-      { name: 'batchSendApi', type: 'string', label: batchSendApi, dynamicProps: SendApiDynamicProps },
-      { name: 'asyncSendApi', type: 'string', label: asyncSendApi, dynamicProps: SendApiDynamicProps },
-      { name: 'secretKey', type: 'string', label: secretKey, required: true },
+      { name: 'signName', type: 'string', label: signature, required: true },
+      { name: 'accessKey', type: 'string', label: accessKey, required: true },
+      { name: 'accessKeySecret', type: 'string', label: accessKeySecret },
+      { name: 'endPoint', type: 'string', label: endPoint },
+      { name: 'serverCode', type: 'string', label: code, required: true },
+      { name: 'serverTypeCode', type: 'string', label: serviceType, required: true, textField: 'name', valueField: 'code', options: serverTypeDs },
     ],
     transport: {
       read: {

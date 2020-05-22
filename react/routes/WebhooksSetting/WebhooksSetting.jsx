@@ -67,7 +67,7 @@ const WebhooksSetting = () => {
   };
 
   const editWebhooks = async (record) => {
-    editWebhooksFormDataSet.queryUrl = `/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/${record.get('id')}`;
+    editWebhooksFormDataSet.queryUrl = `/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/record`;
     await editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
@@ -113,7 +113,7 @@ const WebhooksSetting = () => {
 
   const toggleWebhooks = async (record) => {
     try {
-      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/${record.get('enableFlag') ? 'disabled' : 'enabled'}`);
+      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/update_status?enable_flag=${record.get('enableFlag') ? 'false' : 'true'}`, JSON.stringify());
       if (res.failed) {
         message(res.message);
         throw Error();

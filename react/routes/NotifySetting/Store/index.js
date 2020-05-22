@@ -13,8 +13,25 @@ export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
     const { AppState: { currentMenuType: { type, id } }, intl, children } = props;
     const intlPrefix = 'global.notifySetting';
+    const serverTypeDs = useMemo(() => new DataSet({
+      data: [
+        {
+          name: '阿里云',
+          code: 'ali',
+        },
+        {
+          name: '腾讯云',
+          code: 'tencent',
+        },
+        {
+          name: '百度云',
+          code: 'baidu',
+        },
+      ],
+      selection: 'single',
+    }), []);
     const mailSettingDataSet = useMemo(() => new DataSet(MailSettingDataSet(intl, `${intlPrefix}.mailsetting`)));
-    const smsSettingDataSet = useMemo(() => new DataSet(SmsSettingDataSet(intl, `${intlPrefix}.smssetting`)));
+    const smsSettingDataSet = useMemo(() => new DataSet(SmsSettingDataSet(intl, `${intlPrefix}.smssetting`, serverTypeDs)));
     const value = {
       ...props,
       intlPrefix,
