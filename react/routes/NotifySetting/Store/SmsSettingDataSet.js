@@ -17,7 +17,7 @@ export default (intl, intlPrefix, serverTypeDs) => {
       { name: 'accessKeySecret', type: 'string', label: accessKeySecret },
       { name: 'endPoint', type: 'string', label: endPoint },
       { name: 'serverCode', type: 'string', label: code, required: true },
-      { name: 'serverTypeCode', type: 'string', label: serviceType, required: true, textField: 'name', valueField: 'code', options: serverTypeDs },
+      { name: 'serverTypeCode', type: 'string', label: serviceType, required: true, textField: 'meaning', valueField: 'value', options: serverTypeDs },
     ],
     transport: {
       read: {
@@ -25,7 +25,7 @@ export default (intl, intlPrefix, serverTypeDs) => {
         method: 'get',
       },
       submit: ({ data }) => ({
-        url: `/hmsg/choerodon/v1/sms/config/${data[0].id || 0}`,
+        url: '/hmsg/choerodon/v1/notices/configs/sms',
         method: 'put',
         data: data[0],
       }),

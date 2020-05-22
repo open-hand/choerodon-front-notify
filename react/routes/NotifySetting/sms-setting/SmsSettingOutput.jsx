@@ -10,7 +10,7 @@ const OutputEmptyValue = ({ value }) => (value ? <span>{value}</span> : <span>�
 
 export default observer((props) => {
   const context = useContext(store);
-  const { smsSettingDataSet, singleSendApiMap } = context;
+  const { smsSettingDataSet, singleSendApiMap, serverTypeDs } = context;
   const sendType = smsSettingDataSet.current && smsSettingDataSet.current.getPristineValue('sendType');
 
   const submitFunc = () => new Promise((resolve, reject) => {
@@ -44,6 +44,13 @@ export default observer((props) => {
       // beforeClose: (a, b, c) => { debugger;window.console.log('after close'); },
     });
   };
+
+  function renderType({ value }) {
+    const selectedRecord = serverTypeDs.filter((typeRecord) => typeRecord.get('value') === value)[0];
+    const meaning = selectedRecord ? selectedRecord.get('meaning') || '-' : '-';
+    return meaning;
+  }
+
   return (
     <Page>
       <Header
@@ -73,7 +80,7 @@ export default observer((props) => {
           >
             <Output name="serverCode" />
             <Output name="signName" />
-            <Output name="serverTypeCode" />
+            <Output name="serverTypeCode" renderer={renderType} />
             <Output name="endPoint" />
             <Output name="accessKey" />
             <Output name="accessKeySecret" renderer={() => '••••••'} />
