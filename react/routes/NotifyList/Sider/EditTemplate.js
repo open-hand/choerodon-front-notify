@@ -7,10 +7,29 @@ import './index.less';
 
 export default observer(({ context, modal, type }) => {
   const { messageTypeDetailDataSet } = context;
-  const dataSet = messageTypeDetailDataSet.children.templates;
-  let record = messageTypeDetailDataSet.children.templates.find((item) => item.getPristineValue('sendingType') === type);
+  const dataSet = messageTypeDetailDataSet.children.messageTemplateVOS;
+  let record;
+  if (type === 'webHookJson') {
+    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('JSON'));
+  } else if (type === 'webHookOther') {
+    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('DingTalkAndWeChat'));
+  } else {
+    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === type);
+  }
   if (!record) {
-    dataSet.create({ content: '', sendingType: type, isPredefined: false, sendSettingCode: messageTypeDetailDataSet.current.get('code') });
+    dataSet.create({ templateContent: '',
+      sendingType: type.includes('webHook') ? 'WEB_HOOK' : type,
+      isPredefined: false,
+      messageCode: messageTypeDetailDataSet.current.get('messageCode'),
+      templateCode: (function () {
+        if (type === 'webHookJson') {
+          return 'CHOERODON.DELETE_APP_SERVICE_JSON';
+        } else if (type === 'webHookOther') {
+          return 'CHOERODON.DELETE_APP_SERVICE_DingTalkAndWeChat';
+        } else {
+          return '';
+        }
+      }()) });
     record = dataSet.current;
   }
   modal.handleOk(async () => {
@@ -29,17 +48,17 @@ export default observer(({ context, modal, type }) => {
     dataSet.reset();
   });
   switch (type) {
-    case 'email':
-    case 'pm':
+    case 'EMAIL':
+    case 'WEB':
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
-            <TextField label={type === 'email' ? '邮件主题' : '站内信标题'} name="title" />
+            <TextField label={type === 'EMAIL' ? '邮件主题' : '站内信标题'} name="templateTitle" />
             <ChoerodonEditor
               nomore
               toolbarContainer="toolbar"
-              value={record.get('content')}
-              onChange={(value) => record.set('content', value)}
+              value={record.get('templateContent')}
+              onChange={(value) => record.set('templateContent', value)}
             />
           </Form>
         </div>
@@ -50,19 +69,19 @@ export default observer(({ context, modal, type }) => {
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
-            <TextField label="模板主题" name="title" />
+            <TextField label="模板主题" name="templateTitle" />
             <MdEditor
-              value={record.get('content')}
-              onChange={(value) => record.set('content', value)}
+              value={record.get('templateContent')}
+              onChange={(value) => record.set('templateContent', value)}
             />
           </Form>
         </div>
       );
-    case 'sms':
+    case 'SMS':
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
-            <TextArea resize="vertical" label="短信内容" name="content" />
+            <TextArea resize="vertical" label="短信内容" name="templateContent" />
           </Form>
         </div>
       );

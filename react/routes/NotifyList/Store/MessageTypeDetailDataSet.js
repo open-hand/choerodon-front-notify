@@ -7,7 +7,7 @@ export default function (templateDataSet) {
     paging: false,
     autoQueryAfterSubmit: false,
     children: {
-      templates: templateDataSet,
+      messageTemplateVOS: templateDataSet,
     },
     fields: [
       { name: 'enabled', type: 'boolean' },
@@ -18,22 +18,46 @@ export default function (templateDataSet) {
       { name: 'backlogFlag', type: 'boolean', label: '是否为代办提醒' },
       { name: 'emailEnabledFlag', type: 'boolean', label: '邮件' },
       { name: 'pmEnabledFlag', type: 'boolean', label: '站内信' },
-      { name: 'webhookOtherEnabledFlag', type: 'boolean', label: 'webhook-钉钉微信' },
+      { name: 'webhookEnabledFlag', type: 'boolean', label: 'webhook-钉钉微信' },
       { name: 'webhookJsonEnabledFlag', type: 'boolean', label: 'webhook-Json' },
       { name: 'smsEnabledFlag', type: 'boolean', label: '短信' },
     ],
     transport: {
-      read: {
-        url: '/hmsg/choerodon/v1/notices/send_settings/detail',
+      read: ({ data: { id } }) => ({
+        url: `/hmsg/choerodon/v1/notices/send_settings/detail?tempServerId=${id}`,
         method: 'get',
+        transformResponse(data) {
+          const newData = JSON.parse(data);
+          Object.keys(newData).forEach((k) => {
+            if (k.includes('EnabledFlag')) {
+              if (newData[k]) {
+                newData[k] = true;
+              } else {
+                newData[k] = false;
+              }
+            }
+          });
+          return newData;
+        },
+      }),
+      update: ({ data: [data] }) => {
+        Object.keys(data).forEach((k) => {
+          if (k.includes('EnabledFlag')) {
+            if (data[k]) {
+              data[k] = 1;
+            } else {
+              data[k] = 0;
+            }
+          }
+        });
+        return (
+          {
+            url: `/hmsg/choerodon/v1/notices/send_settings/${data.tempServerId}/send_setting`,
+            method: 'put',
+            data,
+          }
+        );
       },
-      update: ({ data: [data] }) => (
-        {
-          url: `/hmsg/choerodon/v1/notices/send_settings/${data.id}/send_setting`,
-          method: 'put',
-          data,
-        }
-      ),
     },
   };
 }

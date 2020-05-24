@@ -9,7 +9,7 @@ export default function () {
 
     fields: [
       { name: 'type', type: 'string', label: '类型' },
-      { name: 'content', type: 'string' },
+      { name: 'templateContent', type: 'string' },
     ],
     transport: {
       read: {
@@ -22,7 +22,7 @@ export default function () {
         data,
       }),
       update: ({ data: [data] }) => ({
-        url: '/hmsg/choerodon/v1/templates',
+        url: '/hmsg/v1/0/message/templates',
         method: 'post',
         data,
       }),

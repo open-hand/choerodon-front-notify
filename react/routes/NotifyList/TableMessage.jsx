@@ -161,7 +161,7 @@ export default observer(() => {
   }
 
   function editTemplate(type, title) {
-    messageTypeDetailDataSet.children.templates.reset();
+    messageTypeDetailDataSet.children.messageTemplateVOS.reset();
     Modal.open({
       title,
       drawer: true,
@@ -174,11 +174,11 @@ export default observer(() => {
     return currentPageType.currentSelectedType === 'form' && (
       <Header>
         <Button icon="mode_edit" onClick={editSendSettings}>修改发送设置</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('email', '修改邮件模板')}>修改邮件模板</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('pm', '修改站内信模板')}>修改站内信模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('EMAIL', '修改邮件模板')}>修改邮件模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('WEB', '修改站内信模板')}>修改站内信模板</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('webHookJson', '修改webhook-Json模板')}>修改webhook-Json模板</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('webHookOther', '修改webhook-钉钉微信模板')}>修改webhook-钉钉微信模板</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('sms', '修改短信模板')}>修改短信模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('SMS', '修改短信模板')}>修改短信模板</Button>
       </Header>
     );
   }
