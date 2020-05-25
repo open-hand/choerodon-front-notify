@@ -37,6 +37,9 @@ export default function (templateDataSet) {
               }
             }
           });
+          if (!newData.messageTemplateVOS) {
+            newData.messageTemplateVOS = [];
+          }
           return newData;
         },
       }),

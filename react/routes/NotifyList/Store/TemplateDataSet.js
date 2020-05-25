@@ -1,6 +1,6 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
 
-export default function () {
+export default function (organizationId) {
   return {
     autoQuery: false,
     selection: false,
@@ -17,13 +17,13 @@ export default function () {
         method: 'get',
       },
       create: ({ data: [data] }) => ({
-        url: '/hmsg/choerodon/v1/templates',
+        url: `/hmsg/v1/${organizationId}/message/templates`,
         method: 'post',
         data,
       }),
       update: ({ data: [data] }) => ({
-        url: '/hmsg/v1/0/message/templates',
-        method: 'post',
+        url: `/hmsg/v1/${organizationId}/message/templates`,
+        method: 'put',
         data,
       }),
     },
