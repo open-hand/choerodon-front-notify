@@ -11,16 +11,16 @@ import './index.less';
 
 export default props => (
   <StoreProvider {...props}>
-    <PageWrap cache noHeader={['choerodon.code.project.setting-notify-agile', 'choerodon.code.project.setting-notify-devops', 'choerodon.code.project.setting-notify-resource']}>
-      <PageTab alwaysShow title="敏捷消息" tabKey="choerodon.code.project.setting-notify-agile" component={AgileContent} />
-      <PageTab alwaysShow title="Devops消息" tabKey="choerodon.code.project.setting-notify-devops" component={DevopsContent} />
+    <PageWrap noHeader={['choerodon.code.project.setting-notify-agile', 'choerodon.code.project.setting-notify-devops', 'choerodon.code.project.setting-notify-resource']}>
+      <PageTab route="/notify/project-notify/agile" title="敏捷消息" tabKey="choerodon.code.project.setting-notify-agile" component={AgileContent} />
+      <PageTab route="/notify/project-notify/devops" title="Devops消息" tabKey="choerodon.code.project.setting-notify-devops" component={DevopsContent} />
       <PageTab
-        alwaysShow
+        route="/notify/project-notify/resource"
         title={<Tips title="资源删除验证" helpText="资源删除验证用于为项目下所有环境中的资源删除操作配置二次确认的通知信息，配置成功后，当用户在执行相应的删除操作时，就需要输入验证码进行二次确认" placement="topLeft" />}
         tabKey="choerodon.code.project.setting-notify-resource"
         component={ResourceContent}
       />
-      <PageTab alwaysShow title="Webhook配置" tabKey="choerodon.code.project.setting-notify-webhook" component={WebhookContent} />
+      <PageTab route="/notify/project-notify/webhook" title="Webhook配置" tabKey="choerodon.code.project.setting-notify-webhook" component={WebhookContent} />
     </PageWrap>
   </StoreProvider>
 );
