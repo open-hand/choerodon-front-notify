@@ -30,11 +30,11 @@ export default function (optionDs) {
     selection: false,
     paging: true,
     fields: [{
-      name: 'messageType',
+      name: 'messageName',
       type: 'string',
       label: '消息类型',
     }, {
-      name: 'introduce',
+      name: 'description',
       type: 'string',
       label: '说明',
     }, {

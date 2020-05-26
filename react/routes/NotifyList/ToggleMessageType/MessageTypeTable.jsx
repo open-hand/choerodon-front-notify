@@ -78,7 +78,7 @@ const MessageTypeTable = () => {
       </div>
       <Table className="message-service" dataSet={messageTypeTableDataSet}>
         <Column
-          name="messageType"
+          name="messageName"
           className={`${cssPrefix}-nameContainer link`}
           onCell={({ record }) => ({
             onClick: () => {
@@ -92,7 +92,7 @@ const MessageTypeTable = () => {
           })}
         />
         <Column renderer={ActionRenderer} width={50} />
-        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="messageTypeValue" />
+        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="description" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={80} name="enabled" renderer={getEnabled} align="left" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={147} name="allowConfig" renderer={getAllowConfig} />
       </Table>
