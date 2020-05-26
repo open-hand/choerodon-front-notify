@@ -82,8 +82,8 @@ const MessageTypeTable = () => {
           className={`${cssPrefix}-nameContainer link`}
           onCell={({ record }) => ({
             onClick: () => {
-              messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
-              messageTypeDetailDataSet.setQueryParameter('id', record.get('id'));
+              // messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
+              messageTypeDetailDataSet.setQueryParameter('tempServerId', record.get('id'));
               messageTypeDetailDataSet.query();
               setCurrentPageType({
                 currentSelectedType: 'form',
@@ -92,7 +92,7 @@ const MessageTypeTable = () => {
           })}
         />
         <Column renderer={ActionRenderer} width={50} />
-        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="introduce" />
+        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="messageTypeValue" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={80} name="enabled" renderer={getEnabled} align="left" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={147} name="allowConfig" renderer={getAllowConfig} />
       </Table>

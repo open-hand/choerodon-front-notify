@@ -1,7 +1,7 @@
 /**
  * hover 显示全称
  */
-
+/* eslint-disable */
 import React, { Component } from 'react';
 import { Tooltip } from 'choerodon-ui';
 import PropTypes from 'prop-types';
@@ -48,7 +48,7 @@ export default class MouserOverWrapper extends Component {
 
   render() {
     const { text, width, className, style } = this.props;
-    const menuWidth = document.getElementsByClassName('common-menu')[0].offsetWidth || 250;
+    const menuWidth = document.getElementsByClassName('common-menu').length > 0 ? document.getElementsByClassName('common-menu')[0].offsetWidth || 250 : 250;
     const iWidth = window.innerWidth - 48 - menuWidth;
     const maxWidth = typeof width === 'number' ? iWidth * width : width.slice(0, -2);
     const textStyle = {
@@ -65,11 +65,13 @@ export default class MouserOverWrapper extends Component {
     if (text && domWidth <= maxWidth) {
       return <div style={textStyle} className={className}> {this.props.children}</div>;
     } else {
-      return (<Tooltip title={text} placement="topLeft">
-        <div style={textStyle} className={className}>
-          {this.props.children}
-        </div>
-      </Tooltip>);
+      return (
+        <Tooltip title={text} placement="topLeft">
+          <div style={textStyle} className={className}>
+            {this.props.children}
+          </div>
+        </Tooltip>
+      );
     }
   }
 }

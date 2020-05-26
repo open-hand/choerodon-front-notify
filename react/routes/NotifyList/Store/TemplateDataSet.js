@@ -17,7 +17,7 @@ export default function (organizationId) {
         method: 'get',
       },
       create: ({ data: [data] }) => ({
-        url: `/hmsg/v1/${organizationId}/message/templates`,
+        url: '/hmsg/choerodon/v1/notices/send_settings/template',
         method: 'post',
         data,
       }),
