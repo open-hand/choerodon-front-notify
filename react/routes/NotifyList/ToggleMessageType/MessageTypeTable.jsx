@@ -83,7 +83,7 @@ const MessageTypeTable = () => {
           onCell={({ record }) => ({
             onClick: () => {
               // messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
-              messageTypeDetailDataSet.setQueryParameter('tempServerId', record.get('id'));
+              messageTypeDetailDataSet.setQueryParameter('tempServerCode', record.get('messageCode'));
               messageTypeDetailDataSet.query();
               setCurrentPageType({
                 currentSelectedType: 'form',

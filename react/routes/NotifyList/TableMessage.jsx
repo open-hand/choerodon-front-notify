@@ -125,7 +125,7 @@ export default observer(() => {
         });
       } else if (level === 2) {
         // messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
-        messageTypeDetailDataSet.setQueryParameter('tempServerId', record.get('id'));
+        messageTypeDetailDataSet.setQueryParameter('tempServerCode', record.get('code'));
         messageTypeDetailDataSet.query();
         setCurrentPageType({
           currentSelectedType: 'form',

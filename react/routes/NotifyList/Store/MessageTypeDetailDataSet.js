@@ -23,7 +23,7 @@ export default function (templateDataSet) {
       { name: 'smsEnabledFlag', type: 'boolean', label: '短信' },
     ],
     transport: {
-      read: ({ data: { tempServerId } }) => ({
+      read: ({ data: { tempServerCode } }) => ({
         url: '/hmsg/choerodon/v1/notices/send_settings/detail',
         method: 'get',
         transformResponse(data) {
