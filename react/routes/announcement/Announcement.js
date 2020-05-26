@@ -445,20 +445,6 @@ export default class Announcement extends Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout}>
-            {getFieldDecorator('sendNotices', {
-              rules: [],
-              initialValue: isModify ? currentRecord.sendNotices : true,
-            })(
-              <RadioGroup
-                label={<FormattedMessage id="announcement.send.letter" />}
-                className="radioGroup"
-              >
-                <Radio value>{intl.formatMessage({ id: 'yes' })}</Radio>
-                <Radio value={false}>{intl.formatMessage({ id: 'no' })}</Radio>
-              </RadioGroup>,
-            )}
-          </FormItem>
-          <FormItem {...formItemLayout}>
             {getFieldDecorator('sticky', {
               rules: [],
               initialValue: isModify ? currentRecord.sticky || false : false,
