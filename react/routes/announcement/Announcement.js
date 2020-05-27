@@ -255,7 +255,7 @@ export default class Announcement extends Component {
     const actionDatas = [];
     if (record.status === 'WAITING') {
       actionDatas.push({
-        service: ['notify-service.system-announcement.update'],
+        service: ['choerodon.code.site.manager.announcement.ps.update'],
         text: <FormattedMessage id="modify" />,
         action: () => this.handleOpen('modify', record),
       });
@@ -265,7 +265,7 @@ export default class Announcement extends Component {
       action: () => this.handleOpen('detail', record),
     });
     actionDatas.push({
-      service: ['notify-service.system-announcement.delete'],
+      service: ['choerodon.code.site.manager.announcement.ps.delete'],
       text: <FormattedMessage id="delete" />,
       action: () => this.handleDelete(record),
     });
