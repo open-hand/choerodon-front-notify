@@ -18,11 +18,21 @@ configure({ enforceActions: false });
 const patternHTMLEmpty = /^(((<[^i>]+>)*\s*)|&nbsp;|\s)*$/g;
 const modalKey = ProModal.key();
 const iconType = {
-  COMPLETED: 'COMPLETED',
-  SENDING: 'RUNNING',
-  WAITING: 'UN_START',
+  // COMPLETED: 'COMPLETED',
+  // SENDING: 'RUNNING',
+  // WAITING: 'UN_START',
   // FAILED: 'FAILED',
+  PUBLISHED: 'COMPLETED',
+  DRAFT: 'UN_START',
+  DELETED: 'DELETED',
 };
+
+const colorCode = {
+  PUBLISHED: '#00BFA5',
+  DELETED: '#d3d3d3',
+  DRAFT: '#ffb100',
+};
+
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const formItemLayout = {
@@ -116,6 +126,8 @@ export default class Announcement extends Component {
                 } else {
                   Choerodon.prompt(data.message);
                 }
+              }).catch(() => {
+                AnnouncementStore.setSubmitting(false);
               });
             } else {
               AnnouncementStore.modifyAnnouncement({
@@ -135,6 +147,8 @@ export default class Announcement extends Component {
                 } else {
                   Choerodon.prompt(data.message);
                 }
+              }).catch(() => {
+                AnnouncementStore.setSubmitting(false);
               });
             }
           } else {
@@ -233,7 +247,7 @@ export default class Announcement extends Component {
         render: status => (
           <StatusTag
             name={intl.formatMessage({ id: status ? `announcement.${status.toLowerCase()}` : 'announcement.completed' })}
-            colorCode={status || iconType.COMPLETED}
+            color={colorCode[status]}
           />
         ),
       }, {
