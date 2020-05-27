@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, CheckBox, Radio, NumberField, message, TextField } from 'choerodon-ui/pro';
 import './index.less';
 
 export default function ({ context, modal }) {
   const { messageTypeDetailDataSet } = context;
+
+  const [enabledList, setEnabledList] = useState({});
+
+  useEffect(() => {
+    const obj = {};
+    const messageTemplateVOS = messageTypeDetailDataSet.current.get('messageTemplateVOS');
+    const keys = ['EMAIL', 'WEB', 'webHookJson', 'webHookOther', 'SMS'];
+    keys.forEach(k => {
+      let flag = false;
+      if (k === 'webHookJson') {
+        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK') && messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK').templateCode.includes('JSON');
+      } else if (k === 'webHookOther') {
+        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK') && messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK').templateCode.includes('DingTalkAndWeChat');
+      } else {
+        flag = !!messageTemplateVOS.some(m => m.sendingType === k);
+      }
+      obj[k] = flag;
+    });
+    setEnabledList(obj);
+  }, []);
+
   modal.handleOk(async () => {
     try {
       if (await messageTypeDetailDataSet.submit() !== false) {
@@ -24,11 +45,11 @@ export default function ({ context, modal }) {
       <div className="c7n-notify-contentList-sider-label">发送方式</div>
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
         {/* <TextField renderer={renderCheckbox} name="emailEnabledFlag" /> */}
-        <CheckBox name="emailEnabledFlag" />
-        <CheckBox name="pmEnabledFlag" />
-        <CheckBox name="webhookEnabledFlag" />
-        <CheckBox name="webhookJsonEnabledFlag" />
-        <CheckBox name="smsEnabledFlag" />
+        <CheckBox disabled={!enabledList.EMAIL} name="emailEnabledFlag" />
+        <CheckBox disabled={!enabledList.WEB} name="pmEnabledFlag" />
+        <CheckBox disabled={!enabledList.webHookOther} name="webhookEnabledFlag" />
+        <CheckBox disabled={!enabledList.webHookJson} name="webhookJsonEnabledFlag" />
+        <CheckBox disabled={!enabledList.SMS} name="smsEnabledFlag" />
       </Form>
       <div className="c7n-notify-contentList-sider-label">是否允许配置接收</div>
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
