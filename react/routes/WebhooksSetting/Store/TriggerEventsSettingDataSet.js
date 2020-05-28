@@ -24,9 +24,9 @@ export default (type, id, orgType, orgId) => ({
       url: `hmsg/choerodon/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/send_settings`,
       method: 'get',
       transformResponse(JSONData) {
-        const { sendSettingCategorySelection, sendSettingSelection } = JSON.parse(JSONData);
-        const list = (sendSettingCategorySelection || []).map(item => ({ ...item, description: null }));
-        return [...list, ...(sendSettingSelection || [])];
+        const { categories, sendSettings } = JSON.parse(JSONData);
+        const list = ([categories] || []).map(item => ({ ...item, description: null }));
+        return [...list, ...(sendSettings || [])];
       },
       params: {
         ...params,

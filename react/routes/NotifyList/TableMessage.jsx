@@ -51,10 +51,10 @@ export default observer(() => {
     if (record.get('enabled')) {
       // 停用
       disableModal.close();
-      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/disabled?code=${code}`);
+      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/update_status?code=${code}&status=false`);
     } else {
       // 启用
-      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/enabled?code=${code}`);
+      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/update_status?code=${code}&status=true`);
     }
     await queryTreeDataSet.query();
     const { currentCode, currentSelectedType } = currentPageType;
@@ -84,8 +84,8 @@ export default observer(() => {
         action: () => (enabled ? openStopModal(record) : handleToggleState(record)),
       },
     ];
-    if (!children) {
-      return <Action style={{ position: 'absolute', top: '0.04rem', right: '0.05rem' }} data={actionDatas} onClick={(e) => e.stopPropagation()} />;
+    if (!['undefined', 'null'].includes(String(enabled))) {
+      return <Action style={{ position: 'absolute', right: '0.05rem' }} data={actionDatas} onClick={(e) => e.stopPropagation()} />;
     }
     return null;
   }
