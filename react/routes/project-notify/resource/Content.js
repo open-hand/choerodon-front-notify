@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { TabPage, Content, Breadcrumb, Choerodon } from '@choerodon/boot';
+import { TabPage, Content, Breadcrumb, Choerodon, Permission } from '@choerodon/boot';
 import { Table, CheckBox, Icon, Dropdown, Spin } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { Prompt } from 'react-router-dom';
@@ -44,7 +44,7 @@ export default observer(props => {
   function handleHeaderChange(value, type, flagName) {
     tableDs.forEach((record) => record.get(flagName) && record.set(type, value));
   }
-  
+
   function renderCheckBoxHeader(name, flagName) {
     const disabled = !tableDs.find((record) => record.get(flagName));
     const isChecked = !disabled && tableDs.totalCount && !tableDs.find((record) => !record.get(name) && record.get(flagName));
@@ -91,7 +91,7 @@ export default observer(props => {
       />
     );
   }
-  
+
   function renderNotifyObject({ record }) {
     if (!record.get('groupId')) {
       return '-';
@@ -160,7 +160,11 @@ export default observer(props => {
               renderer={renderNotifyObject}
             />
           </Table>
-          <FooterButtons onOk={saveSettings} onCancel={refresh} />
+          <Permission
+            service={['choerodon.code.project.setting.setting-notify.ps.resourcdelete-save']}
+          >
+            <FooterButtons onOk={saveSettings} onCancel={refresh} />
+          </Permission>
         </Fragment>
       );
     } else {
@@ -174,7 +178,7 @@ export default observer(props => {
   }
 
   return (
-    <TabPage service={permissions}>
+    <TabPage service={['choerodon.code.project.setting.setting-notify.ps.resource\t']}>
       <Breadcrumb />
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-page-content`}>

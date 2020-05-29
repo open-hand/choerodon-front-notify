@@ -2,7 +2,7 @@ import React, { useContext, useState, useRef, useCallback, useEffect } from 'rea
 import { Table, Button, Modal } from 'choerodon-ui/pro';
 import { message, Popover, Icon } from 'choerodon-ui';
 import { useMeasure } from 'react-use';
-import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page } from '@choerodon/boot';
+import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page, Permission } from '@choerodon/boot';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import WebhookRecord from './WebhookRecord';
 import Store from './Store';
@@ -10,6 +10,12 @@ import Store from './Store';
 import './index.less';
 
 const { Column } = Table;
+
+const Services = {
+  pageService: '',
+  createService: '',
+  recordService: '',
+};
 
 const WebhooksSetting = () => {
   const {
@@ -27,6 +33,14 @@ const WebhooksSetting = () => {
     prefixCls,
     AppState: { currentMenuType: { type, id, orgId } },
   } = useContext(Store);
+
+  useEffect(() => {
+    if (type === 'organization') {
+      Services.pageService = 'choerodon.code.organization.setting.webhooks-setting.ps.default';
+      Services.createService = 'choerodon.code.organization.setting.webhooks-setting.ps.create';
+      Services.recordService = 'choerodon.code.organization.setting.webhooks-setting.ps.records';
+    }
+  }, []);
 
   const [ref, { width }] = useMeasure();
 
@@ -266,10 +280,18 @@ const WebhooksSetting = () => {
   );
 
   return (
-    <Page>
+    <Page
+      service={Services.pageService}
+    >
       <Header>
-        <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
-        <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
+        <Permission service={Services.createService}>
+          <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
+        </Permission>
+        <Permission
+          service={Services.recordService}
+        >
+          <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
+        </Permission>
       </Header>
       <Breadcrumb />
       <Content className={`${prefixCls}-content`}>

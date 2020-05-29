@@ -52,17 +52,23 @@ export default observer((props) => {
   }
 
   return (
-    <Page>
+    <Page
+      service={['choerodon.code.site.setting.notify.msg-config.ps.sms']}
+    >
       <Header
         title="通知配置"
       >
-        <Button
-          color="blue"
-          onClick={() => openSideBar()}
-          icon="mode_edit"
+        <Permission
+          service={['choerodon.code.site.setting.notify.msg-config.ps.edit-sms']}
         >
-          修改
-        </Button>
+          <Button
+            color="blue"
+            onClick={() => openSideBar()}
+            icon="mode_edit"
+          >
+            修改
+          </Button>
+        </Permission>
       </Header>
       <Breadcrumb />
       <Content

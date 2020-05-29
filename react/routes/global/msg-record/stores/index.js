@@ -21,9 +21,7 @@ export const StoreProvider = injectIntl(inject('AppState')(
       ...props,
       intlPrefix,
       permissions: [
-        'notify-service.message-record-site.pageEmail',
-        'notify-service.message-record-org.pageEmail',
-        'notify-service.webhook-record.pagingByMessage',
+        'choerodon.code.site.manager.message-log.ps.email',
       ],
       ENABLED_GREEN: 'rgba(0, 191, 165, 1)',
       DISABLED_GRAY: 'rgba(0, 0, 0, 0.2)',

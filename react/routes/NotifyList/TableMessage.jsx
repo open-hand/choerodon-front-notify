@@ -1,6 +1,6 @@
 import React, { Component, useContext, useState } from 'react/index';
 import { Table, Button, Tree, Icon, TextField, Modal } from 'choerodon-ui/pro';
-import { Header, axios, Page, Breadcrumb, Content, PageTab, Action } from '@choerodon/boot';
+import { Header, axios, Page, Breadcrumb, Content, PageTab, Action, Permission } from '@choerodon/boot';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import EditSendSettings from './Sider/EditSendSettings';
@@ -85,7 +85,13 @@ export default observer(() => {
       },
     ];
     if (!['undefined', 'null'].includes(String(enabled))) {
-      return <Action style={{ position: 'absolute', right: '0.05rem' }} data={actionDatas} onClick={(e) => e.stopPropagation()} />;
+      return (
+        <Permission
+          service={['choerodon.code.site.setting.notify.msg-service.ps.disable']}
+        >
+          <Action style={{ position: 'absolute', right: '0.05rem' }} data={actionDatas} onClick={(e) => e.stopPropagation()} />
+        </Permission>
+      );
     }
     return null;
   }
@@ -215,7 +221,9 @@ export default observer(() => {
   }
 
   return (
-    <Page>
+    <Page
+      service={['choerodon.code.site.setting.notify.msg-service.ps.default']}
+    >
       {getPageHeader()}
       <Breadcrumb />
       <Content className={cssPrefix}>

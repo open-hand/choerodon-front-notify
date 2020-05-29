@@ -587,9 +587,11 @@ export default class Announcement extends Component {
     const { intlPrefix } = this.announcementType;
     const { AnnouncementStore: { selectType } } = this.props;
     return (
-      <Page>
+      <Page
+        service={['choerodon.code.site.manager.announcement.ps.default']}
+      >
         <Header>
-          <Permission>
+          <Permission service={['choerodon.code.site.manager.announcement.ps.add']}>
             <Button
               onClick={() => this.handleOpen('create')}
               icon="playlist_add"

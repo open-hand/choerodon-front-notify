@@ -48,7 +48,7 @@ const MessageTypeTable = () => {
     const enabled = record.get('enabled');
     const edit = record.get('edit');
     const actionArr = [{
-      service: [],
+      service: ['choerodon.code.site.setting.notify.msg-service.ps.disable'],
       text: enabled ? formatMessage({ id: 'disable' }) : formatMessage({ id: 'enable' }),
       action: () => (enabled ? openDisableModal() : changeMake()),
     }];
