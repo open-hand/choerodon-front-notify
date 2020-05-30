@@ -20,12 +20,13 @@ export default observer(({ context, modal, type }) => {
     dataSet.create({ templateContent: '',
       sendingType: type.includes('webHook') ? 'WEB_HOOK' : type,
       isPredefined: false,
+      isNew: true,
       messageCode: messageTypeDetailDataSet.current.get('messageCode'),
       templateCode: (function () {
         if (type === 'webHookJson') {
-          return 'CHOERODON.DELETE_APP_SERVICE_JSON';
+          return 'JSON';
         } else if (type === 'webHookOther') {
-          return 'CHOERODON.DELETE_APP_SERVICE_DingTalkAndWeChat';
+          return 'DingTalkAndWeChat';
         } else {
           return '';
         }
@@ -34,6 +35,9 @@ export default observer(({ context, modal, type }) => {
   }
   modal.handleOk(async () => {
     try {
+      if (dataSet.current.get('isNew')) {
+        dataSet.current.set('templateCode', '');
+      }
       if (await dataSet.submit() !== false) {
         messageTypeDetailDataSet.query();
       } else {

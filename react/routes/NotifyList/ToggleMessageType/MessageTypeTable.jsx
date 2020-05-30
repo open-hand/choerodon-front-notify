@@ -16,11 +16,11 @@ const MessageTypeTable = () => {
   async function changeMake() {
     const status = messageTypeTableDataSet.current.get('enabled');
     const id = messageTypeTableDataSet.current.get('id');
-    const code = messageTypeTableDataSet.current.get('code');
+    const code = messageTypeTableDataSet.current.get('messageCode');
     if (status) {
       disableModal.close();
     }
-    const url = `/hmsg/choerodon/v1/notices/send_settings/${status ? 'disabled' : 'enabled'}?code=${code}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/update_status?status=${status ? 'false' : 'true'}&code=${code}`;
     const res = await axios.put(url);
     messageTypeTableDataSet.query();
   }
