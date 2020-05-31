@@ -37,6 +37,7 @@ export default observer(({ context, modal, type }) => {
     try {
       if (dataSet.current.get('isNew')) {
         dataSet.current.set('templateCode', '');
+        dataSet.current.set('webhookType', type === 'webHookJson' ? 'Json' : 'DingTalkAndWeChat');
       }
       if (await dataSet.submit() !== false) {
         messageTypeDetailDataSet.query();

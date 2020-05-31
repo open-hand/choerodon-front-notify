@@ -81,7 +81,7 @@ const WebhooksSetting = () => {
   };
 
   const editWebhooks = async (record) => {
-    editWebhooksFormDataSet.queryUrl = `/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/record`;
+    editWebhooksFormDataSet.queryUrl = `/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/record`;
     await editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
@@ -93,7 +93,7 @@ const WebhooksSetting = () => {
       },
       onOk: async () => {
         try {
-          const res = await axios.put(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}`, {
+          const res = await axios.put(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}`, {
             ...editWebhooksFormDataSet.toData()[0],
             sendSettingIdList: editTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
             triggerEventSelection: undefined,
@@ -281,14 +281,14 @@ const WebhooksSetting = () => {
 
   return (
     <Page
-      service={Services.pageService}
+      service={[Services.pageService]}
     >
       <Header>
-        <Permission service={Services.createService}>
+        <Permission service={[Services.createService]}>
           <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
         </Permission>
         <Permission
-          service={Services.recordService}
+          service={[Services.recordService]}
         >
           <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
         </Permission>
@@ -300,13 +300,13 @@ const WebhooksSetting = () => {
             name="name"
             width="60%"
             renderer={NameRenderer}
-            // onCell={({ record }) => ({
-            //   onClick: () => editWebhooks(record),
-            // })}
+            onCell={({ record }) => ({
+              onClick: () => editWebhooks(record),
+            })}
           />
           <Column renderer={ActionRenderer} width={48} />
-          <Column name="webhookPath" renderer={PathRenderer} />
-          <Column name="type" renderer={typeRenderer} />
+          <Column name="webhookAddress" renderer={PathRenderer} />
+          <Column name="serverType" renderer={typeRenderer} />
           <Column name="enableFlag" renderer={StatusRenderer} />
         </Table>
       </Content>

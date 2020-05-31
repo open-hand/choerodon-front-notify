@@ -42,7 +42,7 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
   };
 
   useEffect(() => {
-    handleQueryTriggerEvent(dataSet.current.get('type'));
+    handleQueryTriggerEvent(dataSet.current.get('serverType'));
   }, []);
 
   const checkBoxRenderer = ({ value, record }) => {
@@ -66,8 +66,8 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
   return (
     <React.Fragment>
       <Form dataSet={dataSet} style={{ width: '5.12rem' }}>
-        <SelectBox onChange={(value) => handleQueryTriggerEvent(value)} name="type" />
-        <TextArea name="webhookPath" />
+        <SelectBox onChange={(value) => handleQueryTriggerEvent(value)} name="serverType" />
+        <TextArea name="webhookAddress" />
         {/* { */}
         {/* (function () { */}
         {/*  if (dataSet.current) { */}
@@ -79,7 +79,7 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
         {/* } */}
         {
           dataSet.current
-          && ['DingTalk', 'Json'].includes(dataSet.current.get('type'))
+          && ['DingTalk', 'Json'].includes(dataSet.current.get('serverType'))
           && <TextArea name="secret" />
         }
       </Form>

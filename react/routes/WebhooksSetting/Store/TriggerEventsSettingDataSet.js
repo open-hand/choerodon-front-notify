@@ -25,8 +25,21 @@ export default (type, id, orgType, orgId) => ({
       method: 'get',
       transformResponse(JSONData) {
         const { categories, sendSettings } = JSON.parse(JSONData);
-        const list = ([categories] || []).map(item => ({ ...item, description: null }));
-        return [...list, ...(sendSettings || [])];
+        const arrCategories = [];
+        Object.keys(categories).forEach(k => {
+          arrCategories.push({
+            code: k,
+            name: categories[k],
+          });
+        });
+        const sendSettings2 = sendSettings.map(s => {
+          s.categoryCode = s.subcategoryCode;
+          s.name = s.messageName;
+          s.id = s.tempServerId;
+          return s;
+        });
+        const list = (arrCategories || []).map(item => ({ ...item, description: null }));
+        return [...list, ...(sendSettings2 || [])];
       },
       params: {
         ...params,
