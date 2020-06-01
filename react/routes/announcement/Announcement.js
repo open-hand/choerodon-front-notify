@@ -267,13 +267,13 @@ export default class Announcement extends Component {
 
   renderAction = (text, record) => {
     const actionDatas = [];
-    if (record.status === 'WAITING') {
-      actionDatas.push({
-        service: ['choerodon.code.site.manager.announcement.ps.update'],
-        text: <FormattedMessage id="modify" />,
-        action: () => this.handleOpen('modify', record),
-      });
-    }
+    // if (record.status === 'WAITING') {
+    //   actionDatas.push({
+    //     service: ['choerodon.code.site.manager.announcement.ps.update'],
+    //     text: <FormattedMessage id="modify" />,
+    //     action: () => this.handleOpen('modify', record),
+    //   });
+    // }
     actionDatas.push({
       text: '详情',
       action: () => this.handleOpen('detail', record),
@@ -563,7 +563,7 @@ export default class Announcement extends Component {
           <div className="inline">
             <StatusTag
               name={intl.formatMessage({ id: status ? `announcement.${status.toLowerCase()}` : 'announcement.completed' })}
-              colorCode={status}
+              color={colorCode[status] || '#d3d3d3'}
             />
           </div>
         </div>

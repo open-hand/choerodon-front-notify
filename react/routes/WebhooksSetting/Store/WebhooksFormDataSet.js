@@ -66,11 +66,11 @@ export default function (type, id, children, orgId, orgType) {
         url: dataSet.queryUrl,
         method: 'get',
         transformResponse(data) {
-          const { sendSettingIdList, triggerEventSelection } = JSON.parse(data);
-          const { sendSettingCategorySelection, sendSettingSelection } = triggerEventSelection;
+          const { sendSettingIdList, templateServers } = JSON.parse(data);
+          const triggerEventSelection = templateServers;
           return {
             ...JSON.parse(data),
-            triggerEventSelection: [...sendSettingCategorySelection, ...sendSettingSelection],
+            triggerEventSelection: [...triggerEventSelection],
           };
         },
       }),
