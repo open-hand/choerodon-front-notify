@@ -14,9 +14,9 @@ export default function ({ context, modal }) {
     keys.forEach(k => {
       let flag = false;
       if (k === 'webHookJson') {
-        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK') && messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK').templateCode.includes('JSON');
+        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK' && m.templateCode.includes('JSON'));
       } else if (k === 'webHookOther') {
-        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK') && messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK').templateCode.includes('DingTalkAndWeChat');
+        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK' && m.templateCode.includes('DingTalkAndWeChat'));
       } else {
         flag = !!messageTemplateVOS.some(m => m.sendingType === k);
       }
@@ -45,11 +45,11 @@ export default function ({ context, modal }) {
       <div className="c7n-notify-contentList-sider-label">发送方式</div>
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
         {/* <TextField renderer={renderCheckbox} name="emailEnabledFlag" /> */}
-        <CheckBox disabled={!enabledList.EMAIL} name="emailEnabledFlag" />
-        <CheckBox disabled={!enabledList.WEB} name="pmEnabledFlag" />
-        <CheckBox disabled={!enabledList.webHookOther} name="webhookEnabledFlag" />
-        <CheckBox disabled={!enabledList.webHookJson} name="webhookJsonEnabledFlag" />
-        <CheckBox disabled={!enabledList.SMS} name="smsEnabledFlag" />
+        <CheckBox disabled={!enabledList.EMAIL && !messageTypeDetailDataSet.current.get('emailEnabledFlag')} name="emailEnabledFlag" />
+        <CheckBox disabled={!enabledList.WEB && !messageTypeDetailDataSet.current.get('pmEnabledFlag')} name="pmEnabledFlag" />
+        <CheckBox disabled={!enabledList.webHookOther && !messageTypeDetailDataSet.current.get('webhookEnabledFlag')} name="webhookEnabledFlag" />
+        <CheckBox disabled={!enabledList.webHookJson && !messageTypeDetailDataSet.current.get('webhookJsonEnabledFlag')} name="webhookJsonEnabledFlag" />
+        <CheckBox disabled={!enabledList.SMS && !messageTypeDetailDataSet.current.get('smsEnabledFlag')} name="smsEnabledFlag" />
       </Form>
       <div className="c7n-notify-contentList-sider-label">是否允许配置接收</div>
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
