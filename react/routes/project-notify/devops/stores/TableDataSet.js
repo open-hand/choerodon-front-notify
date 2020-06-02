@@ -2,12 +2,12 @@ function formatData(data) {
   const newData = [];
   data.forEach((item) => {
     const res = { ...item };
-    const { groupId, id } = item;
+    const { groupId, id, categoryCode, code } = item;
     if (groupId) {
-      res.key = `${groupId}-${id}`;
-      res.groupId = String(groupId);
+      res.key = `${groupId}-${code}`;
+      // res.groupId = String(groupId);
     } else {
-      res.key = String(id);
+      res.key = categoryCode;
     }
     newData.push(res);
   });
@@ -57,14 +57,7 @@ export default ({ formatMessage, intlPrefix, projectId }) => ({
       },
     },
     submit: ({ data }) => {
-      const res = [];
-      data.forEach((item) => {
-        const { groupId } = item;
-        if (groupId) {
-          item.groupId = Number(groupId);
-          res.push(item);
-        }
-      });
+      const res = data.filter(({ groupId }) => groupId);
       return ({
         url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/devops/batch`,
         method: 'put',
