@@ -127,14 +127,14 @@ const WebhooksSetting = () => {
 
   const toggleWebhooks = async (record) => {
     try {
-      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/update_status?enable_flag=${record.get('enableFlag') ? 'false' : 'true'}`, JSON.stringify());
+      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/update_status?enable_flag=${record.get('enabledFlag') ? 0 : 1}`, JSON.stringify());
       if (res.failed) {
         message(res.message);
         throw Error();
       }
-      if (!res) {
-        throw Error(res);
-      }
+      // if (!res) {
+      //   throw Error(res);
+      // }
       webhooksDataSet.query();
     } catch (e) {
       return false;
@@ -246,7 +246,7 @@ const WebhooksSetting = () => {
       },
     }, {
       service: [],
-      text: record.get('enableFlag') ? '停用' : '启用',
+      text: record.get('enabledFlag') ? '停用' : '启用',
       action: () => toggleWebhooks(record),
     }, {
       service: [],
@@ -307,7 +307,7 @@ const WebhooksSetting = () => {
           <Column renderer={ActionRenderer} width={48} />
           <Column name="webhookAddress" renderer={PathRenderer} />
           <Column name="serverType" renderer={typeRenderer} />
-          <Column name="enableFlag" renderer={StatusRenderer} />
+          <Column name="enabledFlag" renderer={StatusRenderer} />
         </Table>
       </Content>
     </Page>
