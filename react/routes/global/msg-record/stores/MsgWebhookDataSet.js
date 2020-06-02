@@ -3,8 +3,8 @@ export default () => ({
   selection: false,
   transport: {
     read: {
-      url: '/notify/v1/records/web_hook_records',
-      method: 'post',
+      url: '/hmsg/v1/messages?messageTypeCode=WEB_HOOK',
+      method: 'get',
     },
   },
   fields: [

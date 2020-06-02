@@ -23,10 +23,11 @@ export default (id, businessType, type, intl, intlPrefix, templateDataSet) => {
 
     transport: {
       read: {
-        url: `notify/v1/notices/send_settings/${id}/${type}_send_setting`,
+        url: `hmsg/choerodon/v1/notices/send_settings/${id}/${type}_send_setting`,
         method: 'get',
         transformResponse(data) {
           return ({
+            list: JSON.parse(data).content,
             ...JSON.parse(data),
             // sendInstantly: data.sendInstantly ? data.sendInstantly : false,
             // manualRetry: data.manualRetry ? data.manualRetry : false,
@@ -35,7 +36,7 @@ export default (id, businessType, type, intl, intlPrefix, templateDataSet) => {
       },
 
       submit: ({ data }) => ({
-        url: `notify/v1/notices/send_settings/${id}/${type}_send_setting`,
+        url: `hmsg/choerodon/v1/notices/send_settings/${id}/${type}_send_setting`,
         method: 'put',
         data: data[0],
       }),

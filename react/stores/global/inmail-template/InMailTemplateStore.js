@@ -82,35 +82,35 @@ class InMailTemplateStore {
       queryObj.sort = sorter.join(',');
     }
     if (appType === 'site') {
-      return axios.get(`/notify/v1/notices/letters/templates?page=${current}&size=${pageSize}&${querystring.stringify(queryObj)}`);
+      return axios.get(`/hmsg/choerodon/v1/notices/letters/templates?page=${current}&size=${pageSize}&${querystring.stringify(queryObj)}`);
     } else {
-      return axios.get(`/notify/v1/notices/letters/templates/organizations/${orgId}?page=${current}&size=${pageSize}&${querystring.stringify(queryObj)}`);
+      return axios.get(`/hmsg/choerodon/v1/notices/letters/templates/organizations/${orgId}?page=${current}&size=${pageSize}&${querystring.stringify(queryObj)}`);
     }
   };
 
   loadTemplateType = (appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.get(`/notify/v1/notices/send_settings/names${path}`);
+    return axios.get(`/hmsg/choerodon/v1/notices/send_settings/names${path}`);
   };
 
   createTemplate = (data, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.post(`notify/v1/notices/letters/templates${path}`, JSON.stringify(data));
+    return axios.post(`hmsg/choerodon/v1/notices/letters/templates${path}`, JSON.stringify(data));
   };
 
   deleteMailTemplate = (id, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.delete(`/notify/v1/notices/letters/templates/${id}${path}`);
+    return axios.delete(`/hmsg/choerodon/v1/notices/letters/templates/${id}${path}`);
   };
 
   getTemplateDetail = (id, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.get(`notify/v1/notices/letters/templates/${id}${path}`);
+    return axios.get(`hmsg/choerodon/v1/notices/letters/templates/${id}${path}`);
   };
 
   updateTemplateDetail = (id, data, appType, orgId) => {
     const path = appType === 'site' ? '' : `/organizations/${orgId}`;
-    return axios.put(`notify/v1/notices/letters/templates/${id}${path}`, JSON.stringify(data));
+    return axios.put(`hmsg/choerodon/v1/notices/letters/templates/${id}${path}`, JSON.stringify(data));
   }
 }
 

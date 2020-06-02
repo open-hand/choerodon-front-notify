@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabPage, Content, Breadcrumb, Choerodon } from '@choerodon/boot';
+import { TabPage, Content, Breadcrumb, Choerodon, Permission } from '@choerodon/boot';
 import { Table, CheckBox, Dropdown, Icon } from 'choerodon-ui/pro';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -100,7 +100,7 @@ export default observer(props => {
   }
 
   return (
-    <TabPage service={permissions}>
+    <TabPage service={['choerodon.code.project.setting.setting-notify.ps.agile']}>
       <Breadcrumb />
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-page-content`}>
@@ -118,7 +118,11 @@ export default observer(props => {
           />
           <Column renderer={renderNotifyObject} header={formatMessage({ id: `${intlPrefix}.noticeObject` })} />
         </Table>
-        <FooterButtons onOk={saveSettings} onCancel={refresh} />
+        <Permission
+          service={['choerodon.code.project.setting.setting-notify.ps.agile-save']}
+        >
+          <FooterButtons onOk={saveSettings} onCancel={refresh} />
+        </Permission>
       </Content>
     </TabPage>
   );

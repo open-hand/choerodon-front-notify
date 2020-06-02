@@ -11,7 +11,7 @@ export default (props) => {
   const context = useContext(store);
   const { mailSettingDataSet } = context;
 
-  const testConnection = async () => axios.post('notify/v1/notices/configs/email/test', mailSettingDataSet.current && mailSettingDataSet.current.toData()).then((data) => {
+  const testConnection = async () => axios.get('hmsg/choerodon/v1/notices/configs/email/test', mailSettingDataSet.current && mailSettingDataSet.current.toData()).then((data) => {
     if (data.failed) {
       Choerodon.prompt(data.message);
     } else {
@@ -53,24 +53,34 @@ export default (props) => {
   };
 
   return (
-    <Page>
+    <Page
+      service={['choerodon.code.site.setting.notify.msg-config.ps.email']}
+    >
       <Header
         title="通知配置"
       >
-        <Button
-          onClick={testConnection}
-          color="blue"
-          icon="low_priority"
+        <Permission
+          service={['choerodon.code.site.setting.notify.msg-config.ps.connect']}
         >
-          <span>连接测试</span>
-        </Button>
-        <Button
-          color="blue"
-          onClick={() => openSideBar()}
-          icon="mode_edit"
+          <Button
+            onClick={testConnection}
+            color="blue"
+            icon="low_priority"
+          >
+            <span>连接测试</span>
+          </Button>
+        </Permission>
+        <Permission
+          service={['choerodon.code.site.setting.notify.msg-config.ps.edit']}
         >
-          修改
-        </Button>
+          <Button
+            color="blue"
+            onClick={() => openSideBar()}
+            icon="mode_edit"
+          >
+            修改
+          </Button>
+        </Permission>
       </Header>
       <Breadcrumb />
       <Content

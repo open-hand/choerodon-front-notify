@@ -42,7 +42,7 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
   expandField: 'expand',
   transport: {
     read: {
-      url: `/notify/v1/projects/${projectId}/message_settings/resourceDelete`,
+      url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/resourceDelete`,
       method: 'get',
       transformResponse(response) {
         try {
@@ -77,7 +77,7 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
         }
       });
       return ({
-        url: `/notify/v1/projects/${projectId}/message_settings/resourceDelete/batch`,
+        url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/resourceDelete/batch`,
         method: 'put',
         data: newData,
       });

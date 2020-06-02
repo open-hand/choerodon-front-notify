@@ -19,12 +19,12 @@ class MailSettingStore {
 
   loadData = () => {
     this.cleanData();
-    return axios.get('notify/v1/notices/configs/email');
+    return axios.get('hmsg/choerodon/v1/notices/configs/email');
   }
 
-  updateData = data => axios.put('notify/v1/notices/configs/email', JSON.stringify(data));
+  updateData = data => axios.put('hmsg/choerodon/v1/notices/configs/email', JSON.stringify(data));
 
-  testConnection = data => axios.post('notify/v1/notices/configs/email/test', JSON.stringify(data));
+  testConnection = data => axios.post('hmsg/choerodon/v1/notices/configs/email/test', JSON.stringify(data));
 }
 
 const mailSettingStore = new MailSettingStore();

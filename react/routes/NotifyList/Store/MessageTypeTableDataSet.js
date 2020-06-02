@@ -30,11 +30,11 @@ export default function (optionDs) {
     selection: false,
     paging: true,
     fields: [{
-      name: 'messageType',
+      name: 'messageName',
       type: 'string',
       label: '消息类型',
     }, {
-      name: 'introduce',
+      name: 'description',
       type: 'string',
       label: '说明',
     }, {
@@ -77,8 +77,14 @@ export default function (optionDs) {
     }],
     transport: {
       read: (props) => ({
-        url: '/notify/v1/notices/send_settings',
+        url: '/hmsg/choerodon/v1/notices/send_settings',
         method: 'get',
+        transformResponse(data) {
+          return ({
+            list: JSON.parse(data).content,
+            ...JSON.parse(data),
+          });
+        },
       }),
     },
   };

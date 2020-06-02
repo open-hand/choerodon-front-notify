@@ -1,6 +1,6 @@
 import React, { Component, useContext, useState } from 'react/index';
 import { Table, Button, Tree, Icon, TextField, Modal } from 'choerodon-ui/pro';
-import { Header, axios, Page, Breadcrumb, Content, PageTab, Action } from '@choerodon/boot';
+import { Header, axios, Page, Breadcrumb, Content, PageTab, Action, Permission } from '@choerodon/boot';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import EditSendSettings from './Sider/EditSendSettings';
@@ -30,7 +30,7 @@ export default observer(() => {
   let disableModal;
 
   function getTitle(record) {
-    const name = record.get('name').toLowerCase();
+    const name = record.get('name') && record.get('name').toLowerCase();
     const searchValue = inputValue.toLowerCase();
     const index = name.indexOf(searchValue);
     const beforeStr = name.substr(0, index).toLowerCase();
@@ -51,10 +51,10 @@ export default observer(() => {
     if (record.get('enabled')) {
       // 停用
       disableModal.close();
-      await axios.put(`/notify/v1/notices/send_settings/disabled?code=${code}`);
+      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/update_status?code=${code}&status=false`);
     } else {
       // 启用
-      await axios.put(`/notify/v1/notices/send_settings/enabled?code=${code}`);
+      await axios.put(`/hmsg/choerodon/v1/notices/send_settings/update_status?code=${code}&status=true`);
     }
     await queryTreeDataSet.query();
     const { currentCode, currentSelectedType } = currentPageType;
@@ -84,8 +84,14 @@ export default observer(() => {
         action: () => (enabled ? openStopModal(record) : handleToggleState(record)),
       },
     ];
-    if (!children) {
-      return <Action style={{ position: 'absolute', top: '0.04rem', right: '0.05rem' }} data={actionDatas} onClick={(e) => e.stopPropagation()} />;
+    if (!['undefined', 'null'].includes(String(enabled))) {
+      return (
+        <Permission
+          service={['choerodon.code.site.setting.notify.msg-service.ps.disable']}
+        >
+          <Action style={{ position: 'absolute', right: '0.05rem' }} data={actionDatas} onClick={(e) => e.stopPropagation()} />
+        </Permission>
+      );
     }
     return null;
   }
@@ -124,7 +130,8 @@ export default observer(() => {
           title: record.get('name'),
         });
       } else if (level === 2) {
-        messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
+        // messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
+        messageTypeDetailDataSet.setQueryParameter('tempServerCode', record.get('code'));
         messageTypeDetailDataSet.query();
         setCurrentPageType({
           currentSelectedType: 'form',
@@ -161,7 +168,7 @@ export default observer(() => {
   }
 
   function editTemplate(type, title) {
-    messageTypeDetailDataSet.children.templates.reset();
+    messageTypeDetailDataSet.children.messageTemplateVOS.reset();
     Modal.open({
       title,
       drawer: true,
@@ -174,11 +181,11 @@ export default observer(() => {
     return currentPageType.currentSelectedType === 'form' && (
       <Header>
         <Button icon="mode_edit" onClick={editSendSettings}>修改发送设置</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('email', '修改邮件模板')}>修改邮件模板</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('pm', '修改站内信模板')}>修改站内信模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('EMAIL', '修改邮件模板')}>修改邮件模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('WEB', '修改站内信模板')}>修改站内信模板</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('webHookJson', '修改webhook-Json模板')}>修改webhook-Json模板</Button>
         <Button icon="mode_edit" onClick={() => editTemplate('webHookOther', '修改webhook-钉钉微信模板')}>修改webhook-钉钉微信模板</Button>
-        <Button icon="mode_edit" onClick={() => editTemplate('sms', '修改短信模板')}>修改短信模板</Button>
+        <Button icon="mode_edit" onClick={() => editTemplate('SMS', '修改短信模板')}>修改短信模板</Button>
       </Header>
     );
   }
@@ -214,7 +221,9 @@ export default observer(() => {
   }
 
   return (
-    <Page>
+    <Page
+      service={['choerodon.code.site.setting.notify.msg-service.ps.default']}
+    >
       {getPageHeader()}
       <Breadcrumb />
       <Content className={cssPrefix}>

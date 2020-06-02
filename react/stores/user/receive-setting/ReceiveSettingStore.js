@@ -93,7 +93,7 @@ class ReceiveSettingStore {
   }
 
   @action loadAllowConfigData() {
-    return axios.get('notify/v1/notices/send_settings/list/allow_config').then(action(
+    return axios.get('hmsg/choerodon/v1/notices/send_settings/list/allow_config').then(action(
       (data) => {
         if (data.failed) {
           Choerodon.prompt(data.message);
@@ -109,7 +109,7 @@ class ReceiveSettingStore {
   }
 
   @action loadReceiveSettingData() {
-    return axios.get('notify/v1/notices/receive_setting').then(action(
+    return axios.get('hmsg/choerodon/v1/notices/receive_setting').then(action(
       (data) => {
         if (data.failed) {
           Choerodon.prompt(data.message);
@@ -234,7 +234,7 @@ class ReceiveSettingStore {
     return selectLength > 0 && selectLength < checkAbleLength;
   }
 
-  saveData = () => axios.put('/notify/v1/notices/receive_setting/all', JSON.stringify(this.receiveSettingData));
+  saveData = () => axios.put('/hmsg/choerodon/v1/notices/receive_setting/all', JSON.stringify(this.receiveSettingData));
 }
 
 export default new ReceiveSettingStore();

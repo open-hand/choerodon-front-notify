@@ -18,11 +18,21 @@ configure({ enforceActions: false });
 const patternHTMLEmpty = /^(((<[^i>]+>)*\s*)|&nbsp;|\s)*$/g;
 const modalKey = ProModal.key();
 const iconType = {
-  COMPLETED: 'COMPLETED',
-  SENDING: 'RUNNING',
-  WAITING: 'UN_START',
+  // COMPLETED: 'COMPLETED',
+  // SENDING: 'RUNNING',
+  // WAITING: 'UN_START',
   // FAILED: 'FAILED',
+  PUBLISHED: 'COMPLETED',
+  DRAFT: 'UN_START',
+  DELETED: 'DELETED',
 };
+
+const colorCode = {
+  PUBLISHED: '#00BFA5',
+  DELETED: '#d3d3d3',
+  DRAFT: '#ffb100',
+};
+
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const formItemLayout = {
@@ -49,7 +59,7 @@ class AnnouncementType {
     this.values = { name: name || 'Choerodon' };
     this.type = type;
     this.orgId = id;
-    this.apiPrefix = '/notify/v1/system_notice';
+    this.apiPrefix = '/hmsg/choerodon/v1/system_notice';
     this.intlPrefix = `${codePrefix}.announcement`;
     this.intlValue = type === 'organization' ? name : AppState.getSiteInfo.systemName || 'Choerodon';
   }
@@ -116,6 +126,8 @@ export default class Announcement extends Component {
                 } else {
                   Choerodon.prompt(data.message);
                 }
+              }).catch(() => {
+                AnnouncementStore.setSubmitting(false);
               });
             } else {
               AnnouncementStore.modifyAnnouncement({
@@ -135,6 +147,8 @@ export default class Announcement extends Component {
                 } else {
                   Choerodon.prompt(data.message);
                 }
+              }).catch(() => {
+                AnnouncementStore.setSubmitting(false);
               });
             }
           } else {
@@ -233,7 +247,7 @@ export default class Announcement extends Component {
         render: status => (
           <StatusTag
             name={intl.formatMessage({ id: status ? `announcement.${status.toLowerCase()}` : 'announcement.completed' })}
-            colorCode={status || iconType.COMPLETED}
+            color={colorCode[status]}
           />
         ),
       }, {
@@ -247,25 +261,25 @@ export default class Announcement extends Component {
             {text}
           </MouseOverWrapper>
         ),
-      }, 
+      },
     ];
   }
 
   renderAction = (text, record) => {
     const actionDatas = [];
-    if (record.status === 'WAITING') {
-      actionDatas.push({
-        service: ['notify-service.system-announcement.update'],
-        text: <FormattedMessage id="modify" />,
-        action: () => this.handleOpen('modify', record),
-      });
-    }
+    // if (record.status === 'WAITING') {
+    //   actionDatas.push({
+    //     service: ['choerodon.code.site.manager.announcement.ps.update'],
+    //     text: <FormattedMessage id="modify" />,
+    //     action: () => this.handleOpen('modify', record),
+    //   });
+    // }
     actionDatas.push({
       text: '详情',
       action: () => this.handleOpen('detail', record),
     });
     actionDatas.push({
-      service: ['notify-service.system-announcement.delete'],
+      service: ['choerodon.code.site.manager.announcement.ps.delete'],
       text: <FormattedMessage id="delete" />,
       action: () => this.handleDelete(record),
     });
@@ -445,20 +459,6 @@ export default class Announcement extends Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout}>
-            {getFieldDecorator('sendNotices', {
-              rules: [],
-              initialValue: isModify ? currentRecord.sendNotices : true,
-            })(
-              <RadioGroup
-                label={<FormattedMessage id="announcement.send.letter" />}
-                className="radioGroup"
-              >
-                <Radio value>{intl.formatMessage({ id: 'yes' })}</Radio>
-                <Radio value={false}>{intl.formatMessage({ id: 'no' })}</Radio>
-              </RadioGroup>,
-            )}
-          </FormItem>
-          <FormItem {...formItemLayout}>
             {getFieldDecorator('sticky', {
               rules: [],
               initialValue: isModify ? currentRecord.sticky || false : false,
@@ -542,7 +542,7 @@ export default class Announcement extends Component {
             onChange={(value) => {
               AnnouncementStore.setEditorContent(value);
             }}
-          /> 
+          />
         </Modal>
       </div>
     );
@@ -563,7 +563,7 @@ export default class Announcement extends Component {
           <div className="inline">
             <StatusTag
               name={intl.formatMessage({ id: status ? `announcement.${status.toLowerCase()}` : 'announcement.completed' })}
-              colorCode={status}
+              color={colorCode[status] || '#d3d3d3'}
             />
           </div>
         </div>
@@ -588,15 +588,10 @@ export default class Announcement extends Component {
     const { AnnouncementStore: { selectType } } = this.props;
     return (
       <Page
-        service={[
-          'notify-service.system-announcement.pagingQuery',
-          'notify-service.system-announcement.create',
-          'notify-service.system-announcement.update',
-          'notify-service.system-announcement.delete',
-        ]}
+        service={['choerodon.code.site.manager.announcement.ps.default']}
       >
         <Header>
-          <Permission service={['notify-service.system-announcement.create']}>
+          <Permission service={['choerodon.code.site.manager.announcement.ps.add']}>
             <Button
               onClick={() => this.handleOpen('create')}
               icon="playlist_add"

@@ -6,17 +6,12 @@ import '../index.less';
 const { Option } = Select;
 
 export default observer(({ context }) => (
-  <Form className="hidden-password" dataSet={context.smsSettingDataSet} labelLayout="float" labelAlign="left">
-    <input type="password" style={{ position: 'absolute', top: '-999px' }} />
-    <TextField name="signature" />
-    <TextField name="hostAddress" />
-    <NumberField name="hostPort" />
-    <SelectBox name="sendType">
-      <Option value="batch">{context.singleSendApiMap.get('batch')}</Option>
-      <Option value="single">{context.singleSendApiMap.get('single')}</Option>
-      <Option value="async">{context.singleSendApiMap.get('async')}</Option>
-    </SelectBox>
-    <TextField name={`${context.smsSettingDataSet.current.get('sendType')}SendApi`} />
-    <Password name="secretKey" />
+  <Form dataSet={context.smsSettingDataSet}>
+    <TextField name="serverCode" />
+    <TextField name="signName" />
+    <Select name="serverTypeCode" />
+    <TextField name="endPoint" />
+    <TextField name="accessKey" />
+    <Password name="accessKeySecret" />
   </Form>
 ));

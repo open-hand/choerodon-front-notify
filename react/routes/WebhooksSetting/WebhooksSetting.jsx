@@ -2,7 +2,7 @@ import React, { useContext, useState, useRef, useCallback, useEffect } from 'rea
 import { Table, Button, Modal } from 'choerodon-ui/pro';
 import { message, Popover, Icon } from 'choerodon-ui';
 import { useMeasure } from 'react-use';
-import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page } from '@choerodon/boot';
+import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page, Permission } from '@choerodon/boot';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import WebhookRecord from './WebhookRecord';
 import Store from './Store';
@@ -10,6 +10,12 @@ import Store from './Store';
 import './index.less';
 
 const { Column } = Table;
+
+const Services = {
+  pageService: '',
+  createService: '',
+  recordService: '',
+};
 
 const WebhooksSetting = () => {
   const {
@@ -28,6 +34,14 @@ const WebhooksSetting = () => {
     AppState: { currentMenuType: { type, id, orgId } },
   } = useContext(Store);
 
+  useEffect(() => {
+    if (type === 'organization') {
+      Services.pageService = 'choerodon.code.organization.setting.webhooks-setting.ps.default';
+      Services.createService = 'choerodon.code.organization.setting.webhooks-setting.ps.create';
+      Services.recordService = 'choerodon.code.organization.setting.webhooks-setting.ps.records';
+    }
+  }, []);
+
   const [ref, { width }] = useMeasure();
 
   const handleCreateWebhooks = () => {
@@ -44,7 +58,7 @@ const WebhooksSetting = () => {
       ),
       onOk: async () => {
         try {
-          const res = await axios.post(`/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`, {
+          const res = await axios.post(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`, {
             ...createWebhooksFormDataSet.toJSONData()[0],
             sendSettingIdList: createTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
           });
@@ -67,7 +81,7 @@ const WebhooksSetting = () => {
   };
 
   const editWebhooks = async (record) => {
-    editWebhooksFormDataSet.queryUrl = `/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/${record.get('id')}`;
+    editWebhooksFormDataSet.queryUrl = `/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/record`;
     await editWebhooksFormDataSet.query();
     Modal.open({
       title: '编辑Webhook',
@@ -79,7 +93,7 @@ const WebhooksSetting = () => {
       },
       onOk: async () => {
         try {
-          const res = await axios.put(`/notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}`, {
+          const res = await axios.put(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}`, {
             ...editWebhooksFormDataSet.toData()[0],
             sendSettingIdList: editTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
             triggerEventSelection: undefined,
@@ -113,7 +127,7 @@ const WebhooksSetting = () => {
 
   const toggleWebhooks = async (record) => {
     try {
-      const res = await axios.put(`notify/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/${record.get('enableFlag') ? 'disabled' : 'enabled'}`);
+      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('id')}/update_status?enable_flag=${record.get('enableFlag') ? 'false' : 'true'}`, JSON.stringify());
       if (res.failed) {
         message(res.message);
         throw Error();
@@ -266,10 +280,18 @@ const WebhooksSetting = () => {
   );
 
   return (
-    <Page>
+    <Page
+      service={[Services.pageService]}
+    >
       <Header>
-        <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
-        <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
+        <Permission service={[Services.createService]}>
+          <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
+        </Permission>
+        <Permission
+          service={[Services.recordService]}
+        >
+          <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
+        </Permission>
       </Header>
       <Breadcrumb />
       <Content className={`${prefixCls}-content`}>
@@ -278,13 +300,13 @@ const WebhooksSetting = () => {
             name="name"
             width="60%"
             renderer={NameRenderer}
-            // onCell={({ record }) => ({
-            //   onClick: () => editWebhooks(record),
-            // })}
+            onCell={({ record }) => ({
+              onClick: () => editWebhooks(record),
+            })}
           />
           <Column renderer={ActionRenderer} width={48} />
-          <Column name="webhookPath" renderer={PathRenderer} />
-          <Column name="type" renderer={typeRenderer} />
+          <Column name="webhookAddress" renderer={PathRenderer} />
+          <Column name="serverType" renderer={typeRenderer} />
           <Column name="enableFlag" renderer={StatusRenderer} />
         </Table>
       </Content>

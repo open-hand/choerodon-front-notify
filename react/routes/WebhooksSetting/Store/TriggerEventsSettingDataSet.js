@@ -21,12 +21,25 @@ export default (type, id, orgType, orgId) => ({
   ],
   transport: {
     read: ({ data, params }) => ({
-      url: `notify/v1/${orgType === 'project' ? `projects/${id}` : `organization/${orgId}`}/send_settings`,
+      url: `hmsg/choerodon/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/send_settings`,
       method: 'get',
       transformResponse(JSONData) {
-        const { sendSettingCategorySelection, sendSettingSelection } = JSON.parse(JSONData);
-        const list = (sendSettingCategorySelection || []).map(item => ({ ...item, description: null }));
-        return [...list, ...(sendSettingSelection || [])];
+        const { categories, sendSettings } = JSON.parse(JSONData);
+        const arrCategories = [];
+        Object.keys(categories).forEach(k => {
+          arrCategories.push({
+            code: k,
+            name: categories[k],
+          });
+        });
+        const sendSettings2 = sendSettings.map(s => {
+          s.categoryCode = s.subcategoryCode;
+          s.name = s.messageName;
+          s.id = s.tempServerId;
+          return s;
+        });
+        const list = (arrCategories || []).map(item => ({ ...item, description: null }));
+        return [...list, ...(sendSettings2 || [])];
       },
       params: {
         ...params,

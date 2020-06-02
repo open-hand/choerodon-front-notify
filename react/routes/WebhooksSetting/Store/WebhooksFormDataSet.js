@@ -22,7 +22,7 @@ const typeOptionDataSet = new DataSet({
 export default function (type, id, children, orgId, orgType) {
   const validateWebhooksPath = async (value) => {
     try {
-      const res = await axios.get(`notify/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
+      const res = await axios.get(`hmsg/choerodon/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
         params: {
           id,
           path: value,
@@ -44,19 +44,19 @@ export default function (type, id, children, orgId, orgType) {
     paging: false,
     dataKey: false,
     data: [{
-      type: 'DingTalk',
+      serverType: 'DingTalk',
     }],
     fields: [
       { name: 'id', type: 'string' },
       { name: 'name', type: 'string', label: 'Webhooks名称', required: true },
-      { name: 'type', type: 'string', label: 'Webhooks类型', options: typeOptionDataSet, valueField: 'value', textField: 'name', required: true },
+      { name: 'serverType', type: 'string', label: 'Webhooks类型', options: typeOptionDataSet, valueField: 'value', textField: 'name', required: true },
       { name: 'secret',
         type: 'string',
         dynamicProps: ({ record, name }) => ({
           label: record.get('type') === 'DingTalk' ? '钉钉加签密钥' : '密钥',
         }),
       },
-      { name: 'webhookPath', type: 'string', label: 'Webhooks地址', validator: validateWebhooksPath, required: true },
+      { name: 'webhookAddress', type: 'string', label: 'Webhooks地址', validator: validateWebhooksPath, required: true },
       { name: 'id', type: 'number' },
       { name: 'objectVersionNumber', type: 'number' },
       { name: 'triggerEventSelection', ignore: 'always' },
@@ -66,16 +66,16 @@ export default function (type, id, children, orgId, orgType) {
         url: dataSet.queryUrl,
         method: 'get',
         transformResponse(data) {
-          const { sendSettingIdList, triggerEventSelection } = JSON.parse(data);
-          const { sendSettingCategorySelection, sendSettingSelection } = triggerEventSelection;
+          const { sendSettingIdList, templateServers } = JSON.parse(data);
+          const triggerEventSelection = templateServers;
           return {
             ...JSON.parse(data),
-            triggerEventSelection: [...sendSettingCategorySelection, ...sendSettingSelection],
+            triggerEventSelection: [...triggerEventSelection],
           };
         },
       }),
       update: ({ data }) => ({
-        url: `notify/v1/projects/${id}/web_hooks/${data[0].id}`,
+        url: `hmsg/choerodon/v1/projects/${id}/web_hooks/${data[0].id}`,
         method: 'put',
         data: {
           ...data[0],

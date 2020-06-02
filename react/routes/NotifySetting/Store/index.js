@@ -4,6 +4,7 @@ import { inject } from 'mobx-react';
 import { injectIntl } from 'react-intl';
 import MailSettingDataSet from './MailSettingDataSet';
 import SmsSettingDataSet from './SmsSettingDataSet';
+import ServerTypeDataSet from './ServerTypeDataSet';
 
 const Store = createContext();
 
@@ -13,13 +14,15 @@ export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
     const { AppState: { currentMenuType: { type, id } }, intl, children } = props;
     const intlPrefix = 'global.notifySetting';
+    const serverTypeDs = useMemo(() => new DataSet(ServerTypeDataSet()), []);
     const mailSettingDataSet = useMemo(() => new DataSet(MailSettingDataSet(intl, `${intlPrefix}.mailsetting`)));
-    const smsSettingDataSet = useMemo(() => new DataSet(SmsSettingDataSet(intl, `${intlPrefix}.smssetting`)));
+    const smsSettingDataSet = useMemo(() => new DataSet(SmsSettingDataSet(intl, `${intlPrefix}.smssetting`, serverTypeDs)));
     const value = {
       ...props,
       intlPrefix,
       mailSettingDataSet,
       smsSettingDataSet,
+      serverTypeDs,
       getCurrentDataSet: code => (code === 'mail' ? mailSettingDataSet : smsSettingDataSet),
       singleSendApiMap: new Map([
         ['batch', '批量调用'],

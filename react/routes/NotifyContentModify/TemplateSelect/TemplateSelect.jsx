@@ -30,10 +30,10 @@ const detailTemplate = (detailId, context) => {
 
 // 修改
 /**
- * 
+ *
  * @param {string} type 邮件/站内信/短信 类型
  * @param {*} detailId 当前模板对应的id
- * @param {*} context 
+ * @param {*} context
  * @param {*} index  用于判定是否是当前
  */
 const updateLink = (type, detailId, context, index) => {
@@ -60,7 +60,7 @@ export default (props) => {
   const { templateDataSet, intlPrefix, prefixCls, settingType } = context;
   function changeCurrent(id) {
     // 【PUT】/v1/templates/{id}
-    axios.put(`notify/v1/templates/${id}`).then((data) => {
+    axios.put(`hmsg/choerodon/v1/templates/${id}`).then((data) => {
       if (data.failed) {
         throw data.message;
       }
@@ -77,7 +77,7 @@ export default (props) => {
       content: `确认删除模板"${record.get('name')}"吗？`,
       onOk: async () => {
         try {
-          const result = await axios.delete(`notify/v1/templates/${record.get('id')}`);
+          const result = await axios.delete(`hmsg/choerodon/v1/templates/${record.get('id')}`);
           if (result.failed) {
             throw result.message;
           }
@@ -92,7 +92,7 @@ export default (props) => {
     });
   };
 
-  // 渲染消息类型 
+  // 渲染消息类型
   function getNameMethod({ value, text, name, record }) {
     const messageType = record.get('messageType');
     const { index } = record;

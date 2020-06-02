@@ -16,7 +16,7 @@ export default Store;
 
 export const StoreProvider = withRouter(injectIntl(inject('AppState')(
   (props) => {
-    const { AppState: { currentMenuType: { type, id } }, intl, children } = props;
+    const { AppState: { currentMenuType: { type, id, organizationId } }, intl, children } = props;
     const [currentPageType, setCurrentPageType] = useState({
       currentSelectedType: 'table',
       icon: 'folder_open2',
@@ -26,7 +26,7 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
     const messageStore = useStore();
     const levelDataSet = useMemo(() => new DataSet(LevelDataSet()), []);
     const messageTypeTableDataSet = useMemo(() => new DataSet(MessageTypeTableDataSet(levelDataSet)), []);
-    const templateDataSet = useMemo(() => new DataSet(TemplateDataSet()), []);
+    const templateDataSet = useMemo(() => new DataSet(TemplateDataSet(organizationId)), []);
     const messageTypeDetailDataSet = useMemo(() => new DataSet(MessageTypeDetailDataSet(templateDataSet)), []);
     const queryTreeDataSet = useMemo(() => new DataSet(QueryTreeDataSet({ setCurrentPageType, store: messageStore })), []);
     const value = {

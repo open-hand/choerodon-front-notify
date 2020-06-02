@@ -16,11 +16,11 @@ const MessageTypeTable = () => {
   async function changeMake() {
     const status = messageTypeTableDataSet.current.get('enabled');
     const id = messageTypeTableDataSet.current.get('id');
-    const code = messageTypeTableDataSet.current.get('code');
+    const code = messageTypeTableDataSet.current.get('messageCode');
     if (status) {
       disableModal.close();
     }
-    const url = `/notify/v1/notices/send_settings/${status ? 'disabled' : 'enabled'}?code=${code}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/update_status?status=${status ? 'false' : 'true'}&code=${code}`;
     const res = await axios.put(url);
     messageTypeTableDataSet.query();
   }
@@ -39,7 +39,7 @@ const MessageTypeTable = () => {
   async function changeReceive() {
     const config = messageTypeTableDataSet.current.get('allowConfig');
     const id = messageTypeTableDataSet.current.get('id');
-    const url = `/notify/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
     const res = await axios.put(url);
     messageTypeTableDataSet.query();
   }
@@ -48,7 +48,7 @@ const MessageTypeTable = () => {
     const enabled = record.get('enabled');
     const edit = record.get('edit');
     const actionArr = [{
-      service: [],
+      service: ['choerodon.code.site.setting.notify.msg-service.ps.disable'],
       text: enabled ? formatMessage({ id: 'disable' }) : formatMessage({ id: 'enable' }),
       action: () => (enabled ? openDisableModal() : changeMake()),
     }];
@@ -78,11 +78,12 @@ const MessageTypeTable = () => {
       </div>
       <Table className="message-service" dataSet={messageTypeTableDataSet}>
         <Column
-          name="messageType"
+          name="messageName"
           className={`${cssPrefix}-nameContainer link`}
           onCell={({ record }) => ({
             onClick: () => {
-              messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
+              // messageTypeDetailDataSet.setQueryParameter('code', record.get('code'));
+              messageTypeDetailDataSet.setQueryParameter('tempServerCode', record.get('messageCode'));
               messageTypeDetailDataSet.query();
               setCurrentPageType({
                 currentSelectedType: 'form',
@@ -91,7 +92,7 @@ const MessageTypeTable = () => {
           })}
         />
         <Column renderer={ActionRenderer} width={50} />
-        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="introduce" />
+        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="description" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={80} name="enabled" renderer={getEnabled} align="left" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={147} name="allowConfig" renderer={getAllowConfig} />
       </Table>

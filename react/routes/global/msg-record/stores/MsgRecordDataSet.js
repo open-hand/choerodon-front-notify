@@ -59,7 +59,7 @@ export default (orgId, type, intl, intlPrefix) => {
 
     transport: {
       read: {
-        url: '/notify/v1/records/emails',
+        url: '/hmsg/v1/messages?messageTypeCode=SMS',
         method: 'get',
       },
     },
