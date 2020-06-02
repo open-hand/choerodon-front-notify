@@ -10,7 +10,7 @@ export default (id, type, orgId) => ({
     { name: 'name', type: 'string', label: '触发事件', required: true },
     { name: 'webhookAddress', type: 'string', label: 'Webhook地址', required: true },
     { name: 'serverType', type: 'string', label: 'Webhook类型' },
-    { name: 'enableFlag', type: 'boolean', label: '状态', required: true },
+    { name: 'enabledFlag', type: 'number', label: '状态', required: true },
   ],
   transport: {
     read: {
