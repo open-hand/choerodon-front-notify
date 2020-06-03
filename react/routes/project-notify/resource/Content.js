@@ -178,7 +178,7 @@ export default observer(props => {
   }
 
   return (
-    <TabPage service={['choerodon.code.project.setting.setting-notify.ps.resource\t']}>
+    <TabPage service={['choerodon.code.project.setting.setting-notify.ps.resource']}>
       <Breadcrumb />
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-page-content`}>
