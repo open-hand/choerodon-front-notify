@@ -12,7 +12,7 @@ export default observer(({ context, modal, type }) => {
   if (type === 'webHookJson') {
     record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('JSON'));
   } else if (type === 'webHookOther') {
-    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('DingTalkAndWeChat'));
+    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('DINGTALKANDWECHAT'));
   } else {
     record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === type);
   }
@@ -26,7 +26,7 @@ export default observer(({ context, modal, type }) => {
         if (type === 'webHookJson') {
           return 'JSON';
         } else if (type === 'webHookOther') {
-          return 'DingTalkAndWeChat';
+          return 'DINGTALKANDWECHAT';
         } else {
           return '';
         }
@@ -37,7 +37,7 @@ export default observer(({ context, modal, type }) => {
     try {
       if (dataSet.current.get('isNew')) {
         dataSet.current.set('templateCode', '');
-        dataSet.current.set('webhookType', type === 'webHookJson' ? 'Json' : 'DingTalkAndWeChat');
+        dataSet.current.set('webhookType', type === 'webHookJson' ? 'Json' : 'DINGTALKANDWECHAT');
       }
       if (await dataSet.submit() !== false) {
         messageTypeDetailDataSet.query();

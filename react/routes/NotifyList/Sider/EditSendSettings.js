@@ -16,7 +16,7 @@ export default function ({ context, modal }) {
       if (k === 'webHookJson') {
         flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK' && m.templateCode.includes('JSON'));
       } else if (k === 'webHookOther') {
-        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK' && m.templateCode.includes('DingTalkAndWeChat'));
+        flag = messageTemplateVOS.find(m => m.sendingType === 'WEB_HOOK' && m.templateCode.includes('DINGTALKANDWECHAT'));
       } else {
         flag = !!messageTemplateVOS.some(m => m.sendingType === k);
       }
