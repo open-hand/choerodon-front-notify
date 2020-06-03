@@ -38,7 +38,7 @@ function MsgEmail(props) {
 
   const actionRenderer = ({ value, record }) => {
     const actionArr = [{
-      service: [],
+      service: ['choerodon.code.site.manager.message-log.ps.retry-email'],
       text: <FormattedMessage id="msgrecord.resend" />,
       action: () => retry(record),
     }];
