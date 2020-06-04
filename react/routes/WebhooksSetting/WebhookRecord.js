@@ -18,16 +18,16 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
   }, []);
 
   const handleAction = async (record) => {
-    if (record.get('status') === 'RUNNING') {
+    if (record.get('status') === 'S') {
       try {
-        await useStore.handleForceFailure(type, id, orgId, record.get('id'));
+        await useStore.handleForceFailure(type, id, orgId, record.get('recordId'));
         ds.query();
       } catch (e) {
         window.console.log(e);
       }
     } else {
       try {
-        await useStore.handleRetryRecord(type, id, orgId, record.get('id'));
+        await useStore.handleRetryRecord(type, id, orgId, record.get('recordId'));
         ds.query();
       } catch (e) {
         window.console.log(e);
@@ -37,8 +37,8 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
 
   const ActionRenderer = ({ record }) => {
     const actionArr = [{
-      service: [],
-      text: record.get('status') === 'RUNNING' ? '强制失败' : '重新执行',
+      service: ['choerodon.code.organization.setting.webhooks-setting.ps.retry-webhook', 'choerodon.code.organization.setting.webhooks-setting.ps.webhook-failed'],
+      text: record.get('status') === 'S' ? '强制失败' : '重新执行',
       action: () => handleAction(record),
     }];
     return <Action className="action-icon" data={actionArr} />;
@@ -46,16 +46,16 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
 
   const statusRenderer = ({ record, value }) => {
     const statusKeyValue = {
-      COMPLETED: {
+      S: {
         name: '成功',
         color: 'rgba(0, 191, 165, 1)',
       },
-      FAILED: {
+      F: {
         name: '失败',
         color: 'rgb(241, 111, 127)',
       },
-      RUNNING: {
-        name: '执行中',
+      P: {
+        name: '就绪',
         color: '#4D90FE',
       },
     };
@@ -95,9 +95,9 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
       queryBar="advancedBar"
       queryFieldsLimit={3}
     >
-      <Column name="name" renderer={nameRender} />
+      <Column name="messageName" renderer={nameRender} />
       <Column renderer={ActionRenderer} width={48} />
-      <Column name="webhookPath" renderer={handleRenderWebhookPath} />
+      <Column name="webHookAddress" renderer={handleRenderWebhookPath} />
       <Column name="status" renderer={statusRenderer} />
       <Column name="typeString" />
       <Column name="sendTimeAround" renderer={handleRenderSendTime} />

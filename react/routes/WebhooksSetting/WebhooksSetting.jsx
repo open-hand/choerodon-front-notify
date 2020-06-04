@@ -223,7 +223,9 @@ const WebhooksSetting = () => {
     </div>
   );
 
-  const handleAllWebhookRecord = () => {
+  const handleAllWebhookRecord = async () => {
+    const res = await axios.get('/hpfm/v1/lovs/value?lovCode=HMSG.TRANSACTION_STATUS');
+    webhooksSettingUseStore.setStatusList(res);
     Modal.open({
       title: 'Webhook执行记录',
       key: Modal.key(),
