@@ -12,9 +12,9 @@ import './index.less';
 const { Column } = Table;
 
 const Services = {
-  pageService: '',
-  createService: '',
-  recordService: '',
+  pageService: null,
+  createService: null,
+  recordService: null,
 };
 
 const WebhooksSetting = () => {
@@ -36,9 +36,9 @@ const WebhooksSetting = () => {
 
   useEffect(() => {
     if (type === 'organization') {
-      Services.pageService = 'choerodon.code.organization.setting.webhooks-setting.ps.default';
-      Services.createService = 'choerodon.code.organization.setting.webhooks-setting.ps.create';
-      Services.recordService = 'choerodon.code.organization.setting.webhooks-setting.ps.records';
+      Services.pageService = ['choerodon.code.organization.setting.webhooks-setting.ps.default'];
+      Services.createService = ['choerodon.code.organization.setting.webhooks-setting.ps.create'];
+      Services.recordService = ['choerodon.code.organization.setting.webhooks-setting.ps.records'];
     }
   }, []);
 
@@ -281,14 +281,14 @@ const WebhooksSetting = () => {
 
   return (
     <Page
-      service={[Services.pageService]}
+      service={Services.pageService}
     >
       <Header>
-        <Permission service={[Services.createService]}>
+        <Permission service={Services.createService}>
           <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
         </Permission>
         <Permission
-          service={[Services.recordService]}
+          service={Services.recordService}
         >
           <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
         </Permission>
