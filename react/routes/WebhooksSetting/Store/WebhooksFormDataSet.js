@@ -67,7 +67,7 @@ export default function (type, id, children, orgId, orgType) {
         method: 'get',
         transformResponse(data) {
           const { sendSettingIdList, templateServers } = JSON.parse(data);
-          const triggerEventSelection = templateServers;
+          const triggerEventSelection = templateServers || [];
           return {
             ...JSON.parse(data),
             triggerEventSelection: [...triggerEventSelection],
