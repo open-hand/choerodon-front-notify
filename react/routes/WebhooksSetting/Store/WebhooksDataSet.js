@@ -32,7 +32,7 @@ export default (id, type, orgId) => ({
       },
     },
     destroy: ({ data: [record, ...etc] }) => ({
-      url: `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.id}`,
+      url: `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.serverId}`,
       method: 'delete',
       data: undefined,
     }),
