@@ -40,7 +40,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
     idField: 'sequenceId',
     transport: {
       read: {
-        url: '/hmsg/choerodon/v1/notices/send_settings/list/allow_config?source_type=site',
+        url: '/hmsg/choerodon/v1/notices/send_settings/list/allow_config?source_type=SITE',
         method: 'get',
       },
       submit: ({ dataSet }) => {
@@ -69,7 +69,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
         });
 
         return ({
-          url: '/hmsg/choerodon/v1/notices/receive_setting/all?source_type=site',
+          url: '/hmsg/choerodon/v1/notices/receive_setting/all?source_type=SITE',
           method: 'put',
           data: res,
         });

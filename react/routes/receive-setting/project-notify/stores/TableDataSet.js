@@ -69,7 +69,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
     primaryKey: 'key',
     transport: {
       read: {
-        url: '/hmsg/choerodon/v1/notices/send_settings/list/allow_config?source_type=project',
+        url: '/hmsg/choerodon/v1/notices/send_settings/list/allow_config?source_type=PROJECT',
         method: 'get',
         transformResponse(response) {
           try {
@@ -114,7 +114,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
         });
 
         return ({
-          url: '/hmsg/choerodon/v1/notices/receive_setting/all?source_type=project',
+          url: '/hmsg/choerodon/v1/notices/receive_setting/all?source_type=PROJECT',
           method: 'put',
           data: res,
         });
