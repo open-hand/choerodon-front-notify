@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { DataSet } from 'choerodon-ui/pro';
 
-export default (id, type, orgId) => {
+export default (id, type, orgId, webhooksSettingUseStore) => {
   function handleLoadTime(startTime, endTime) {
     if (startTime && endTime) {
       const releaseDate = moment(endTime);
@@ -48,17 +48,7 @@ export default (id, type, orgId) => {
         url: dataSet.queryUrl,
         method: 'get',
         transformResponse(res) {
-          const selectValues = {
-            COMPLETED: {
-              name: '成功',
-            },
-            FAILED: {
-              name: '失败',
-            },
-            RUNNING: {
-              name: '执行中',
-            },
-          };
+          const selectValues = webhooksSettingUseStore.getStatusList;
           const obj = {
             DingTalk: '钉钉',
             WeChat: '企业微信',
@@ -67,21 +57,21 @@ export default (id, type, orgId) => {
           const data = JSON.parse(res);
           if (data.content) {
             const newList = data.content.map(d => {
-              if (d.sendTime) {
-                d.sendTimeAround = `${handleLoadTime(d.sendTime, moment().format('YYYY-MM-DD HH:mm:ss'))}前`;
+              if (d.creationDate) {
+                d.sendTimeAround = `${handleLoadTime(d.creationDate, moment().format('YYYY-MM-DD HH:mm:ss'))}前`;
               } else {
                 d.sendTimeAround = '无';
               }
-              d.typeString = obj[d.type];
+              d.typeString = obj[d.webHookType];
               return d;
             });
             data.list = newList;
           }
-          statusDataSet.loadData(Array.from(new Set(data.list.map(l => l.status))).map(a => ({
+          statusDataSet.loadData(Array.from(new Set(data.content.map(l => l.status))).map(a => ({
             value: a,
-            text: selectValues[a].name,
+            text: selectValues.find(s => s.value === a).meaning,
           })));
-          typeDataSet.loadData(Array.from(new Set(data.list.map(d => d.type))).map(l => ({
+          typeDataSet.loadData(Array.from(new Set(data.content.map(d => d.webHookType))).map(l => ({
             value: l,
             text: obj[l],
           })));
@@ -91,11 +81,11 @@ export default (id, type, orgId) => {
     },
     fields: [{
       label: '触发事件',
-      name: 'name',
+      name: 'messageName',
       type: 'string',
     }, {
       label: 'Webhook地址',
-      name: 'webhookPath',
+      name: 'webHookAddress',
       type: 'string',
     }, {
       label: '状态',
@@ -113,7 +103,7 @@ export default (id, type, orgId) => {
     queryFields: [
       {
         label: '查询触发事件',
-        name: 'name',
+        name: 'messageName',
         type: 'string',
       },
       {
