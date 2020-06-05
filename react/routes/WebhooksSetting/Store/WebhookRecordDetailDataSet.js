@@ -34,24 +34,24 @@ export default () => {
           } else {
             data.timeConsuming = '无';
           }
-          return data;
+          return [data];
         },
       }),
     },
     fields: [{
-      name: 'name',
+      name: 'messageName',
       type: 'string',
       label: '触发事件',
     }, {
-      name: 'sendTime',
+      name: 'creationDate',
       type: 'string',
       label: '发送时间',
     }, {
       name: 'timeConsuming',
       type: 'string',
-      label: '累计耗时',
+      label: '执行状态',
     }, {
-      name: 'webhookPath',
+      name: 'webHookAddress',
       type: 'string',
       label: 'Webhook地址',
     }],

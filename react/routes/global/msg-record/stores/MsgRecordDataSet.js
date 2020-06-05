@@ -39,8 +39,8 @@ export default (orgId, type, intl, intlPrefix) => {
     paging: true,
     fields: [
       { name: 'email', type: 'string', label: email },
-      { name: 'status', type: 'string', label: status },
-      { name: 'templateType', type: 'string', label: templateType },
+      { name: 'statusMeaning', type: 'string', label: status },
+      { name: 'messageName', type: 'string', label: templateType },
       { name: 'failedReason', type: 'string', label: failedReason },
       { name: 'retryCount', type: 'number', label: retryCount },
       { name: 'creationDate', type: 'string', label: creationDate },
@@ -51,15 +51,15 @@ export default (orgId, type, intl, intlPrefix) => {
 
       // receiveEmail 字段
       { name: 'receiveEmail', type: 'string', label: email },
-      { name: 'status', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined },
-      { name: 'templateType', type: 'string', label: templateType },
+      { name: 'trxStatusMeaning', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined },
+      { name: 'messageName', type: 'string', label: templateType },
       { name: 'failedReason', type: 'string', label: failedReason },
 
     ],
 
     transport: {
       read: {
-        url: '/hmsg/v1/messages?messageTypeCode=EMAIL',
+        url: '/hmsg/choerodon/v1/mails/records/emails',
         method: 'get',
       },
     },

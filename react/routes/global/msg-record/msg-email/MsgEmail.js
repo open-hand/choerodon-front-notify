@@ -34,7 +34,7 @@ function MsgEmail(props) {
       Choerodon.prompt(intl.formatMessage({ id: 'msgrecord.send.failed' }));
     });
   }
-  const StatusCard = ({ value }) => (<StatusTag name={<FormattedMessage id={value.toLowerCase()} />} color={value !== 'FAILED' ? ENABLED_GREEN : DISABLED_GRAY} />);
+  const StatusCard = ({ value }) => (<StatusTag name={<FormattedMessage id={value} />} color={value !== '失败' ? ENABLED_GREEN : DISABLED_GRAY} />);
 
   const actionRenderer = ({ value, record }) => {
     const actionArr = [{
@@ -42,7 +42,7 @@ function MsgEmail(props) {
       text: <FormattedMessage id="msgrecord.resend" />,
       action: () => retry(record),
     }];
-    return ['COMPLETED', 'FAILED'].includes(record.get('status')) && <Action className="action-icon" data={actionArr} />;
+    return ['S', 'F'].includes(record.get('statusCode')) && <Action className="action-icon" data={actionArr} />;
   };
 
   const renderMouseOver = ({ value }) => (
@@ -68,10 +68,15 @@ function MsgEmail(props) {
             <Table dataSet={msgRecordDataSet} style={{ paddingTop: 0 }}>
               <Column align="left" name="email" renderer={renderEmail} />
               <Column renderer={actionRenderer} width={48} />
-              <Column align="left" width={100} name="status" />
-              <Column name="templateType" renderer={renderMouseOver} />
+              <Column
+                align="left"
+                width={100}
+                name="statusMeaning"
+                renderer={StatusCard}
+              />
+              <Column name="messageName" renderer={renderMouseOver} />
               <Column name="failedReason" renderer={renderMouseOver} />
-              <Column width={100} align="left" name="retryCount" />
+              {/* <Column width={100} align="left" name="retryCount" /> */}
               <Column name="creationDate" />
             </Table>
           </Content>

@@ -3,22 +3,22 @@ export default () => ({
   selection: false,
   transport: {
     read: {
-      url: '/hmsg/v1/messages?messageTypeCode=WEB_HOOK',
+      url: '/hmsg/choerodon/v1/mails/records/webhooks',
       method: 'get',
     },
   },
   fields: [
-    { name: 'sendTime', type: 'date', label: '发送时间' },
-    { name: 'status', type: 'string', label: '状态' },
+    { name: 'creationDate', type: 'date', label: '发送时间' },
+    { name: 'statusMeaning', type: 'string', label: '状态' },
     { name: 'failedReason', type: 'string', label: '失败原因' },
-    { name: 'sourceName', type: 'string', label: '组织/项目' },
-    { name: 'webhookPath', type: 'string', label: 'webhook地址' },
+    { name: 'messageName', type: 'string', label: '模板类型' },
+    { name: 'webhookAddress', type: 'string', label: 'webhook地址' },
   ],
   queryFields: [
-    { name: 'sendTime', type: 'date', label: '发送时间' },
-    { name: 'status', type: 'string', label: '状态' },
+    { name: 'creationDate', type: 'date', label: '发送时间' },
+    { name: 'statusMeaning', type: 'string', label: '状态' },
     { name: 'failedReason', type: 'string', label: '失败原因' },
-    { name: 'sourceName', type: 'string', label: '组织/项目' },
-    { name: 'webhookPath', type: 'string', label: 'webhook地址' },
+    { name: 'messageName', type: 'string', label: '模板类型' },
+    { name: 'webhookAddress', type: 'string', label: 'webhook地址' },
   ],
 });
