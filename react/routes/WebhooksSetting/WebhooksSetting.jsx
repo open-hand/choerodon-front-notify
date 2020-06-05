@@ -39,6 +39,10 @@ const WebhooksSetting = () => {
       Services.pageService = ['choerodon.code.organization.setting.webhooks-setting.ps.default'];
       Services.createService = ['choerodon.code.organization.setting.webhooks-setting.ps.create'];
       Services.recordService = ['choerodon.code.organization.setting.webhooks-setting.ps.records'];
+    } else {
+      Services.pageService = ['choerodon.code.project.setting.setting-notify.ps.webhook'];
+      Services.createService = ['choerodon.code.project.setting.setting-notify.ps.webhook.create'];
+      Services.pageService = ['choerodon.code.project.setting.setting-notify.ps.webhook.logs'];
     }
   }, []);
 
