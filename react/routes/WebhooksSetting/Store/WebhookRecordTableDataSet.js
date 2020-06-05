@@ -67,9 +67,9 @@ export default (id, type, orgId, webhooksSettingUseStore) => {
             });
             data.list = newList;
           }
-          statusDataSet.loadData(Array.from(new Set(data.content.map(l => l.status))).map(a => ({
+          statusDataSet.loadData(Array.from(new Set(data.content.map(l => l.statusCode))).filter(s => s).map(a => ({
             value: a,
-            text: selectValues.find(s => s.value === a).meaning,
+            text: selectValues.find(s => s.value === a) ? selectValues.find(s => s.value === a).meaning : '',
           })));
           typeDataSet.loadData(Array.from(new Set(data.content.map(d => d.webHookType))).map(l => ({
             value: l,
@@ -89,7 +89,7 @@ export default (id, type, orgId, webhooksSettingUseStore) => {
       type: 'string',
     }, {
       label: '状态',
-      name: 'status',
+      name: 'statusMeaning',
       type: 'string',
     }, {
       label: 'Webhook类型',
@@ -108,7 +108,7 @@ export default (id, type, orgId, webhooksSettingUseStore) => {
       },
       {
         label: '查询执行状态',
-        name: 'status',
+        name: 'statusMeaning',
         type: 'string',
         textField: 'text',
         valueField: 'value',

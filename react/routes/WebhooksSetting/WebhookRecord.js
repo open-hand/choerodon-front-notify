@@ -41,7 +41,7 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
       text: record.get('status') === 'S' ? '强制失败' : '重新执行',
       action: () => handleAction(record),
     }];
-    return <Action className="action-icon" data={actionArr} />;
+    return record.get('status') !== 'S' && <Action className="action-icon" data={actionArr} />;
   };
 
   const statusRenderer = ({ record, value }) => {
@@ -72,7 +72,7 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
       style: {
         width: 740,
       },
-      children: <WebhookRecordDetail ds={ds} recordId={record.get('id')} itemType={record.get('status')} type={type} id={id} orgId={orgId} useStore={useStore} />,
+      children: <WebhookRecordDetail ds={ds} recordId={record.get('recordId')} itemType={record.get('status')} type={type} id={id} orgId={orgId} useStore={useStore} />,
     });
   };
 
@@ -98,7 +98,10 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
       <Column name="messageName" renderer={nameRender} />
       <Column renderer={ActionRenderer} width={48} />
       <Column name="webHookAddress" renderer={handleRenderWebhookPath} />
-      <Column name="status" renderer={statusRenderer} />
+      <Column
+        name="statusMeaning"
+        // renderer={statusRenderer}
+      />
       <Column name="typeString" />
       <Column name="sendTimeAround" renderer={handleRenderSendTime} />
     </Table>
