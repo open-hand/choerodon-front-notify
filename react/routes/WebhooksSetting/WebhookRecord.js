@@ -99,8 +99,8 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
       <Column renderer={ActionRenderer} width={48} />
       <Column name="webHookAddress" renderer={handleRenderWebhookPath} />
       <Column
-        name="statusMeaning"
-        // renderer={statusRenderer}
+        name="statusCode"
+        renderer={statusRenderer}
       />
       <Column name="typeString" />
       <Column name="sendTimeAround" renderer={handleRenderSendTime} />
