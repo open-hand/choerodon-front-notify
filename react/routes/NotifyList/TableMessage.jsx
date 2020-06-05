@@ -122,7 +122,7 @@ export default observer(() => {
       const { parent, children, level } = record;
       if (!parent) {
         messageTypeTableDataSet.setQueryParameter('secondCode', undefined);
-        messageTypeTableDataSet.setQueryParameter('firstCode', record.get('code') === 'ORGANIZATION' ? 'TENANT' : record.get('code'));
+        messageTypeTableDataSet.setQueryParameter('firstCode', record.get('code'));
         messageTypeTableDataSet.query();
         setCurrentPageType({
           currentSelectedType: 'table',
@@ -138,7 +138,7 @@ export default observer(() => {
           currentCode: record.get('code'),
         });
       } else {
-        messageTypeTableDataSet.setQueryParameter('firstCode', record.parent.get('code') === 'ORGANIZATION' ? 'TENANT' : record.parent.get('code'));
+        messageTypeTableDataSet.setQueryParameter('firstCode', record.parent.get('code'));
         messageTypeTableDataSet.setQueryParameter('secondCode', record.get('code'));
         messageTypeTableDataSet.query();
         setCurrentPageType({
