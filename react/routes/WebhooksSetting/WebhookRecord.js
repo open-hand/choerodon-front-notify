@@ -79,7 +79,7 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
   const nameRender = ({ record, value }) => <p className="webhookRecord_table_name" onClick={() => handleClickName(record)}>{value}</p>;
 
   const handleRenderSendTime = ({ record, value }) => (
-    <TimePopover content={record.get('sendTime')} />
+    <TimePopover content={record.get('creationDate')} />
   );
 
   const handleRenderWebhookPath = ({ value }) => (
@@ -99,11 +99,14 @@ const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
       <Column renderer={ActionRenderer} width={48} />
       <Column name="webHookAddress" renderer={handleRenderWebhookPath} />
       <Column
-        name="statusMeaning"
-        // renderer={statusRenderer}
+        name="statusCode"
+        renderer={statusRenderer}
       />
       <Column name="typeString" />
-      <Column name="sendTimeAround" renderer={handleRenderSendTime} />
+      <Column
+        name="sendTimeAround"
+        renderer={handleRenderSendTime}
+      />
     </Table>
   );
 };

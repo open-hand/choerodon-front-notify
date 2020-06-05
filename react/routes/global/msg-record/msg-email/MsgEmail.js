@@ -16,12 +16,12 @@ function MsgEmail(props) {
 
   // 重发
   function retry(record) {
-    const { type, id: orgId } = AppState.currentMenuType;
+    const { type, id: orgId, organizationId } = AppState.currentMenuType;
     // const getTypePath = () => (type === 'site' ? '' : `/organizations/${orgId}`);
     return axios({
       // url: `/notify/v1/records/emails/${record.get('id')}/retry${getTypePath()}`,
       // method: type === 'site' ? 'post' : 'get',
-      url: `/hmsg/choerodon/v1/records/emails/${record.get('id')}/retry`,
+      url: `/hmsg/v1/messages/resend?transactionId=${record.get('id')}`,
       method: 'post',
     }).then((data) => {
       let msg = intl.formatMessage({ id: 'msgrecord.send.success' });
