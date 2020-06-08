@@ -2,10 +2,10 @@ function formatData(data) {
   const newData = [];
   data.forEach((item) => {
     const res = { ...item };
-    const { groupId, id } = item;
-    if (groupId) {
-      res.key = `${groupId}-${id}`;
-      res.groupId = String(groupId);
+    const { envId, id } = item;
+    if (envId) {
+      res.key = `${envId}-${id}`;
+      res.envId = String(envId);
     } else {
       res.key = String(id);
     }
@@ -15,8 +15,8 @@ function formatData(data) {
 }
 
 function parentItemIsChecked({ dataSet, record, name, flagName }) {
-  const parentIsChecked = !dataSet.find((tableRecord) => record.get('key') === tableRecord.get('groupId') && !tableRecord.get(name) && tableRecord.get(flagName));
-  const canCheck = !!dataSet.find((tableRecord) => record.get('key') === tableRecord.get('groupId') && tableRecord.get(flagName));
+  const parentIsChecked = !dataSet.find((tableRecord) => record.get('key') === tableRecord.get('envId') && !tableRecord.get(name) && tableRecord.get(flagName));
+  const canCheck = !!dataSet.find((tableRecord) => record.get('key') === tableRecord.get('envId') && tableRecord.get(flagName));
   record.init(name, parentIsChecked && canCheck);
   record.init(flagName, canCheck);
 }
@@ -24,7 +24,7 @@ function parentItemIsChecked({ dataSet, record, name, flagName }) {
 function handleLoad({ dataSet }) {
   dataSet.get(0).init('expand', true);
   dataSet.forEach((record) => {
-    if (!record.get('groupId')) {
+    if (!record.get('envId')) {
       parentItemIsChecked({ dataSet, record, name: 'pmEnable', flagName: 'pmEnabledFlag' });
       parentItemIsChecked({ dataSet, record, name: 'emailEnable', flagName: 'emailEnabledFlag' });
       parentItemIsChecked({ dataSet, record, name: 'smsEnable', flagName: 'smsEnabledFlag' });
@@ -36,7 +36,7 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
   autoQuery: false,
   selection: false,
   paging: false,
-  parentField: 'groupId',
+  parentField: 'envId',
   idField: 'key',
   primaryKey: 'key',
   expandField: 'expand',
@@ -62,10 +62,10 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
     submit: ({ data }) => {
       const newData = [];
       data.forEach((item) => {
-        if (item.groupId) {
+        if (item.envId) {
           const obj = {
             ...item,
-            groupId: Number(item.groupId),
+            envId: Number(item.envId),
           };
           if (!item.sendRoleList.includes('specifier')) {
             obj.userList = [];

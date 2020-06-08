@@ -63,15 +63,15 @@ export default observer(props => {
 
   function handleCheckBoxChange({ record, value, name, flagName }) {
     record.set(name, value);
-    if (!record.get('groupId')) {
+    if (!record.get('envId')) {
       tableDs.forEach((tableRecord) => {
-        if (tableRecord.get('groupId') === record.get('key') && tableRecord.get(flagName)) {
+        if (tableRecord.get('envId') === record.get('key') && tableRecord.get(flagName)) {
           tableRecord.set(name, value);
         }
       });
     } else {
-      const parentRecord = tableDs.find((tableRecord) => record.get('groupId') === tableRecord.get('key'));
-      const parentIsChecked = !tableDs.find((tableRecord) => parentRecord.get('key') === tableRecord.get('groupId') && !tableRecord.get(name) && tableRecord.get(flagName));
+      const parentRecord = tableDs.find((tableRecord) => record.get('envId') === tableRecord.get('key'));
+      const parentIsChecked = !tableDs.find((tableRecord) => parentRecord.get('key') === tableRecord.get('envId') && !tableRecord.get(name) && tableRecord.get(flagName));
       parentRecord.set(name, parentIsChecked && parentRecord.get(flagName));
     }
   }
@@ -79,7 +79,7 @@ export default observer(props => {
   function renderCheckBox({ record, name, flagName }) {
     const checked = record.get(name);
     const disabled = !record.get(flagName);
-    const isIndeterminate = !record.get('groupId') && !!tableDs.find((tableRecord) => tableRecord.get('groupId') === record.get('key') && tableRecord.get(name) && tableRecord.get(flagName));
+    const isIndeterminate = !record.get('envId') && !!tableDs.find((tableRecord) => tableRecord.get('envId') === record.get('key') && tableRecord.get(name) && tableRecord.get(flagName));
     return (
       <CheckBox
         record={record}
@@ -93,7 +93,7 @@ export default observer(props => {
   }
 
   function renderNotifyObject({ record }) {
-    if (!record.get('groupId')) {
+    if (!record.get('envId')) {
       return '-';
     }
 

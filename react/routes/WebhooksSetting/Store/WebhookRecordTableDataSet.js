@@ -89,7 +89,7 @@ export default (id, type, orgId, webhooksSettingUseStore) => {
       type: 'string',
     }, {
       label: '状态',
-      name: 'statusMeaning',
+      name: 'statusCode',
       type: 'string',
     }, {
       label: 'Webhook类型',
@@ -108,7 +108,7 @@ export default (id, type, orgId, webhooksSettingUseStore) => {
       },
       {
         label: '查询执行状态',
-        name: 'statusMeaning',
+        name: 'statusCode',
         type: 'string',
         textField: 'text',
         valueField: 'value',
