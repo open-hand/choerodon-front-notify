@@ -64,14 +64,24 @@ const WebhookRecordDetail = ({ ds, recordId, itemType, type, id, orgId, useStore
       <div className="webhookRecordDetail_content">
         {requestHeaders}
       </div>
-      <p style={{ marginTop: '1em' }} className="webhookRecordDetail_pHeader">错误日志</p>
-      <div className="webhookRecordDetail_content">
-        {requestBody && (
-          <pre>
-            <code>{JSON.stringify(JSON.parse(requestBody), null, 4)}</code>
-          </pre>
-        )}
-      </div>
+      {
+        webhookRecordDetailDataSet.current && webhookRecordDetailDataSet.current.get('statusCode') !== 'S' ? (
+          <React.Fragment>
+            <p style={{ marginTop: '1em' }} className="webhookRecordDetail_pHeader">错误日志</p>
+            <div className="webhookRecordDetail_content">
+              {/* {requestBody && ( */}
+              {/* <pre> */}
+              {/*  <code>{JSON.stringify(JSON.parse(requestBody), null, 4)}</code> */}
+              {/* </pre> */}
+              {/* )} */}
+              {
+                requestBody
+              }
+            </div>
+          </React.Fragment>
+        ) : ''
+      }
+
       {/* <p className="webhookRecordDetail_pHeader">Response headers</p> */}
       {/* <div className="webhookRecordDetail_content"> */}
       {/*  {responseHeaders && ( */}

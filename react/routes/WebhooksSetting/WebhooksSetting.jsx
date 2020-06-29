@@ -270,7 +270,7 @@ const WebhooksSetting = () => {
         },
         okCancel: false,
         okText: '取消',
-        children: <WebhookRecord webhookId={record.get('id')} ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
+        children: <WebhookRecord webhookId={record.get('serverId')} ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
       }),
     }];
     return <Action className="action-icon" data={actionArr} />;
