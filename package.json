@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/notify",
   "routeName": "notify",
-  "version": "0.22.1",
+  "version": "0.23.0",
   "description": "",
   "main": "./lib/index.js",
   "dependencies": {
@@ -16,12 +16,12 @@
     "lib"
   ],
   "peerDependencies": {
-    "@choerodon/boot": "0.21.2",
-    "@choerodon/master": "0.22.0"
+    "@choerodon/boot": "0.21.4",
+    "@choerodon/master": "0.23.0"
   },
   "devDependencies": {
-    "@choerodon/boot": "0.21.2",
-    "@choerodon/master": "0.22.0"
+    "@choerodon/boot": "0.21.4",
+    "@choerodon/master": "0.23.0"
   },
   "scripts": {
     "start": "choerodon-front-boot start --config ./react/config.js",

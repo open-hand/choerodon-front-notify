@@ -20,49 +20,13 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
         parentItemIsChecked({ dataSet, record, name: 'email' });
       }
     });
-  }
-
-  function initChecked(item, type, templateIdName, enabledName) {
-    const hasTemplateId = item[templateIdName] && item[enabledName];
-    const isCheck = hasTemplateId && !receiveStore.getReceiveData.some(({ sendSettingId, sourceId, sendingType }) => (
-      sendSettingId === item.id && Number(item.sourceId.split('-')[0]) === sourceId && sendingType === type
-    ));
-    item[`${type}Disabled`] = !hasTemplateId;
-    return isCheck;
-  }
-
-  function formatData(data) {
-    const res = [...receiveStore.getProjectData];
-    const newData = [];
-    res.forEach((project) => {
-      const projectId = project.id;
-      project.key = `${projectId}`;
-      project.treeType = 'project';
-      const newLists = data.map((item) => {
-        const { id, parentId, sequenceId } = item;
-        const children = { ...item };
-        if (id) {
-          children.key = `${projectId}-${parentId}-${id}`;
-          children.sourceId = `${projectId}-${parentId}`;
-          children.treeType = 'item';
-          children.pm = initChecked(children, 'pm', 'pmTemplateId', 'pmEnabledFlag');
-          children.email = initChecked(children, 'email', 'emailTemplateId', 'emailEnabledFlag');
-        } else {
-          children.key = `${projectId}-${sequenceId}`;
-          children.sourceId = `${projectId}`;
-          children.treeType = 'group';
-        }
-        return children;
-      });
-      newData.push(project, ...newLists);
-    });
-    return newData;
+    receiveStore.setSpinning(false);
   }
 
   return ({
     autoQuery: false,
     selection: false,
-    paging: false,
+    paging: true,
     autoQueryAfterSubmit: false,
     parentField: 'sourceId',
     idField: 'key',
@@ -77,7 +41,8 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
             if (data && data.failed) {
               return data;
             } else {
-              return formatData(data);
+              receiveStore.setAllowConfigData(data);
+              return receiveStore.formatData();
             }
           } catch (e) {
             return response;
@@ -130,6 +95,9 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
     queryFields: [],
     events: {
       load: handleLoad,
+      beforeLoad: () => {
+        receiveStore.setSpinning(true);
+      },
     },
   });
 };
