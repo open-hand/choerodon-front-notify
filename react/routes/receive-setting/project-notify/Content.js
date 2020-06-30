@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Content, Breadcrumb, Choerodon, TabPage } from '@choerodon/boot';
-import { Table, CheckBox, Button } from 'choerodon-ui/pro';
+import { Spin } from 'choerodon-ui';
+import { Table, CheckBox, Button, Pagination, message } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -143,11 +144,11 @@ export default observer(props => {
   }
 
   return (
-    <TabPage>
+    <TabPage className="projectNotify">
       <Breadcrumb />
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-content`}>
-        <Table dataSet={tableDs} mode="tree">
+        <Table loading={receiveStore.getSpinning} dataSet={tableDs} mode="tree">
           <Column name="name" />
           <Column
             header={(dataSet) => renderCheckBoxHeader(dataSet, 'pm')}
@@ -162,6 +163,26 @@ export default observer(props => {
             editor={(record) => renderEditor(record, 'email')}
           />
         </Table>
+        <Pagination
+          total={receiveStore.getPagination.total}
+          pageSize={5}
+          page={receiveStore.getPagination.page}
+          onChange={(data) => {
+            if (tableDs.dirty) {
+              message.error('当前页有修改，请先保存再操作');
+              receiveStore.setPagination({
+                page: data - 1,
+                total: receiveStore.getPagination.total,
+              });
+            } else {
+              receiveStore.setPagination({
+                page: data,
+                total: receiveStore.getPagination.total,
+              });
+              tableDs.loadData(receiveStore.formatData());
+            }
+          }}
+        />
         <div className={`${prefixCls}-buttons`}>
           <Button
             funcType="raised"
