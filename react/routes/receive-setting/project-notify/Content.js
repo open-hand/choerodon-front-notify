@@ -168,6 +168,7 @@ export default observer(props => {
           total={receiveStore.getPagination.total}
           pageSize={5}
           page={receiveStore.getPagination.page}
+          showSizeChanger={false}
           onChange={(data) => {
             if (tableDs.dirty) {
               message.error('当前页有修改，请先保存再操作');
