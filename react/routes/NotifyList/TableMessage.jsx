@@ -1,11 +1,12 @@
-import React, { Component, useContext, useState } from 'react/index';
-import { Table, Button, Tree, Icon, TextField, Modal } from 'choerodon-ui/pro';
+import React, { Component, useContext, useState, useRef, useMemo } from 'react/index';
+import { Table, Button, Tree, Icon, TextField, Modal, Tooltip } from 'choerodon-ui/pro';
 import { Header, axios, Page, Breadcrumb, Content, PageTab, Action, Permission } from '@choerodon/boot';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import EditSendSettings from './Sider/EditSendSettings';
 import EditTemplate from './Sider/EditTemplate';
 import Store from './Store';
+import DragBar from '../../components/drag-bar';
 
 import ToggleMessageType from './ToggleMessageType';
 import './TableMessage.less';
@@ -42,7 +43,11 @@ export default observer(() => {
         {afterStr}
       </span>
     ) : (<span className={`${cssPrefix}-text-title`}>{name}</span>);
-    return title;
+    return (
+      <Tooltip title={title} placement="top">
+        {title}
+      </Tooltip>
+    );
   }
 
   async function handleToggleState(record) {
@@ -97,8 +102,8 @@ export default observer(() => {
   }
 
   const treeNodeRenderer = ({ record }) => {
+    const { parent, children, level } = record;
     const treeIcon = () => {
-      const { parent, children, level } = record;
       // 最上层节点, 展开
       if (!parent && record.get('expand')) {
         return <Icon type="folder_open2" />;
@@ -118,8 +123,8 @@ export default observer(() => {
       }
       return <Icon type="textsms" />;
     };
+
     const toggleContentRenderer = () => {
-      const { parent, children, level } = record;
       if (!parent) {
         messageTypeTableDataSet.setQueryParameter('secondCode', undefined);
         messageTypeTableDataSet.setQueryParameter('firstCode', record.get('code'));
@@ -224,6 +229,10 @@ export default observer(() => {
     messageStore.setExpandedKeys(keys);
   }
 
+  const rootRef = useRef(null);
+
+  const bounds = useMemo(() => messageStore.getNavBounds, [messageStore.getNavBounds]);
+
   return (
     <Page
       service={['choerodon.code.site.setting.notify.msg-service.ps.default']}
@@ -231,25 +240,33 @@ export default observer(() => {
       {getPageHeader()}
       <Breadcrumb />
       <Content className={cssPrefix}>
-        <div className={`${cssPrefix}-tree`}>
-          <TextField
-            name="id"
-            className={`${cssPrefix}-tree-query`}
-            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.65)' }} />}
-            placeholder="请输入搜索条件"
-            onInput={handleInput}
-            onChange={handleSearch}
-            value={inputValue}
-            onEnterDown={handleExpand}
-          />
-          <Tree
-            dataSet={queryTreeDataSet}
-            renderer={treeNodeRenderer}
-            onExpand={handleExpanded}
-          />
-        </div>
-        <div className={`${cssPrefix}-rightContent`}>
-          <ToggleMessageType />
+        <div
+          ref={rootRef}
+          style={{ width: '100%', height: '100%', position: 'relative', display: 'flex' }}
+        >
+          <DragBar parentRef={rootRef} store={messageStore} />
+          <div className={`${cssPrefix}-tree`}>
+            <TextField
+              name="id"
+              className={`${cssPrefix}-tree-query`}
+              prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.65)' }} />}
+              placeholder="请输入搜索条件"
+              onInput={handleInput}
+              onChange={handleSearch}
+              value={inputValue}
+              onEnterDown={handleExpand}
+            />
+            <nav style={bounds} className={`${cssPrefix}-tree-sider-bar`}>
+              <Tree
+                dataSet={queryTreeDataSet}
+                renderer={treeNodeRenderer}
+                onExpand={handleExpanded}
+              />
+            </nav>
+          </div>
+          <div className={`${cssPrefix}-rightContent`}>
+            <ToggleMessageType />
+          </div>
         </div>
       </Content>
     </Page>

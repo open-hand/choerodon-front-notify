@@ -5,7 +5,13 @@ const NO_HEADER = [];
 
 export default function useStore() {
   return useLocalStore(() => ({
-
+    navBounds: {},
+    setNavBounds(data) {
+      this.navBounds = data;
+    },
+    get getNavBounds() {
+      return this.navBounds;
+    },
     expandedKeys: [],
     setExpandedKeys(keys) {
       this.expandedKeys = keys;
