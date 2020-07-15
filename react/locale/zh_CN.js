@@ -132,7 +132,6 @@ const pageDetail = {
   'global.instance.detail.description': '实例属于一个微服务。您可以在此查看实例的详细信息。',
   'global.instance.detail.link': `${docServer}/user-guide/microservice-development/microservice-management/instance/`,
 
-
   // 路由管理
   'global.route.title': '平台"{name}"的路由管理',
   'global.route.description': '路由发送请求到网关会访问服务。一个服务可以分配多个路径的路由，一个路由路径只指向一个服务。',
@@ -287,7 +286,6 @@ const pageDetail = {
   'global.notifyContent.template.pmContent': '站内信内容',
   'global.notifyContent.template.smsContent': '短信内容',
   'global.notifyContent.template.source': '来源',
-
 
   // 项目管理
   'organization.project.title': '组织"{name}"的项目管理',
@@ -450,7 +448,6 @@ const pageDetail = {
   'organization.mailtemplate.modify.description': '由特定事件触发后，系统自动发送邮件给用户，邮件模板统一了用户接收的邮件内容。',
   'organization.mailtemplate.modify.link': `${docServer}/user-guide/system-configuration/tenant/email-template/`,
 
-
   // 短信模板
   'smstemplate.delete.owncontent': '确定要删除短信模板"{name}"吗？',
 
@@ -545,7 +542,6 @@ const pageDetail = {
   'organization.application.add.description': '您可以在此修改组合应用下的子应用信息。',
   'organization.application.sidebar.title': '添加子应用',
 
-
   // 项目信息
   'project.info.title': '对项目"{name}"进行项目设置',
   'project.info.description': '您可以在此修改项目名称、停用项目。',
@@ -608,7 +604,6 @@ const pageDetail = {
   'project.executable.program.class.title': '"{name}"的参数详情',
   'project.executable.program.class.description': '任务类的参数信息。在这里，您可以了解此任务类的参数信息，包括参数名，参数类型，默认值。',
   'project.executable.program.class.link': `${docServer}/user-guide/microservice-development/job/job-class/`,
-
 
   // 个人信息
   'user.userinfo.title': '用户"{name}"的个人信息',
@@ -697,6 +692,7 @@ const receiveSetting = {
   'receive.type.pm': '站内信',
   'receive.type.email': '邮件',
   'receive.type.sms': '短信',
+  'receive.type.organizationName': '组织名称',
 };
 
 /* eslint-disable-next-line */
@@ -1316,7 +1312,6 @@ const zh_CN = {
   'global.mailsetting.port.pattern': '请输入大于零的整数',
   'global.mailsetting.connect.success': '连接成功',
 
-
   // 事务定义
   'global.saga.header.title': '事务定义',
   'global.saga.code': '编码',
@@ -1712,7 +1707,6 @@ const zh_CN = {
   'user.userinfo.org.name': '组织名称',
   'user.userinfo.org.code': '组织编码',
 
-
   // 修改密码
   'user.changepwd.twopwd.pattern.msg': '两次密码输入不一致',
   'user.changepwd.header.title': '修改密码',
@@ -1744,7 +1738,6 @@ const zh_CN = {
   'user.permissioninfo.organization.redirect': '跳转至组织"{name}"',
   'user.permissioninfo.project.redirect': '跳转至项目"{name}"',
   'user.permissioninfo.role.disabled.tip': '该角色已停用',
-
 
   // 消息通知
   'user.usermsg.header.title': '消息通知',
@@ -1824,7 +1817,6 @@ const zh_CN = {
   'saga-instance.code': '实例状态总览',
   'saga-instance.saga.instance': '事务实例',
   'saga-instance.task.retry-count': '重试次数',
-
 
   // 角色标签
   'memberlabel.member.disabled.msg': '用户已被停用，无法给此用户分配角色，请先启用此用户',

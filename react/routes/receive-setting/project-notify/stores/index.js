@@ -22,6 +22,15 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
 
   const receiveStore = useStore();
   const tableDs = useMemo(() => new DataSet(TableDataSet({ formatMessage, intlPrefix, receiveStore, userId: id })), []);
+
+  useEffect(() => {
+    const queryData = tableDs.queryDataSet.toData();
+    if (queryData && queryData.length) {
+      const { params } = queryData[0] || {};
+      receiveStore.loadReceiveData(id, params);
+    }
+  }, [tableDs.queryDataSet.toData()]);
+
   const value = {
     ...props,
     intlPrefix,

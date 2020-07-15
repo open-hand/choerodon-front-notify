@@ -149,6 +149,7 @@ export default observer(props => {
       <Content className={`${prefixCls}-content`}>
         <Table dataSet={tableDs} mode="tree">
           <Column name="name" />
+          <Column name="organizationName" />
           <Column
             header={(dataSet) => renderCheckBoxHeader(dataSet, 'pm')}
             renderer={({ record }) => renderCheckBox({ record, name: 'pm' })}

@@ -126,6 +126,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
       { name: 'name', type: 'string', label: formatMessage({ id: 'receive.type' }) },
       { name: 'pm', type: 'boolean', label: formatMessage({ id: 'receive.type.pm' }) },
       { name: 'email', type: 'boolean', label: formatMessage({ id: 'receive.type.email' }) },
+      { name: 'organizationName', type: 'string', label: formatMessage({ id: 'receive.type.organizationName' }) },
     ],
     queryFields: [],
     events: {

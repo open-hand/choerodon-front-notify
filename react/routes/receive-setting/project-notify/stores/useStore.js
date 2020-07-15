@@ -20,11 +20,11 @@ export default function useStore() {
       this.projectData = data;
     },
 
-    async loadReceiveData(organizationId) {
+    async loadReceiveData(organizationId, params) {
       try {
         const [receive, projects] = await axios.all([
           axios.get('hmsg/choerodon/v1/notices/receive_setting?source_type=project'),
-          axios.get(`iam/choerodon/v1/users/${organizationId}/organization_project`),
+          axios.get(`iam/choerodon/v1/users/${organizationId}/organization_project${params ? `?project_name=${params}` : ''}`),
         ]);
         if (receive && receive.failed) {
           Choerodon.prompt(receive.message);
