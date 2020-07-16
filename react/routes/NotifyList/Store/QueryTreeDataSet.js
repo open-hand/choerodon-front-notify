@@ -8,11 +8,11 @@ export default function ({ setCurrentPageType, store }) {
     expandField: 'expand',
     idField: 'id',
     queryFields: [
-      { name: 'id', type: 'number' },
+      { name: 'id', type: 'string' },
     ],
     fields: [
-      { name: 'parentId', type: 'number' },
-      { name: 'id', type: 'number' },
+      { name: 'parentId', type: 'string' },
+      { name: 'id', type: 'string' },
       { name: 'name', type: 'string', label: '节点名称' },
       { name: 'enabled', type: 'boolean', label: '是否启用' },
       { name: 'code', type: 'string' },
