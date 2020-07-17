@@ -57,7 +57,7 @@ export default function (type, id, children, orgId, orgType) {
         }),
       },
       { name: 'webhookAddress', type: 'string', label: 'Webhooks地址', validator: validateWebhooksPath, required: true },
-      { name: 'id', type: 'number' },
+      { name: 'id', type: 'string' },
       { name: 'objectVersionNumber', type: 'number' },
       { name: 'triggerEventSelection', ignore: 'always' },
     ],
