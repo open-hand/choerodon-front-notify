@@ -46,7 +46,7 @@ const WebhookRecordDetail = ({ ds, recordId, itemType, type, id, orgId, useStore
         <Output colSpan={1} name="messageName" />
         <Output style={{ whiteSpace: 'nowrap' }} colSpan={1} name="creationDate" />
         <Output className="webhookRecordDetail_timeConsuming" colSpan={1} name="timeConsuming" />
-        <Output renderer={handleRenderWebhookPath} style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} colSpan={2} name="webHookAddress" />
+        <Output renderer={handleRenderWebhookPath}  colSpan={2} name="webHookAddress" />
         <div labelWidth={0}>
           <Button
             style={{ color: '#3F51B5', position: 'relative', right: '75px', bottom: '10px', padding: 0 }}
