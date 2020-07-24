@@ -53,8 +53,8 @@ export default function ({ context, modal }) {
       </Form>
       <div className="c7n-notify-contentList-sider-label">是否允许配置接收</div>
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
-        <Radio colSpan={1} name="allowConfig" value disabled={!messageTypeDetailDataSet.current.get('edit')}>是</Radio>
-        <Radio colSpan={2} name="allowConfig" value={false} disabled={!messageTypeDetailDataSet.current.get('edit')}>否</Radio>
+        <Radio colSpan={1} name="receiveConfigFlag" value={1} disabled={!messageTypeDetailDataSet.current.get('edit')}>是</Radio>
+        <Radio colSpan={2} name="receiveConfigFlag" value={0} disabled={!messageTypeDetailDataSet.current.get('edit')}>否</Radio>
       </Form>
       {/* <div className="c7n-notify-contentList-sider-label">是否即时发送</div> */}
       {/* <Form columns={4} dataSet={messageTypeDetailDataSet}> */}

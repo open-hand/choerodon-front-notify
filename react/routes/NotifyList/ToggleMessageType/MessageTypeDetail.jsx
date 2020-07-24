@@ -73,7 +73,7 @@ const MessageTypeDetail = observer(() => {
       </header>
       <Form pristine header="发送设置" className={`${cssPrefix}-form`} dataSet={messageTypeDetailDataSet} labelLayout="horizontal" labelAlign="left" labelWidth={225}>
         <Output label="发送方式" renderer={sentTypeRenderer} />
-        <Output name="allowConfig" renderer={yesOrNoRenderer} />
+        <Output name="receiveConfigFlag" renderer={yesOrNoRenderer} />
         {/* <Output name="isSendInstantly" renderer={yesOrNoRenderer} /> */}
         <Output name="retryCount" />
         {/* <Output name="isManualRetry" renderer={yesOrNoRenderer} /> */}

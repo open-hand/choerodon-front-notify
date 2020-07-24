@@ -22,7 +22,9 @@ function parentItemIsChecked({ dataSet, record, name, flagName }) {
 }
 
 function handleLoad({ dataSet }) {
-  dataSet.get(0).init('expand', true);
+  if (dataSet.get(0)) {
+    dataSet.get(0).init('expand', true);
+  }
   dataSet.forEach((record) => {
     if (!record.get('envId')) {
       parentItemIsChecked({ dataSet, record, name: 'pmEnable', flagName: 'pmEnabledFlag' });
