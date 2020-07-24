@@ -11,7 +11,7 @@ export default function (templateDataSet) {
     },
     fields: [
       { name: 'enabled', type: 'boolean' },
-      { name: 'allowConfig', type: 'boolean', label: '是否允许配置接收' },
+      { name: 'receiveConfigFlag', type: 'number', label: '是否允许配置接收' },
       { name: 'isSendInstantly', type: 'boolean', label: '是否即时发送' },
       { name: 'retryCount', type: 'number', label: '邮件默认重发次数' },
       { name: 'isManualRetry', type: 'boolean', label: '是否允许手动触发邮件' },
