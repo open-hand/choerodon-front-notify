@@ -99,6 +99,11 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
       beforeLoad: () => {
         receiveStore.setSpinning(true);
       },
+      query: async ({ params }) => {
+        const { params: tableParams } = params || {};
+        await receiveStore.loadReceiveData(userId, tableParams);
+        return true;
+      },
     },
   });
 };
