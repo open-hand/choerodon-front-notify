@@ -42,8 +42,8 @@ export default function (optionDs) {
       type: 'boolean',
       label: '状态',
     }, {
-      name: 'allowConfig',
-      type: 'boolean',
+      name: 'receiveConfigFlag',
+      type: 'number',
       label: '允许配置接收',
     }],
     queryFields: [{
@@ -62,7 +62,7 @@ export default function (optionDs) {
       valueField: 'key',
       options: queryEnabled,
     }, {
-      name: 'allowConfig',
+      name: 'receiveConfigFlag',
       type: 'string',
       label: '允许配置接收',
       textField: 'value',

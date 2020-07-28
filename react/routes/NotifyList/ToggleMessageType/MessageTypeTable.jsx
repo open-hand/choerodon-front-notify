@@ -37,7 +37,7 @@ const MessageTypeTable = () => {
 
   // 允许配置接收
   async function changeReceive() {
-    const config = messageTypeTableDataSet.current.get('allowConfig');
+    const config = messageTypeTableDataSet.current.get('receiveConfigFlag');
     const id = messageTypeTableDataSet.current.get('id');
     const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
     const res = await axios.put(url);
@@ -55,7 +55,7 @@ const MessageTypeTable = () => {
     if (edit) {
       actionArr.push({
         service: [],
-        text: record.get('allowConfig') ? '不允许配置接收' : '允许配置接收',
+        text: record.get('receiveConfigFlag') ? '不允许配置接收' : '允许配置接收',
         action: () => changeReceive(),
       });
     }
@@ -69,7 +69,7 @@ const MessageTypeTable = () => {
     />
   );
 
-  const getAllowConfig = ({ record }) => (record.get('allowConfig') ? '允许' : '禁止');
+  const getAllowConfig = ({ record }) => (record.get('receiveConfigFlag') ? '允许' : '禁止');
 
   return (
     <div>
@@ -94,7 +94,7 @@ const MessageTypeTable = () => {
         <Column renderer={ActionRenderer} width={50} />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} name="description" />
         <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={80} name="enabled" renderer={getEnabled} align="left" />
-        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={147} name="allowConfig" renderer={getAllowConfig} />
+        <Column style={{ color: 'rgba(0, 0, 0, 0.65)' }} width={147} name="receiveConfigFlag" renderer={getAllowConfig} />
       </Table>
     </div>
   );
