@@ -45,7 +45,7 @@ export default observer(({ context, modal, type }) => {
         return false;
       }
     } catch (err) {
-      messageTypeDetailDataSet.query();
+      // messageTypeDetailDataSet.query();
       return false;
     }
   });

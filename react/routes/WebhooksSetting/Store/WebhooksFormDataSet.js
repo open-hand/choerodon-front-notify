@@ -20,7 +20,10 @@ const typeOptionDataSet = new DataSet({
  * @returns DataSet
  */
 export default function (type, id, children, orgId, orgType) {
-  const validateWebhooksPath = async (value) => {
+  const validateWebhooksPath = async (value, name, record) => {
+    if (record.getPristineValue(name) && record.getPristineValue(name) === value) {
+      return true;
+    }
     try {
       const res = await axios.get(`hmsg/choerodon/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
         params: {
