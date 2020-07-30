@@ -27,7 +27,7 @@ export default function (type, id, children, orgId, orgType) {
     try {
       const res = await axios.get(`hmsg/choerodon/v1/${orgType === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/check_path`, {
         params: {
-          id,
+          // id,
           path: value,
         },
       });
