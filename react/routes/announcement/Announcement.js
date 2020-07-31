@@ -65,7 +65,6 @@ class AnnouncementType {
   }
 }
 
-
 @Form.create({})
 @withRouter
 @injectIntl
@@ -507,7 +506,7 @@ export default class Announcement extends Component {
               }],
               initialValue: isModify ? currentRecord.title : undefined,
             })(
-              <Input style={{ width: 512 }} autoComplete="off" label={<FormattedMessage id="announcement.title" />} />,
+              <Input style={{ width: 512 }} autoComplete="off" label={<FormattedMessage id="announcement.title" />} maxLength={64} />,
             )}
           </FormItem>
         </Form>
