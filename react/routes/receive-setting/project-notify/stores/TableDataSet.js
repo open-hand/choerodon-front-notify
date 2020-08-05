@@ -1,3 +1,7 @@
+import { uniqBy } from 'lodash/uniqBy';
+import { map } from 'lodash/map';
+import { includes } from 'lodash/includes';
+
 export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
   function parentItemIsChecked({ dataSet, record, name }) {
     const parentIsChecked = !dataSet.find((tableRecord) => record.get('key') === tableRecord.get('sourceId') && !tableRecord.get(name) && !tableRecord.get(`${name}Disabled`));
@@ -51,10 +55,12 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
       },
       submit: ({ dataSet }) => {
         const res = [];
+        const keys = [];
         const data = dataSet.toData();
         data.forEach(({ pm, email, id, treeType, sourceId, pmDisabled, emailDisabled }) => {
           if (treeType === 'item') {
             const projectId = sourceId.split('-')[0];
+            keys.push(`${projectId}**${id}`);
             if (!pm && !pmDisabled) {
               res.push({
                 sendingType: 'pm',
@@ -75,6 +81,14 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
                 userId,
               });
             }
+          }
+        });
+        const receiveData = [...receiveStore.getReceiveData];
+        receiveData.forEach((item) => {
+          const { sendSettingId, sourceId } = item;
+          const key = `${sourceId}**${sendSettingId}`;
+          if (!keys.includes(key)) {
+            res.push(item);
           }
         });
 
