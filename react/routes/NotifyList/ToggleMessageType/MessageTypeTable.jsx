@@ -39,7 +39,7 @@ const MessageTypeTable = () => {
   async function changeReceive() {
     const config = messageTypeTableDataSet.current.get('receiveConfigFlag');
     const id = messageTypeTableDataSet.current.get('id');
-    const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/${config ? 'forbidden_configuration' : 'allow_configuration'}`;
+    const url = `/hmsg/choerodon/v1/notices/send_settings/${id}/receive_config_flag?receiveConfigFlag=${!config}`;
     const res = await axios.put(url);
     messageTypeTableDataSet.query();
   }
