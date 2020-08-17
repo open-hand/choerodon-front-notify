@@ -83,7 +83,7 @@ export default observer(props => {
       }
     });
 
-    return (
+    return record.get('code') !== 'ISSUECHANGESTATUS' ? (
       <Dropdown
         overlay={<NotifyObject record={record} allSendRoleList={allSendRoleList} />}
         trigger={['click', 'focus']}
@@ -96,7 +96,7 @@ export default observer(props => {
           <Icon type="arrow_drop_down" className={`${prefixCls}-object-select-icon`} />
         </div>
       </Dropdown>
-    );
+    ) : '-';
   }
 
   return (
