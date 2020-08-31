@@ -1,18 +1,22 @@
 import React, { Component, useState, useEffect } from 'react';
-import { Permission } from '@choerodon/boot';
+import {
+  Permission, StatusTag, axios, Content, Header, TabPage, Breadcrumb, Action, Choerodon,
+} from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { Table, Tooltip } from 'choerodon-ui/pro';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { StatusTag, axios, Content, Header, TabPage, Breadcrumb, Action, Choerodon } from '@choerodon/boot';
-import MouseOverWrapper from '../../../../components/mouseOverWrapper';
-import { handleFiltersParams } from '../../../../common/util';
 import { useStore } from '../stores';
-
 
 const { Column } = Table;
 function MsgEmail(props) {
-  const context = useStore();
-  const { AppState, intl, permissions, msgRecordDataSet, ENABLED_GREEN, DISABLED_GRAY } = context;
+  const {
+    AppState,
+    intl,
+    permissions,
+    msgRecordDataSet,
+    ENABLED_GREEN,
+    DISABLED_GRAY,
+  } = useStore();
 
   // 重发
   function retry(record) {
@@ -34,7 +38,12 @@ function MsgEmail(props) {
       Choerodon.prompt(intl.formatMessage({ id: 'msgrecord.send.failed' }));
     });
   }
-  const StatusCard = ({ value }) => (<StatusTag name={<FormattedMessage id={value} />} color={value !== '失败' ? ENABLED_GREEN : DISABLED_GRAY} />);
+  const StatusCard = ({ value }) => (
+    <StatusTag
+      name={value || intl.formatMessage({ id: 'success' })}
+      color={value !== '失败' ? ENABLED_GREEN : DISABLED_GRAY}
+    />
+  );
 
   const actionRenderer = ({ value, record }) => {
     const actionArr = [{
@@ -45,11 +54,6 @@ function MsgEmail(props) {
     return ['S', 'F'].includes(record.get('statusCode')) && <Action className="action-icon" data={actionArr} />;
   };
 
-  const renderMouseOver = ({ value }) => (
-    <MouseOverWrapper text={value} width={0.2}>
-      {value}
-    </MouseOverWrapper>
-  );
   const renderEmail = ({ value }) => (
     <Tooltip title={value} placement="topLeft">
       {value}
@@ -74,10 +78,10 @@ function MsgEmail(props) {
                 name="statusMeaning"
                 renderer={StatusCard}
               />
-              <Column name="messageName" renderer={renderMouseOver} />
-              <Column name="failedReason" renderer={renderMouseOver} />
+              <Column name="messageName" tooltip="overflow" />
+              <Column name="failedReason" tooltip="overflow" />
               {/* <Column width={100} align="left" name="retryCount" /> */}
-              <Column name="creationDate" />
+              <Column name="creationDate" width={160} />
             </Table>
           </Content>
         </Permission>
