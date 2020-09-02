@@ -65,10 +65,7 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
       const newData = [];
       data.forEach((item) => {
         if (item.envId) {
-          const obj = {
-            ...item,
-            envId: Number(item.envId),
-          };
+          const obj = { ...item };
           if (!item.sendRoleList.includes('specifier')) {
             obj.userList = [];
             obj.specifierIds = [];
