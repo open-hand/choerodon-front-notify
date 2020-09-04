@@ -1,8 +1,14 @@
-import React, { useContext, useState, useRef, useCallback, useEffect } from 'react';
-import { Table, Button, Modal } from 'choerodon-ui/pro';
+import React, {
+  useContext, useState, useRef, useCallback, useEffect,
+} from 'react';
+import {
+  Table, Button, Modal,
+} from 'choerodon-ui/pro';
 import { message, Popover, Icon } from 'choerodon-ui';
 import { useMeasure } from 'react-use';
-import { axios, Breadcrumb, Header, Content, StatusTag, Action, Page, Permission } from '@choerodon/boot';
+import {
+  axios, Breadcrumb, Header, Content, StatusTag, Action, Page, Permission,
+} from '@choerodon/boot';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import WebhookRecord from './WebhookRecord';
 import Store from './Store';
@@ -10,12 +16,6 @@ import Store from './Store';
 import './index.less';
 
 const { Column } = Table;
-
-const Services = {
-  pageService: null,
-  createService: null,
-  recordService: null,
-};
 
 const WebhooksSetting = () => {
   const {
@@ -32,19 +32,8 @@ const WebhooksSetting = () => {
     DISABLED_GRAY,
     prefixCls,
     AppState: { currentMenuType: { type, id, orgId } },
+    Services,
   } = useContext(Store);
-
-  useEffect(() => {
-    if (type === 'organization') {
-      Services.pageService = ['choerodon.code.organization.setting.webhooks-setting.ps.default'];
-      Services.createService = ['choerodon.code.organization.setting.webhooks-setting.ps.create'];
-      Services.recordService = ['choerodon.code.organization.setting.webhooks-setting.ps.records'];
-    } else {
-      Services.pageService = ['choerodon.code.project.setting.setting-notify.ps.webhook'];
-      Services.createService = ['choerodon.code.project.setting.setting-notify.ps.webhook.create'];
-      Services.pageService = ['choerodon.code.project.setting.setting-notify.ps.webhook.logs'];
-    }
-  }, []);
 
   const [ref, { width }] = useMeasure();
 
@@ -58,13 +47,17 @@ const WebhooksSetting = () => {
       },
       okText: '创建',
       children: (
-        <CreateAndEditWebhooksForm dataSet={createWebhooksFormDataSet} triggerEventsSettingDataSet={createTriggerEventsSettingDataSet} />
+        <CreateAndEditWebhooksForm
+          dataSet={createWebhooksFormDataSet}
+          triggerEventsSettingDataSet={createTriggerEventsSettingDataSet}
+        />
       ),
       onOk: async () => {
         try {
           const res = await axios.post(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks`, {
             ...createWebhooksFormDataSet.toJSONData()[0],
-            sendSettingIdList: createTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
+            sendSettingIdList: createTriggerEventsSettingDataSet.toJSONData(true)
+              .filter((item) => !!item.categoryCode).map((item) => item.id),
           });
           if (!res) {
             throw new Error();
@@ -99,7 +92,8 @@ const WebhooksSetting = () => {
         try {
           const res = await axios.put(`/hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}`, {
             ...editWebhooksFormDataSet.toData()[0],
-            sendSettingIdList: editTriggerEventsSettingDataSet.toJSONData(true).filter((item) => !!item.categoryCode).map(item => item.id),
+            sendSettingIdList: editTriggerEventsSettingDataSet.toJSONData(true)
+              .filter((item) => !!item.categoryCode).map((item) => item.id),
             triggerEventSelection: undefined,
           });
           if (!res) {
@@ -117,7 +111,10 @@ const WebhooksSetting = () => {
         }
       },
       children: (
-        <CreateAndEditWebhooksForm dataSet={editWebhooksFormDataSet} triggerEventsSettingDataSet={editTriggerEventsSettingDataSet} />
+        <CreateAndEditWebhooksForm
+          dataSet={editWebhooksFormDataSet}
+          triggerEventsSettingDataSet={editTriggerEventsSettingDataSet}
+        />
       ),
       afterClose: () => {
         editWebhooksFormDataSet.reset();
@@ -125,10 +122,21 @@ const WebhooksSetting = () => {
     });
   };
 
-  const deleteWebhooks = (record) => webhooksDataSet.delete(record).then((res) => {
-    webhooksDataSet.query();
-  });
+  const deleteWebhooks = async (record) => {
+    const modalProps = {
+      title: '删除Webhook',
+      children: '确定删除该条Webhook吗？',
+      okText: '删除',
+      okProps: { color: 'red' },
+      cancelProps: { color: 'dark' },
+    };
+    const res = await webhooksDataSet.delete(record, modalProps);
+    if (res && res.success) {
+      webhooksDataSet.query();
+    }
+  };
 
+  // eslint-disable-next-line consistent-return
   const toggleWebhooks = async (record) => {
     try {
       const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/update_status?enable_flag=${record.get('enabledFlag') ? 0 : 1}`, JSON.stringify());
@@ -156,11 +164,12 @@ const WebhooksSetting = () => {
     }
   }, [width]);
 
+  // eslint-disable-next-line consistent-return
   const popoverCotent = (record) => {
     if (record && record.get('name')) {
       return (
         <div style={{ width: 360, display: 'flex', flexWrap: 'wrap' }}>
-          {record.get('name').split(',').map(r => (
+          {record.get('name').split(',').map((r) => (
             <span
               className="webhook_nameRenderSpan"
               style={{
@@ -170,7 +179,8 @@ const WebhooksSetting = () => {
                 marginLeft: '8px',
                 marginTop: '8px',
               }}
-            >{r}
+            >
+              {r}
             </span>
           ))}
         </div>
@@ -195,7 +205,7 @@ const WebhooksSetting = () => {
         }}
       >
         {
-            record.get('name').split(',').map(r => (
+            record.get('name').split(',').map((r) => (
               <span
                 className="webhook_nameRenderSpan"
                 style={{
@@ -210,7 +220,8 @@ const WebhooksSetting = () => {
                   lineHeight: '20px',
                   display: 'inline-block',
                 }}
-              >{r}
+              >
+                {r}
               </span>
             ))
           }
@@ -239,27 +250,33 @@ const WebhooksSetting = () => {
       style: {
         width: 900,
       },
-      children: <WebhookRecord ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
+      children: <WebhookRecord
+        ds={webhookRecordTableDataSet}
+        type={type}
+        id={id}
+        orgId={orgId}
+        useStore={webhooksSettingUseStore}
+      />,
     });
   };
 
   const ActionRenderer = ({ record }) => {
     const actionArr = [{
-      service: [],
+      service: Services.editService,
       text: '修改',
       action: () => {
         editWebhooks(record);
       },
     }, {
-      service: [],
+      service: Services.enableService,
       text: record.get('enabledFlag') ? '停用' : '启用',
       action: () => toggleWebhooks(record),
     }, {
-      service: [],
+      service: Services.deleteService,
       text: '删除',
       action: () => deleteWebhooks(record),
     }, {
-      service: [],
+      service: Services.recordService,
       text: '查看执行记录',
       action: () => Modal.open({
         title: 'Webhook执行记录',
@@ -270,7 +287,7 @@ const WebhooksSetting = () => {
         },
         okCancel: false,
         okText: '取消',
-        children: <WebhookRecord webhookId={record.get('serverId')} ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} />,
+        children: <WebhookRecord webhookId={record.get('serverId')} ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} Services={Services} />,
       }),
     }];
     return <Action className="action-icon" data={actionArr} />;
@@ -279,11 +296,6 @@ const WebhooksSetting = () => {
   const StatusRenderer = ({ value }) => <StatusTag name={value ? '启用' : '停用'} color={value ? ENABLED_GREEN : DISABLED_GRAY} />;
 
   const typeRenderer = ({ value }) => <span className="webhookRecord_cantLinkText">{webhooksTypeMap[value]}</span>;
-  const PathRenderer = ({ value }) => (
-    <Popover content={value} placement="top">
-      <span className="webhookRecord_cantLinkText">{value}</span>
-    </Popover>
-  );
 
   return (
     <Page
@@ -311,9 +323,14 @@ const WebhooksSetting = () => {
             })}
           />
           <Column renderer={ActionRenderer} width={48} />
-          <Column name="webhookAddress" renderer={PathRenderer} />
+          <Column name="webhookAddress" tooltip="overflow" />
           <Column name="serverType" renderer={typeRenderer} />
-          <Column name="enabledFlag" renderer={StatusRenderer} />
+          <Column
+            name="enabledFlag"
+            align="left"
+            renderer={StatusRenderer}
+            width={80}
+          />
         </Table>
       </Content>
     </Page>
