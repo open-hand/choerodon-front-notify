@@ -8,7 +8,7 @@ export default () => ({
     },
   },
   fields: [
-    { name: 'creationDate', type: 'string', label: '发送时间' },
+    { name: 'creationDate', type: 'date', label: '发送时间' },
     { name: 'statusMeaning', type: 'string', label: '状态' },
     { name: 'failedReason', type: 'string', label: '失败原因' },
     { name: 'messageName', type: 'string', label: '模板类型' },

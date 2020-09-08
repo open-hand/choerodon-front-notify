@@ -1,6 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events,
-jsx-a11y/no-noninteractive-element-interactions */
-
 import React, { useContext, useEffect } from 'react';
 import { Table, Modal, Tooltip } from 'choerodon-ui/pro';
 import { Action, StatusTag } from '@choerodon/boot';
@@ -9,11 +6,8 @@ import TimePopover from '../../components/timePopover/TimePopover';
 
 const { Column } = Table;
 
-const WebhookRecord = ({
-  webhookId, ds, type, id, orgId, useStore, modal, Services,
-}) => {
+const WebhookRecord = ({ webhookId, ds, type, id, orgId, useStore, modal }) => {
   useEffect(() => {
-    // eslint-disable-next-line no-param-reassign
     ds.queryUrl = `hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/records${webhookId ? `?webhook_id=${webhookId}` : ''}`;
     // ds.setQueryParameter('webhookId', webhookId);
 
@@ -24,7 +18,7 @@ const WebhookRecord = ({
   }, []);
 
   const handleAction = async (record) => {
-    if (record.get('statusCode') === 'S') {
+    if (record.get('status') === 'S') {
       try {
         await useStore.handleForceFailure(type, id, orgId, record.get('recordId'));
         ds.query();
@@ -43,11 +37,11 @@ const WebhookRecord = ({
 
   const ActionRenderer = ({ record }) => {
     const actionArr = [{
-      service: record.get('statusCode') === 'S' ? [] : Services.retryService,
-      text: record.get('statusCode') === 'S' ? '强制失败' : '重新执行',
+      service: ['choerodon.code.organization.setting.webhooks-setting.ps.retry-webhook', 'choerodon.code.organization.setting.webhooks-setting.ps.webhook-failed'],
+      text: record.get('status') === 'S' ? '强制失败' : '重新执行',
       action: () => handleAction(record),
     }];
-    return record.get('statusCode') !== 'S' && <Action className="action-icon" data={actionArr} />;
+    return record.get('status') !== 'S' && <Action className="action-icon" data={actionArr} />;
   };
 
   const statusRenderer = ({ record, value }) => {
@@ -93,6 +87,7 @@ const WebhookRecord = ({
       <p style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{value}</p>
     </Tooltip>
   );
+
 
   return (
     <Table

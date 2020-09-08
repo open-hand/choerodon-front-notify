@@ -24,6 +24,12 @@ export default (orgId, type, intl, intlPrefix) => {
       { key: 'FAILED', value: '失败' },
     ],
   });
+  const optionDataSet = new DataSet({
+    selection: 'multiple',
+    data: [
+      { text: intl.formatMessage({ id: `${intlPrefix}.current` }), value: true },
+    ],
+  });
 
   return {
     autoQuery: true,
@@ -39,14 +45,13 @@ export default (orgId, type, intl, intlPrefix) => {
       { name: 'retryCount', type: 'number', label: retryCount },
       { name: 'creationDate', type: 'string', label: creationDate },
 
+
     ],
     queryFields: [
 
       // receiveEmail 字段
       { name: 'receiveEmail', type: 'string', label: email },
-      {
-        name: 'trxStatusMeaning', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined,
-      },
+      { name: 'trxStatusMeaning', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined },
       { name: 'messageName', type: 'string', label: templateType },
       { name: 'failedReason', type: 'string', label: failedReason },
 
