@@ -47,7 +47,7 @@ export default function (optionDs) {
       label: '允许配置接收',
     }],
     queryFields: [{
-      name: 'messageType',
+      name: 'messageName',
       type: 'string',
       label: '消息类型',
     }, {
