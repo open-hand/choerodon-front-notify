@@ -50,6 +50,7 @@ const WebhooksSetting = () => {
         <CreateAndEditWebhooksForm
           dataSet={createWebhooksFormDataSet}
           triggerEventsSettingDataSet={createTriggerEventsSettingDataSet}
+          useStore={webhooksSettingUseStore}
         />
       ),
       onOk: async () => {
@@ -114,6 +115,7 @@ const WebhooksSetting = () => {
         <CreateAndEditWebhooksForm
           dataSet={editWebhooksFormDataSet}
           triggerEventsSettingDataSet={editTriggerEventsSettingDataSet}
+          useStore={webhooksSettingUseStore}
         />
       ),
       afterClose: () => {

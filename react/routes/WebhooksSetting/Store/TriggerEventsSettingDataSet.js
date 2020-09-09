@@ -3,7 +3,7 @@
  * @param id
  * @return DataSet
  */
-export default (type, id, orgType, orgId) => ({
+export default (type, id, orgType, orgId, useStore) => ({
   autoQuery: false,
   parentField: 'categoryCode',
   idField: 'code',
@@ -26,19 +26,22 @@ export default (type, id, orgType, orgId) => ({
       transformResponse(JSONData) {
         const { categories, sendSettings } = JSON.parse(JSONData);
         const arrCategories = [];
-        Object.keys(categories).forEach(k => {
+        Object.keys(categories).forEach((k) => {
           arrCategories.push({
             code: k,
             name: categories[k],
           });
         });
-        const sendSettings2 = sendSettings.map(s => {
+        const sendSettings2 = sendSettings.map((s) => {
+          // eslint-disable-next-line no-param-reassign
           s.categoryCode = s.subcategoryCode;
+          // eslint-disable-next-line no-param-reassign
           s.name = s.messageName;
+          // eslint-disable-next-line no-param-reassign
           s.id = s.tempServerId;
           return s;
         });
-        const list = (arrCategories || []).map(item => ({ ...item, description: null }));
+        const list = (arrCategories || []).map((item) => ({ ...item, description: null }));
         return [...list, ...(sendSettings2 || [])];
       },
       params: {
@@ -50,21 +53,33 @@ export default (type, id, orgType, orgId) => ({
     }),
   },
   events: {
+    selectAll: () => {
+      useStore.setChangeWebhookSetting();
+    },
+    unSelectAll: () => {
+      useStore.setChangeWebhookSetting();
+    },
     select: ({ dataSet, record }) => {
+      useStore.setChangeWebhookSetting();
       if (record.parent) {
+        // eslint-disable-next-line no-param-reassign
         record.parent.isSelected = true;
       } else {
         record.children.forEach((item) => {
+          // eslint-disable-next-line no-param-reassign
           item.isSelected = true;
         });
       }
     },
     unSelect: ({ dataSet, record }) => {
-      if (record.parent && record.parent.children.filter(item => item.isSelected).length === 0) {
+      useStore.setChangeWebhookSetting();
+      if (record.parent && record.parent.children.filter((item) => item.isSelected).length === 0) {
+        // eslint-disable-next-line no-param-reassign
         record.parent.isSelected = false;
       }
       if (!record.parent) {
         record.children.forEach((item) => {
+          // eslint-disable-next-line no-param-reassign
           item.isSelected = false;
         });
       }
