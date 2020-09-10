@@ -1,4 +1,5 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
+import omit from 'lodash/omit';
 
 export default function (organizationId) {
   return {
@@ -21,11 +22,14 @@ export default function (organizationId) {
         method: 'post',
         data,
       }),
-      update: ({ data: [data] }) => ({
-        url: '/hmsg/v1/0/message/templates',
-        method: 'put',
-        data,
-      }),
+      update: ({ data: [data] }) => {
+        const postData = omit(data, ['messageCategoryCode', 'messageSubcategoryCode']);
+        return ({
+          url: '/hmsg/v1/0/message/templates',
+          method: 'put',
+          data: postData,
+        });
+      },
     },
   };
 }
