@@ -50,7 +50,6 @@ const CreateAndEditWebhooksForm = observer(({
   useEffect(() => {
     const arr = triggerEventsSettingDataSet.toJSONData(true)
       .filter((item) => !!item.categoryCode).map((item) => item.id);
-    console.log(triggerEventsSettingDataSet);
     modal.update({
       okProps: {
         disabled: !arr || arr.length === 0,
@@ -58,15 +57,18 @@ const CreateAndEditWebhooksForm = observer(({
     });
   }, [useStore.getChangeWebhookSetting]);
 
-  useEffect(async () => {
-    await handleQueryTriggerEvent(dataSet.current.get('serverType'));
-    const arr = triggerEventsSettingDataSet.toJSONData(true)
-      .filter((item) => !!item.categoryCode).map((item) => item.id);
-    modal.update({
-      okProps: {
-        disabled: !arr || arr.length === 0,
-      },
-    });
+  useEffect(() => {
+    async function init() {
+      await handleQueryTriggerEvent(dataSet.current.get('serverType'));
+      const arr = triggerEventsSettingDataSet.toJSONData(true)
+        .filter((item) => !!item.categoryCode).map((item) => item.id);
+      modal.update({
+        okProps: {
+          disabled: !arr || arr.length === 0,
+        },
+      });
+    }
+    init();
   }, []);
 
   const checkBoxRenderer = ({ value, record }) => {
