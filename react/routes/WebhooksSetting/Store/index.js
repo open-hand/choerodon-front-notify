@@ -17,12 +17,13 @@ export const StoreProvider = injectIntl(inject('AppState')(
     const { AppState: { currentMenuType: { type, id, orgId } }, intl, children } = props;
     const webhooksSettingUseStore = useStore();
     const webhooksDataSet = useMemo(() => new DataSet(WebhooksDataSet(id, type, orgId)), []);
-    const createTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('create', id, type, orgId)), []);
-    const editTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('edit', id, type, orgId)), []);
+    const createTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('create', id, type, orgId, webhooksSettingUseStore)), []);
+    const editTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('edit', id, type, orgId, webhooksSettingUseStore)), []);
     const editWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('edit', id, editTriggerEventsSettingDataSet, orgId, type)), [editTriggerEventsSettingDataSet]);
     const createWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('create', id, undefined, orgId, type)), []);
-    const webhookRecordTableDataSet = useMemo(() => new DataSet(WebhookRecordTableDataSet(id, type, orgId, webhooksSettingUseStore)), [webhooksSettingUseStore]);
-    // const webhookRecordDetailDataSet = useMemo(() => new DataSet(WebhookRecordDetailDataSet()), []);
+    const webhookRecordTableDataSet = useMemo(() => new DataSet(
+      WebhookRecordTableDataSet(id, type, orgId, webhooksSettingUseStore),
+    ), [webhooksSettingUseStore]);
     const value = {
       projectId: id,
       webhooksSettingUseStore,

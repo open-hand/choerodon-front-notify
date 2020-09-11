@@ -63,7 +63,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
             keys.push(`${projectId}**${id}`);
             if (!pm && !pmDisabled) {
               res.push({
-                sendingType: 'pm',
+                sendingType: 'WEB',
                 disable: true,
                 sendSettingId: id,
                 sourceType: 'project',
@@ -73,7 +73,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
             }
             if (!email && !emailDisabled) {
               res.push({
-                sendingType: 'email',
+                sendingType: 'EMAIL',
                 disable: true,
                 sourceType: 'project',
                 sendSettingId: id,
@@ -100,8 +100,8 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
       },
     },
     fields: [
-      { name: 'parentId', type: 'number' },
-      { name: 'sequenceId', type: 'number' },
+      { name: 'parentId', type: 'string' },
+      { name: 'sequenceId', type: 'string' },
       { name: 'name', type: 'string', label: formatMessage({ id: 'receive.type' }) },
       { name: 'pm', type: 'boolean', label: formatMessage({ id: 'receive.type.pm' }) },
       { name: 'email', type: 'boolean', label: formatMessage({ id: 'receive.type.email' }) },

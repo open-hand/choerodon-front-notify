@@ -8,9 +8,10 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
   }
 
   function isChecked(record, type, templateIdName, enabledName) {
+    const newSendingType = type === 'pm' ? 'WEB' : 'EMAIL';
     const hasTemplateId = record.get(templateIdName) && record.get(enabledName);
     const isCheck = hasTemplateId && !receiveStore.getReceiveData.some(({ sendSettingId, sendingType }) => (
-      sendSettingId === record.get('id') && sendingType === type
+      sendSettingId === record.get('id') && sendingType === newSendingType
     ));
     record.init(type, isCheck);
     record.init(`${type}Disabled`, !hasTemplateId);
@@ -50,7 +51,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
           if (!parentId) return;
           if (!pm && !pmDisabled) {
             res.push({
-              sendingType: 'pm',
+              sendingType: 'WEB',
               disable: true,
               sourceType: 'site',
               sendSettingId: id,
@@ -59,7 +60,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
           }
           if (!email && !emailDisabled) {
             res.push({
-              sendingType: 'email',
+              sendingType: 'EMAIL',
               disable: true,
               sourceType: 'site',
               sendSettingId: id,
@@ -76,7 +77,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
       },
     },
     fields: [
-      { name: 'id', type: 'number' },
+      { name: 'id', type: 'string' },
       { name: 'name', type: 'string', label: formatMessage({ id: 'receive.type' }) },
       { name: 'pm', type: 'boolean', label: formatMessage({ id: 'receive.type.pm' }) },
       { name: 'email', type: 'boolean', label: formatMessage({ id: 'receive.type.email' }) },

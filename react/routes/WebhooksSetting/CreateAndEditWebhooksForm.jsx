@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react';
-import { Form, TextField, TextArea, SelectBox, Table, CheckBox } from 'choerodon-ui/pro';
+import {
+  Form, TextField, TextArea, SelectBox, Table, CheckBox,
+} from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 
 const { Column } = Table;
 
-const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataSet }) => {
+const CreateAndEditWebhooksForm = observer(({
+  dataSet, triggerEventsSettingDataSet, modal, useStore,
+}) => {
   const handleQueryTriggerEvent = async (type) => {
     let typeParams;
     if (type === 'Json') {
@@ -21,32 +25,55 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
     if (children) {
       children.forEach((item) => {
         if (item.isSelected) {
+          // eslint-disable-next-line no-param-reassign
           item.isSelected = false;
         }
-        if (dataSet.current.get('sendSettingIdList') && dataSet.current.get('sendSettingIdList').find(selectId => selectId === item.get('id'))) {
+        if (dataSet.current.get('sendSettingIdList') && dataSet.current.get('sendSettingIdList').find((selectId) => selectId === item.get('id'))) {
           // if (item.get('categoryCode')) {
           //   children.find(l => l.get('code') === item.get('categoryCode')).isSelected = true;
           // }
           if (item.get('categoryCode')) {
             categoryCodesList = [...categoryCodesList, item.get('categoryCode')];
           }
+          // eslint-disable-next-line no-param-reassign
           item.isSelected = true;
         }
       });
     }
     if (categoryCodesList.length > 0) {
-      categoryCodesList.forEach(c => {
-        children.find(l => l.get('code') === c).isSelected = true;
+      categoryCodesList.forEach((c) => {
+        children.find((l) => l.get('code') === c).isSelected = true;
       });
     }
   };
 
   useEffect(() => {
-    handleQueryTriggerEvent(dataSet.current.get('serverType'));
+    const arr = triggerEventsSettingDataSet.toJSONData(true)
+      .filter((item) => !!item.categoryCode).map((item) => item.id);
+    modal.update({
+      okProps: {
+        disabled: !arr || arr.length === 0,
+      },
+    });
+  }, [useStore.getChangeWebhookSetting]);
+
+  useEffect(() => {
+    async function init() {
+      await handleQueryTriggerEvent(dataSet.current.get('serverType'));
+      const arr = triggerEventsSettingDataSet.toJSONData(true)
+        .filter((item) => !!item.categoryCode).map((item) => item.id);
+      modal.update({
+        okProps: {
+          disabled: !arr || arr.length === 0,
+        },
+      });
+    }
+    init();
   }, []);
 
   const checkBoxRenderer = ({ value, record }) => {
-    const handleNodeChecked = (clicked) => (clicked ? triggerEventsSettingDataSet.select(record) : triggerEventsSettingDataSet.unSelect(record));
+    const handleNodeChecked = (clicked) => (clicked ? triggerEventsSettingDataSet.select(record)
+      : triggerEventsSettingDataSet.unSelect(record));
     return (
       <CheckBox
         checked={record.isSelected}
@@ -55,7 +82,8 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
     );
   };
   const checkBoxHeaderRenderer = () => {
-    const handleHeaderChecked = (value) => (value ? triggerEventsSettingDataSet.selectAll() : triggerEventsSettingDataSet.unSelectAll());
+    const handleHeaderChecked = (value) => (value ? triggerEventsSettingDataSet.selectAll()
+      : triggerEventsSettingDataSet.unSelectAll());
     return (
       <CheckBox
         checked={triggerEventsSettingDataSet.every((item) => item.isSelected)}
@@ -64,7 +92,7 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
     );
   };
   return (
-    <React.Fragment>
+    <>
       <Form dataSet={dataSet} style={{ width: '5.12rem' }}>
         <SelectBox onChange={(value) => handleQueryTriggerEvent(value)} name="serverType" />
         <TextArea name="webhookAddress" />
@@ -98,7 +126,7 @@ const CreateAndEditWebhooksForm = observer(({ dataSet, triggerEventsSettingDataS
         <Column name="name" />
         <Column name="description" />
       </Table>
-    </React.Fragment>
+    </>
 
   );
 });

@@ -3,6 +3,16 @@ import { axios } from '@choerodon/boot';
 
 export default function useStore() {
   return useLocalStore(() => ({
+    changeWebhookSetting: false,
+
+    get getChangeWebhookSetting() {
+      return this.changeWebhookSetting;
+    },
+
+    setChangeWebhookSetting() {
+      this.changeWebhookSetting = !this.changeWebhookSetting;
+    },
+
     statusList: [],
 
     get getStatusList() {

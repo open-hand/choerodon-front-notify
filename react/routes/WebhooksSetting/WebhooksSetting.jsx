@@ -50,6 +50,7 @@ const WebhooksSetting = () => {
         <CreateAndEditWebhooksForm
           dataSet={createWebhooksFormDataSet}
           triggerEventsSettingDataSet={createTriggerEventsSettingDataSet}
+          useStore={webhooksSettingUseStore}
         />
       ),
       onOk: async () => {
@@ -114,6 +115,7 @@ const WebhooksSetting = () => {
         <CreateAndEditWebhooksForm
           dataSet={editWebhooksFormDataSet}
           triggerEventsSettingDataSet={editTriggerEventsSettingDataSet}
+          useStore={webhooksSettingUseStore}
         />
       ),
       afterClose: () => {
@@ -238,7 +240,7 @@ const WebhooksSetting = () => {
     </div>
   );
 
-  const handleAllWebhookRecord = async () => {
+  const handleAllWebhookRecord = async (webhookId) => {
     const res = await axios.get('/hpfm/v1/lovs/value?lovCode=HMSG.TRANSACTION_STATUS');
     webhooksSettingUseStore.setStatusList(res);
     Modal.open({
@@ -256,6 +258,8 @@ const WebhooksSetting = () => {
         id={id}
         orgId={orgId}
         useStore={webhooksSettingUseStore}
+        Services={Services}
+        webhookId={webhookId}
       />,
     });
   };
@@ -278,17 +282,7 @@ const WebhooksSetting = () => {
     }, {
       service: Services.recordService,
       text: '查看执行记录',
-      action: () => Modal.open({
-        title: 'Webhook执行记录',
-        key: Modal.key(),
-        drawer: true,
-        style: {
-          width: 900,
-        },
-        okCancel: false,
-        okText: '取消',
-        children: <WebhookRecord webhookId={record.get('serverId')} ds={webhookRecordTableDataSet} type={type} id={id} orgId={orgId} useStore={webhooksSettingUseStore} Services={Services} />,
-      }),
+      action: () => handleAllWebhookRecord(record.get('serverId')),
     }];
     return <Action className="action-icon" data={actionArr} />;
   };
@@ -308,7 +302,12 @@ const WebhooksSetting = () => {
         <Permission
           service={Services.recordService}
         >
-          <Button icon="assignment" onClick={handleAllWebhookRecord}>Webhook执行记录</Button>
+          <Button
+            icon="assignment"
+            onClick={() => handleAllWebhookRecord(false)}
+          >
+            Webhook执行记录
+          </Button>
         </Permission>
       </Header>
       <Breadcrumb />
