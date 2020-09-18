@@ -1,6 +1,6 @@
 package io.choerodon.notify.domain;
 
-public class CrlandSmsResponse {
+public class SmsResponse {
 
     private String mobile;
 

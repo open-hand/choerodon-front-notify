@@ -7,7 +7,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.exception.FeignException;
 import io.choerodon.notify.api.dto.NoticeSendDTO;
 import io.choerodon.notify.api.service.SmsService;
-import io.choerodon.notify.domain.CrlandSmsResponse;
+import io.choerodon.notify.domain.SmsResponse;
 import io.choerodon.notify.domain.SmsRecord;
 import io.choerodon.notify.infra.asserts.SmsConfigAssertHelper;
 import io.choerodon.notify.infra.asserts.TemplateAssertHelper;
@@ -173,9 +173,9 @@ public class SmsServiceImpl implements SmsService {
         SmsRecord record = initRecord(template, variable,entity);
         builder.append(smsConfig.getSingleSendApi());
         try {
-            ResponseEntity<CrlandSmsResponse> response = restTemplate.postForEntity(builder.toString(), entity, CrlandSmsResponse.class);
-            CrlandSmsResponse crlandSmsResponse = response.getBody();
-            processRecordByResponse(record, crlandSmsResponse);
+            ResponseEntity<SmsResponse> response = restTemplate.postForEntity(builder.toString(), entity, SmsResponse.class);
+            SmsResponse smsResponse = response.getBody();
+            processRecordByResponse(record, smsResponse);
         } catch (Exception e) {
             record.setReceiveAccount((String) variable.get("mobile"));
             record.setStatus(FAILED);
@@ -187,11 +187,11 @@ public class SmsServiceImpl implements SmsService {
         }
     }
 
-    private void processRecordByResponse(SmsRecord record, CrlandSmsResponse crlandSmsResponse) {
-        record.setReceiveAccount(crlandSmsResponse.getMobile());
-        if (CrlandSmsResponse.SendStatus.isSuccess(crlandSmsResponse.getSendStatus())) {
+    private void processRecordByResponse(SmsRecord record, SmsResponse smsResponse) {
+        record.setReceiveAccount(smsResponse.getMobile());
+        if (SmsResponse.SendStatus.isSuccess(smsResponse.getSendStatus())) {
             record.setStatus("COMPLETED");
-        } else if (CrlandSmsResponse.SendStatus.isFail(crlandSmsResponse.getSendStatus())) {
+        } else if (SmsResponse.SendStatus.isFail(smsResponse.getSendStatus())) {
             record.setStatus(FAILED);
         }
     }
@@ -226,7 +226,7 @@ public class SmsServiceImpl implements SmsService {
         map.put("template", template);
         map.put("entity",entity);
         try {
-            ResponseEntity<List<CrlandSmsResponse>> response = restTemplate.exchange(builder.toString(), HttpMethod.POST, entity, new ParameterizedTypeReference<List<CrlandSmsResponse>>() {
+            ResponseEntity<List<SmsResponse>> response = restTemplate.exchange(builder.toString(), HttpMethod.POST, entity, new ParameterizedTypeReference<List<SmsResponse>>() {
             });
             map.put("success", "true");
             map.put("responses", response.getBody());
@@ -251,8 +251,8 @@ public class SmsServiceImpl implements SmsService {
         Template template = (Template) map.get("template");
         Map<String, Object> variable = (Map<String, Object>) map.get("variable");
         if (success) {
-            List<CrlandSmsResponse> crlandSmsResponses = (List<CrlandSmsResponse>) map.get("responses");
-            crlandSmsResponses.forEach(resp -> {
+            List<SmsResponse> smsResponse = (List<SmsResponse>) map.get("responses");
+            smsResponse.forEach(resp -> {
                 SmsRecord record = initRecord(template, variable,(HttpEntity<JsonNode>)map.get("entity"));
                 processRecordByResponse(record, resp);
                 smsRecordMapper.insertSelective(record);
