@@ -1,8 +1,5 @@
 package io.choerodon.notify.domain;
 
-/**
- * 调用华润发送短信接口的响应体
- */
 public class CrlandSmsResponse {
 
     private String mobile;
