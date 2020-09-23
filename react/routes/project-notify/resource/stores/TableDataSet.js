@@ -1,3 +1,5 @@
+import JSONBig from 'json-bigint';
+
 function formatData(data) {
   const newData = [];
   data.forEach((item) => {
@@ -14,7 +16,9 @@ function formatData(data) {
   return newData;
 }
 
-function parentItemIsChecked({ dataSet, record, name, flagName }) {
+function parentItemIsChecked({
+  dataSet, record, name, flagName,
+}) {
   const parentIsChecked = !dataSet.find((tableRecord) => record.get('key') === tableRecord.get('envId') && !tableRecord.get(name) && tableRecord.get(flagName));
   const canCheck = !!dataSet.find((tableRecord) => record.get('key') === tableRecord.get('envId') && tableRecord.get(flagName));
   record.init(name, parentIsChecked && canCheck);
@@ -27,14 +31,22 @@ function handleLoad({ dataSet }) {
   }
   dataSet.forEach((record) => {
     if (!record.get('envId')) {
-      parentItemIsChecked({ dataSet, record, name: 'pmEnable', flagName: 'pmEnabledFlag' });
-      parentItemIsChecked({ dataSet, record, name: 'emailEnable', flagName: 'emailEnabledFlag' });
-      parentItemIsChecked({ dataSet, record, name: 'smsEnable', flagName: 'smsEnabledFlag' });
+      parentItemIsChecked({
+        dataSet, record, name: 'pmEnable', flagName: 'pmEnabledFlag',
+      });
+      parentItemIsChecked({
+        dataSet, record, name: 'emailEnable', flagName: 'emailEnabledFlag',
+      });
+      parentItemIsChecked({
+        dataSet, record, name: 'smsEnable', flagName: 'smsEnabledFlag',
+      });
     }
   });
 }
 
-export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
+export default ({
+  formatMessage, intlPrefix, projectId, userDs,
+}) => ({
   autoQuery: false,
   selection: false,
   paging: false,
@@ -48,14 +60,13 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
       method: 'get',
       transformResponse(response) {
         try {
-          const data = JSON.parse(response);
+          const data = JSONBig.parse(response);
           if (data && data.failed) {
             return data;
-          } else {
-            const { notifyEventGroupList, customMessageSettingList } = data;
-            const res = notifyEventGroupList.concat(customMessageSettingList);
-            return formatData(res);
           }
+          const { notifyEventGroupList, customMessageSettingList } = data;
+          const res = notifyEventGroupList.concat(customMessageSettingList);
+          return formatData(res);
         } catch (e) {
           return response;
         }
@@ -87,7 +98,9 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
     { name: 'emailEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.pmEnable` }) },
     { name: 'pmEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.emailEnable` }) },
     { name: 'smsEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.smsEnable` }) },
-    { name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: '请选择' },
+    {
+      name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: '请选择',
+    },
     { name: 'sendRoleList', multiple: true },
   ],
   queryFields: [],
