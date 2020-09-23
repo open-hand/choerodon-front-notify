@@ -5,6 +5,7 @@
   "description": "",
   "main": "./lib/index.js",
   "dependencies": {
+    "@choerodon/agile-pro": "^0.24.0",
     "react-codemirror": "^1.0.0",
     "react-contenteditable": "^3.3.2",
     "react-draggable": "^4.4.3",
@@ -16,11 +17,12 @@
     "lib"
   ],
   "devDependencies": {
+    "@choerodon/agile": "^0.24.0",
     "@choerodon/boot": "0.22.0",
     "@choerodon/master": "0.24.0",
-    "choerodon-ui": "^0.8.0",
     "babel-eslint": "8.2.6",
     "babel-preset-c7n-app": "^0.0.1",
+    "choerodon-ui": "^0.8.0",
     "eslint": "^7.7.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-c7n-app": "^0.0.1",
