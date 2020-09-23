@@ -1,8 +1,12 @@
+import JSONBig from 'json-bigint';
+
 function formatData(data) {
   const newData = [];
   data.forEach((item) => {
     const res = { ...item };
-    const { groupId, id, categoryCode, code } = item;
+    const {
+      groupId, id, categoryCode, code,
+    } = item;
     if (groupId) {
       res.key = `${groupId}-${code}`;
       // res.groupId = String(groupId);
@@ -14,7 +18,9 @@ function formatData(data) {
   return newData;
 }
 
-function parentItemIsChecked({ dataSet, record, name, flagName }) {
+function parentItemIsChecked({
+  dataSet, record, name, flagName,
+}) {
   const parentIsChecked = !dataSet.find((tableRecord) => record.get('key') === tableRecord.get('groupId') && !tableRecord.get(name) && tableRecord.get(flagName));
   const canCheck = !!dataSet.find((tableRecord) => record.get('key') === tableRecord.get('groupId') && tableRecord.get(flagName));
   record.init(flagName, canCheck);
@@ -24,8 +30,12 @@ function parentItemIsChecked({ dataSet, record, name, flagName }) {
 function handleLoad({ dataSet }) {
   dataSet.forEach((record) => {
     if (!record.get('groupId')) {
-      parentItemIsChecked({ dataSet, record, name: 'pmEnable', flagName: 'pmEnabledFlag' });
-      parentItemIsChecked({ dataSet, record, name: 'emailEnable', flagName: 'emailEnabledFlag' });
+      parentItemIsChecked({
+        dataSet, record, name: 'pmEnable', flagName: 'pmEnabledFlag',
+      });
+      parentItemIsChecked({
+        dataSet, record, name: 'emailEnable', flagName: 'emailEnabledFlag',
+      });
     }
   });
 }
@@ -43,14 +53,13 @@ export default ({ formatMessage, intlPrefix, projectId }) => ({
       method: 'get',
       transformResponse(response) {
         try {
-          const data = JSON.parse(response);
+          const data = JSONBig.parse(response);
           if (data && data.failed) {
             return data;
-          } else {
-            const { notifyEventGroupList, customMessageSettingList } = data;
-            const res = notifyEventGroupList.concat(customMessageSettingList);
-            return formatData(res);
           }
+          const { notifyEventGroupList, customMessageSettingList } = data;
+          const res = notifyEventGroupList.concat(customMessageSettingList);
+          return formatData(res);
         } catch (e) {
           return response;
         }
