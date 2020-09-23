@@ -1,4 +1,9 @@
-export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
+/* eslint-disable no-param-reassign */
+import JSONBig from 'json-bigint';
+
+export default ({
+  formatMessage, intlPrefix, projectId, userDs,
+}) => ({
   autoQuery: true,
   selection: false,
   paging: false,
@@ -8,12 +13,11 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
       method: 'get',
       transformResponse(response) {
         try {
-          const data = JSON.parse(response);
+          const data = JSONBig.parse(response);
           if (data && data.failed) {
             return data;
-          } else {
-            return data.customMessageSettingList || [];
           }
+          return data.customMessageSettingList || [];
         } catch (e) {
           return response;
         }
@@ -41,7 +45,9 @@ export default ({ formatMessage, intlPrefix, projectId, userDs }) => ({
     { name: 'name', type: 'string', label: formatMessage({ id: `${intlPrefix}.type` }) },
     { name: 'pmEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.pmEnable` }) },
     { name: 'emailEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.emailEnable` }) },
-    { name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: formatMessage({ id: `${intlPrefix}.choose` }) },
+    {
+      name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: formatMessage({ id: `${intlPrefix}.choose` }),
+    },
     { name: 'sendRoleList', multiple: true },
   ],
   queryFields: [],
