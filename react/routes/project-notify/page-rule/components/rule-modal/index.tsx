@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Form, DataSet, Select, Button, Row, Col, } from 'choerodon-ui/pro';
 import { ModalProps } from 'choerodon-ui/pro/lib/modal/Modal';
 import { Divider } from 'choerodon-ui';
+import { toJS } from 'mobx';
 import useFields from '@choerodon/agile/lib/routes/Issue/components/BatchModal/useFields';
-import { pageConfigApi } from '@choerodon/agile/lib/api';
+import { pageConfigApi, fieldApi } from '@choerodon/agile/lib/api';
 import { find } from 'lodash';
 import styles from './index.less';
 import { ButtonColor } from 'choerodon-ui/pro/lib/button/enum';
@@ -29,137 +30,157 @@ interface Props {
 
 const excludeCode = ['summary', 'description', 'epicName', 'timeTrace', 'belongToBacklog', 'progressFeedback', 'email'];
 
-const renderOperations = (field: IField) => {
-    const { fieldType, id } = field;
-    let operations: {value: Operation, operation: string}[] = [];
-    switch(fieldType) {
-        case 'multiple': {
-            operations = [
-                { value: 'in', operation: '包含'},
-                { value: 'not_in', operation: '不包含'},
-                { value: 'is', operation: '是'},
-                { value: 'is_not', operation: '不是'},
-            ]
-            break;
-        }
-        case 'single': {
-            operations = [
-                { value: 'eq', operation: '等于'},
-                { value: 'not_eq', operation: '不等于'},
-                { value: 'is', operation: '是'},
-                { value: 'is_not', operation: '不是'},
-            ]
-            break;
-        }
-        case 'member': {
-            operations = [
-                { value: 'in', operation: '包含'},
-                { value: 'not_in', operation: '不包含'},
-                { value: 'eq', operation: '等于'},
-                { value: 'not_eq', operation: '不等于'},
-                { value: 'is', operation: '是'},
-                { value: 'is_not', operation: '不是'},
-            ]
-            break;
-        }
-        case 'text':
-        case 'input': {
-            operations = [
-                { value: 'in', operation: '包含'},
-                { value: 'not_in', operation: '不包含'},
-                { value: 'eq', operation: '等于'},
-                { value: 'not_eq', operation: '不等于'},
-            ]
-            break;
-        }
-        case 'number': {
-            operations = [
-                { value: 'gt', operation: '大于'},
-                { value: 'gte', operation: '大于或等于'},
-                { value: 'lt', operation: '小于'},
-                { value: 'lte', operation: '小于或等于'},
-                { value: 'eq', operation: '等于'},
-                { value: 'is', operation: '是'},
-                { value: 'is_not', operation: '不是'},
-            ]
-            break;
-        }
-        case 'time':
-        case 'datetime':
-        case 'date': {
-            operations = [
-                { value: 'gt', operation: '大于'},
-                { value: 'gte', operation: '大于或等于'},
-                { value: 'lt', operation: '小于'},
-                { value: 'lte', operation: '小于或等于'},
-                { value: 'eq', operation: '等于'},
-            ]
-            break;
-        }
-    }
-    return (
-        <Select required name={`${id}-operation`} placeholder="关系">
-            {
-                operations.map(item => (
-                    <Option key={`${id}-${item.value}`} value={item.value}>{item.operation}</Option>
-                ))
-            }
-        </Select>
-    )
-};
-
 const RuleModal: React.FC<Props> = ({ modal }) => {
   const formRef: React.MutableRefObject<Form | undefined> = useRef();
     const [rules, setRules] = useState<Rule[]>([]);
     const [fieldData, setFieldData] = useState<IField[]>([]); 
     const [fields, Field] = useFields();
+    const [updateCount, setUpdateCount] = useState<number>(0);
+
+    
+    const renderOperations = useCallback((field: IField) => {
+      const { fieldType, id } = field;
+      let operations: {value: Operation, operation: string}[] = [];
+      switch(fieldType) {
+          case 'checkbox':
+          case 'multiple': {
+              operations = [
+                  { value: 'in', operation: '包含'},
+                  { value: 'not_in', operation: '不包含'},
+                  { value: 'is', operation: '是'},
+                  { value: 'is_not', operation: '不是'},
+              ]
+              break;
+          }
+          case 'radio':
+          case 'single': {
+              operations = [
+                  { value: 'eq', operation: '等于'},
+                  { value: 'not_eq', operation: '不等于'},
+                  { value: 'is', operation: '是'},
+                  { value: 'is_not', operation: '不是'},
+              ]
+              break;
+          }
+          case 'member': {
+              operations = [
+                  { value: 'eq', operation: '等于'},
+                  { value: 'not_eq', operation: '不等于'},
+                  { value: 'is', operation: '是'},
+                  { value: 'is_not', operation: '不是'},
+              ]
+              break;
+          }
+          case 'text':
+          case 'input': {
+              operations = [
+                  { value: 'like', operation: '包含'},
+                  { value: 'not_like', operation: '不包含'},
+                  { value: 'eq', operation: '等于'},
+                  { value: 'not_eq', operation: '不等于'},
+              ]
+              break;
+          }
+          case 'number': {
+              operations = [
+                  { value: 'gt', operation: '大于'},
+                  { value: 'gte', operation: '大于或等于'},
+                  { value: 'lt', operation: '小于'},
+                  { value: 'lte', operation: '小于或等于'},
+                  { value: 'eq', operation: '等于'},
+                  { value: 'is', operation: '是'},
+                  { value: 'is_not', operation: '不是'},
+              ]
+              break;
+          }
+          case 'time':
+          case 'datetime':
+          case 'date': {
+              operations = [
+                  { value: 'gt', operation: '大于'},
+                  { value: 'gte', operation: '大于或等于'},
+                  { value: 'lt', operation: '小于'},
+                  { value: 'lte', operation: '小于或等于'},
+                  { value: 'eq', operation: '等于'},
+              ]
+              break;
+          }
+      }
+      const handleChangeOperation = () => {
+        setUpdateCount((count) => count + 1);
+        setFieldValue(`${id}-value`, undefined);
+      }
+      return (
+          <Select clearButton={false} required name={`${id}-operation`} placeholder="关系" onChange={handleChangeOperation}>
+              {
+                  operations.map(item => (
+                      <Option key={`${id}-${item.value}`} value={item.value}>{item.operation}</Option>
+                  ))
+              }
+          </Select>
+      )
+  }, []);
 
     useEffect(() => {
       Field.add();
-      pageConfigApi.loadFieldsByType('=7aReL-jA5szZNGpbbMnDfqpF-SWg1-_JQGrtR1P3sj4==').then((res: IField[]) => {
+      fieldApi.getCustomFields().then((res: IField[]) => {
         const data = res.filter((item) => !find(excludeCode, (code) => code === item.code));
         setFieldData(data);
       });
     }, []);
 
-    const handleClickSubmit = async () => {
-      console.log('submit');
+    const handleClickSubmit = useCallback(async () => {
+      console.log('提交数据：');
+      console.log(formRef.current.getFields().map(item => ({
+        name: item.name,
+        value: toJS(item.value),
+      })));
       if(formRef && formRef.current) {
-        console.log(formRef.current);
-        console.log(formRef.current.getFields());
         console.log(await formRef.current.checkValidity());
         if(await formRef.current.checkValidity()) {
-          formRef.current.element.submit();
+          // formRef.current.element.submit();
+          console.log('提交');
         }
       }
       return false;
-    }
+    }, []);
 
     useEffect(() => {
       modal?.handleOk(handleClickSubmit);
     });
 
-    const handleSubmit = () => {
-        console.log('触发了submit');
-    };
+    const setFieldValue = useCallback((name: string, value: any) => {
+      const fieldValues = formRef?.current?.getFields();
+      const currentFieldValue = fieldValues?.find(item => item.name === name);
+      if(currentFieldValue) {
+        currentFieldValue.value = value;
+      }
+    }, []);
+
+    const values = formRef?.current?.getFields().map(item => ({
+      name: item.name,
+      value: toJS(item.value),
+    })) || [];
 
     return (
         <div className={styles.rule_form}>
-         <Form onSubmit={handleSubmit} ref={formRef} >
+         <Form ref={formRef} >
            <div className={`${styles.rule_form_setting} ${styles.rule_form_objectSetting}`}>
                <p className={styles.rule_form_setting_title}>通知对象设置</p>
                 <SelectUser
+                  required
                   style={{
                     width: 600,
-                    marginBottom: 27,
                   }}
                   name="notificationObject"
                   label="通知对象"
                   multiple
                 />
                 <SelectUser
+                  required
                   style={{
                     width: 600,
+                    marginTop: 27,
                   }}
                   name="ccPerson"
                   label="抄送人"
@@ -201,7 +222,13 @@ const RuleModal: React.FC<Props> = ({ modal }) => {
                                       required
                                       placeholder="属性"
                                       name={`${id}-fieldId`}
-                                      onChange={(value) => {
+                                      onChange={(value, oldValue) => {
+                                        console.log(value, oldValue, formRef?.current);
+                                          // const fieldValue = formRef?.current?.getFields().find(item => item.name === `${oldValue}-operation`);
+                                          // console.log(fieldValue);
+                                          // fieldValue.value = undefined;
+                                          setFieldValue(`${oldValue}-operation`, undefined);
+                                          setFieldValue(`${oldValue}-value`, undefined);
                                           const field = find(fieldData, { id: value });
                                           // @ts-ignore
                                           Field.set(key, field);
@@ -228,9 +255,9 @@ const RuleModal: React.FC<Props> = ({ modal }) => {
                             <Col span={8} key={id}>
                                 {
                                   renderRule(f, {
-                                    fieldId: '111',
-                                    operation: 'is', 
-                                    value: '1123',
+                                    fieldId: f.id,
+                                    operation: values.find(fieldValue => fieldValue.name === `${f.id}-operation`)?.value, 
+                                    value: values.find(fieldValue => fieldValue.name === `${f.id}-value`)?.value,
                                   })
                                 }
                             </Col>

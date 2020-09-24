@@ -17,7 +17,7 @@ import SelectUrgent from '@choerodon/agile-pro/lib/components/select/select-prio
 const { Option } = Select;
 const { AppState } = stores;
 
-export type Operation = 'in' | 'not_in' | 'is' | 'is_not' | 'eq' | 'not_eq' | 'gt' | 'gte' | 'lt' | 'lte';
+export type Operation = 'in' | 'not_in' | 'is' | 'is_not' | 'eq' | 'not_eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'not_like' | '';
 
 interface FieldOption {
   code: string
@@ -58,148 +58,170 @@ export interface IFieldK extends IField {
 }
 
 
-const renderRule = (field: IField, fieldValue: Rule = {}) => {
-  const isProgram = AppState.currentMenuType.category !== 'PROGRAM';
+const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '', value: ''}) => {
+    console.log(field, fieldValue);
+    const isProgram = AppState.currentMenuType.category !== 'PROGRAM';
     const { fieldType, id, system, code, fieldOptions } = field;
     const { operation } = fieldValue;
-    if(operation === 'is' || operation === 'is_not' ) {
-      return (
-        <Select required name={`${id}-value`} placeholder="值">
-          <Option value="null">空</Option>
-        </Select>
-      )
-    }
-    if(system) {
-        switch(code) {
-            case 'issueType': {
-              return (
-                <SelectIssueType required name={`${id}-value`} isProgram={isProgram} />
-              )
-            }
-            case 'status': {
+    if(Boolean(operation)) {
+      if(operation === 'is' || operation === 'is_not' ) {
+        return (
+          <Select required name={`${id}-value`} placeholder="值">
+            <Option value='null'>空</Option>
+          </Select>
+        )
+      }
+      if(system) {
+          switch(code) {
+              case 'issueType': {
                 return (
-                    <SelectStatus
-                        required
-                        name={`${id}-value`} 
-                        isProgram={isProgram} 
-                    />
+                  <SelectIssueType 
+                    required 
+                    name={`${id}-value`} 
+                    isProgram={isProgram}
+                    placeholder="值" 
+                  />
                 )
-            }
-            case 'priority': {
-                return (
-                    <SelectPriority required name={`${id}-value`} />
-                )
-            }
-            case 'component': {
-                return <SelectComponent required name={`${id}-value`} />
-            }
-            case 'label': {
-                return <SelectLabel required name={`${id}-value`} />
-            }
-            case 'influenceVersion':
-            case 'fixVersion': {
-              return <SelectVersion required name={`${id}-value`} />
-            }
-            case 'epic': {
-              return <SelectEpic required name={`${id}-value`} isProgram={isProgram} />
-            }
-            case 'sprint': {
-              return <SelectSprint required name={`${id}-value`} />
-            }
-            case 'reporter':
-            case 'assignee': {
-              return <SelectUser required name={`${id}-value`} />
-            }
-            case 'backlogType': {
-              return <SelectDemandType required name={`${id}-value`} />
-            }
-            case 'backlogClassification': {
-              return <SelectTreeDemandClassification required name={`${id}-value`} />
-            }
-            case 'urgent': {
-              return <SelectUrgent required name={`${id}-value`} />
-            }
-        }
-    }
-    switch(fieldType) {
-        case 'multiple':
-        case 'single': {
-            <Select
-              required
-              placeholder="字段值"
-              name={`${id}-value`}
-              multiple={operation === 'in' || operation === 'not_in'}
-              maxTagCount={2}
-              maxTagTextLength={10}
-            >
-              {(fieldOptions || []).map((item: FieldOption) => {
-                if (item.enabled) {
+              }
+              case 'status': {
                   return (
-                    <Option
-                      value={item.id}
-                      key={item.id}
-                    >
-                      {item.value}
-                    </Option>
-                  );
-                }
-                return [];
-              })}
-            </Select>
-        }
-        case 'member': {
-            return (
-              <SelectUser required name={`${id}-value`} />
-            )
-        }
-        case 'text': {
-            <TextArea
+                      <SelectStatus
+                          required
+                          name={`${id}-value`} 
+                          isProgram={isProgram}
+                          placeholder="值"
+                      />
+                  )
+              }
+              case 'priority': {
+                  return (
+                      <SelectPriority
+                        required
+                        name={`${id}-value`}
+                        placeholder="值"
+                      />
+                  )
+              }
+              case 'component': {
+                  return <SelectComponent multiple required name={`${id}-value`} placeholder="值" />
+              }
+              case 'label': {
+                  return <SelectLabel multiple required name={`${id}-value`} placeholder="值" />
+              }
+              case 'influenceVersion':
+              case 'fixVersion': {
+                return <SelectVersion multiple required name={`${id}-value`} placeholder="值" />
+              }
+              case 'epic': {
+                return <SelectEpic required name={`${id}-value`} isProgram={isProgram} placeholder="值" />
+              }
+              case 'sprint': {
+                return <SelectSprint required name={`${id}-value`} placeholder="值" />
+              }
+              case 'reporter':
+              case 'assignee': {
+                return <SelectUser required name={`${id}-value`} placeholder="值" />
+              }
+              case 'backlogType': {
+                return <SelectDemandType required name={`${id}-value`} placeholder="值" />
+              }
+              case 'backlogClassification': {
+                return <SelectTreeDemandClassification required name={`${id}-value`} placeholder="值" />
+              }
+              case 'urgent': {
+                return <SelectUrgent required name={`${id}-value`} placeholder="值" />
+              }
+          }
+      }
+      switch(fieldType) {
+          case 'radio':
+          case 'checkbox':
+          case 'multiple':
+          case 'single': {
+             return (
+              <Select
                 required
+                placeholder="值"
                 name={`${id}-value`}
-                rows={3}
-                maxLength={255}
-                style={{ width: '100%' }}
-              />
-        }
-        case 'input': {
-            return (
-              <TextField
+                multiple={operation === 'in' || operation === 'not_in'}
+                maxTagCount={2}
+                maxTagTextLength={10}
+              >
+                {(fieldOptions || []).map((item: FieldOption) => {
+                  if (item.enabled) {
+                    return (
+                      <Option
+                        value={item.id}
+                        key={item.id}
+                      >
+                        {item.value}
+                      </Option>
+                    );
+                  }
+                  return [];
+                })}
+              </Select>
+             )
+          }
+          case 'member': {
+              return (
+                <SelectUser required name={`${id}-value`} placeholder="值" />
+              )
+          }
+          case 'text': {
+              <TextArea
                   required
                   name={`${id}-value`}
-                  maxLength={100}
+                  rows={3}
+                  maxLength={255}
+                  style={{ width: '100%' }}
+                  placeholder="值"
                 />
-            )
-        }
-        case 'number': {
-           // remainingTime, storyPoints
-           return (
-            <NumberField
-              required
-              name={`${id}-value`}
-            />
-           )
-        }
-        case 'time': {
-          return <TimePicker
-          required
-          name={`${id}-value`}
-        />
-        }
-        case 'datetime': {
-          // creationDate, lastUpdateDate,estimatedStartTime,estimatedEndTime,
-          return (<DateTimePicker
+          }
+          case 'input': {
+              return (
+                <TextField
+                    required
+                    name={`${id}-value`}
+                    maxLength={100}
+                    placeholder="值"
+                  />
+              )
+          }
+          case 'number': {
+             // remainingTime, storyPoints
+             return (
+              <NumberField
+                required
+                name={`${id}-value`}
+                placeholder="值"
+              />
+             )
+          }
+          case 'time': {
+            return <TimePicker
             required
             name={`${id}-value`}
-        />)
-        }
-        case 'date': {
-            return (<DatePicker required name={`${id}-value`} />)
-        }
-        default:
-         <Select required placeholder="值" />
+            placeholder="值"
+          />
+          }
+          case 'datetime': {
+            // creationDate, lastUpdateDate,estimatedStartTime,estimatedEndTime,
+            return (<DateTimePicker
+              required
+              name={`${id}-value`}
+              placeholder="值"
+          />)
+          }
+          case 'date': {
+              return (<DatePicker required name={`${id}-value`} placeholder="值" />)
+          }
+          default:
+           <Select required placeholder="值" />
+      }
     }
     return (
-      <Select required placeholder="值" />
+      <Select name="null" required placeholder="值" />
     )
 }
 
