@@ -1,65 +1,48 @@
 import React, {useMemo} from 'react';
-import { Page, Header, Content, Breadcrumb, stores} from '@choerodon/boot';
+import { Page, Header, Content, Breadcrumb } from '@choerodon/boot';
 import {observer} from 'mobx-react-lite';
 import {Button, DataSet, Modal} from 'choerodon-ui/pro';
 import RuleTable from './components/rule-table';
 import { FieldType } from 'choerodon-ui/pro/lib/data-set/enum';
+import { getProjectId } from '@choerodon/agile/lib/utils/common';
 import styles from './index.less';
 import RuleModal from './components/rule-modal';
-import RuleDataSet from './components/rule-modal/RuleDataSet';
-const { AppState } = stores;
 
 const PageRule = () => {
     const ruleTableDataSet = useMemo(() => {
         return new DataSet({
             autoQuery: true,
             selection: false,
-            // transport: {
-            //     read: ({ params }) => {
-            //     return ({
-            //         url: `/agile/v1/projects/${AppState.currentMenuType.id}/backlog/backlog_list`,
-            //         method: 'post',
-            //     });
-            //     },
-            // },
+            transport: {
+                read: () => {
+                return ({
+                    url: `/agile/v1/projects/${getProjectId()}/configuration_rule`,
+                    method: 'get',
+                });
+                },
+            },
             fields: [
                 {
-                label: '通知对象',
-                name: 'notificationObject',
-                type: 'string' as FieldType,
+                  label: '通知对象',
+                  name: 'receiverList',
+                  type: 'array' as FieldType,
                 },
                 {
-                label: '抄送人',
-                name: 'ccPerson',
-                type: 'string' as FieldType,
+                    name: 'action',
                 },
                 {
-                    label: '通知规则',
-                    name: 'rule',
-                    type: 'array' as FieldType,
+                  label: '抄送人',
+                  name: 'ccList',
+                  type: 'string' as FieldType,
+                },
+                {
+                  label: '通知规则',
+                  name: 'expressQuery',
+                  type: 'string' as FieldType,
                 },
             ],
-            data: [
-                {
-                    notificationObject: '易烊千玺、IU',
-                    ccPerson: '我是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU',
-                    rule: '规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则',
-                },
-                {
-                    notificationObject: '我是易烊千玺、IU',
-                    ccPerson: '我是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU',
-                    rule: '规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则',
-                },
-                {
-                    notificationObject: '易烊千玺、IU易烊千玺、IU易烊千玺、IU易烊千玺、IU易烊千玺、IU易烊千玺、IU易烊千玺、IU',
-                    ccPerson: '我是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU是抄送人易烊千玺、IU',
-                    rule: '规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则',
-                },
-            ]
             });
     }, []);
-
-    const ruleDataSet: DataSet = useMemo(() => new DataSet(RuleDataSet()), []);
 
     const handleAddRule = () => {
         Modal.open({
@@ -70,7 +53,7 @@ const PageRule = () => {
             },
             key: Modal.key(),
             title: '添加规则',
-            children: <RuleModal ruleDataSet={ruleDataSet} />,
+            children: <RuleModal ruleTableDataSet={ruleTableDataSet} />,
         })
     };
 
