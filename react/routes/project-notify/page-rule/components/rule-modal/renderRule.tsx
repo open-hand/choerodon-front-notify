@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Select, DatePicker, TimePicker, DateTimePicker, TextArea, TextField, NumberField } from 'choerodon-ui/pro';
 import { stores } from '@choerodon/boot';
 import SelectIssueType from '@choerodon/agile/lib/components/select/select-issue-type';
@@ -18,7 +18,8 @@ const { Option } = Select;
 const { AppState } = stores;
 
 export type Operation = 'in' | 'not_in' | 'is' | 'is_not' | 'eq' | 'not_eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'not_like' | '';
-
+export type IFieldType = 'radio' | 'checkbox' | 'single' | 'multiple' | 'date' | 'datetime' | 'time' | 'number' | 'member' | 'text' | 'input';
+export type FieldType = 'option' | 'date_hms' | 'date' | 'number' | 'string' | 'text'; 
 interface FieldOption {
   code: string
   fieldId: string
@@ -29,7 +30,7 @@ interface FieldOption {
 
 export interface Rule {
   ao?: 'and' | 'or',
-  fieldId: string,
+  code: string,
   operation: Operation, 
   value: any,
 }
@@ -52,44 +53,54 @@ export interface IField {
   extraConfig?: boolean,
 }
 
+export interface IFieldWithType extends IField {
+  type: FieldType,
+}
+
 export interface IFieldK extends IField {
   key: number,
   request: boolean,
+  type: FieldType,
 }
 
 
-const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '', value: ''}) => {
-    console.log(field, fieldValue);
-    const isProgram = AppState.currentMenuType.category !== 'PROGRAM';
+const renderRule = (field: IField, fieldValue: Rule = {code: '', operation: '', value: ''}, systemDataRefMap) => {
+    const isProgram = AppState.currentMenuType.category === 'PROGRAM';
     const { fieldType, id, system, code, fieldOptions } = field;
     const { operation } = fieldValue;
     if(Boolean(operation)) {
       if(operation === 'is' || operation === 'is_not' ) {
         return (
-          <Select required name={`${id}-value`} placeholder="值">
+          <Select required name={`${code}-value`} placeholder="值">
             <Option value='null'>空</Option>
           </Select>
         )
       }
       if(system) {
           switch(code) {
-              case 'issueType': {
+              case 'issue_type': {
                 return (
-                  <SelectIssueType 
+                  <SelectIssueType
                     required 
-                    name={`${id}-value`} 
+                    name={`${code}-value`} 
                     isProgram={isProgram}
-                    placeholder="值" 
+                    placeholder="值"
+                    afterLoad={(data) => {
+                      systemDataRefMap.current.set(code, data || []);
+                    }}
                   />
                 )
               }
               case 'status': {
                   return (
                       <SelectStatus
-                          required
-                          name={`${id}-value`} 
-                          isProgram={isProgram}
-                          placeholder="值"
+                        required
+                        name={`${code}-value`} 
+                        isProgram={isProgram}
+                        placeholder="值"
+                        afterLoad={(data) => {
+                          systemDataRefMap.current.set(code, data || []);
+                        }}
                       />
                   )
               }
@@ -97,40 +108,109 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
                   return (
                       <SelectPriority
                         required
-                        name={`${id}-value`}
+                        name={`${code}-value`}
                         placeholder="值"
+                        afterLoad={(data) => {
+                          systemDataRefMap.current.set(code, data || []);
+                        }}
                       />
                   )
               }
               case 'component': {
-                  return <SelectComponent multiple required name={`${id}-value`} placeholder="值" />
+                  return (
+                  <SelectComponent 
+                    valueField="componentId"
+                    multiple
+                    required
+                    name={`${code}-value`}
+                    placeholder="值" 
+                    maxTagCount={2}
+                    maxTagTextLength={10}
+                    afterLoad={(data) => {
+                      systemDataRefMap.current.set(code, data || []);
+                    }}
+                  />
+                )
               }
               case 'label': {
-                  return <SelectLabel multiple required name={`${id}-value`} placeholder="值" />
+                  return (
+                  <SelectLabel
+                    valueField="labelId"
+                    multiple 
+                    required 
+                    name={`${code}-value`} 
+                    placeholder="值"
+                    maxTagCount={2}
+                    maxTagTextLength={10}
+                    afterLoad={(data) => {
+                      systemDataRefMap.current.set(code, data || []);
+                    }} 
+                  />
+                  )
               }
-              case 'influenceVersion':
-              case 'fixVersion': {
-                return <SelectVersion multiple required name={`${id}-value`} placeholder="值" />
+              case 'influence_version':
+              case 'fix_version': {
+                return (
+                <SelectVersion
+                  valueField="versionId"
+                  multiple 
+                  required 
+                  name={`${code}-value`} 
+                  placeholder="值"
+                  maxTagCount={2}
+                  maxTagTextLength={10}
+                  afterLoad={(data) => {
+                    systemDataRefMap.current.set(code, data || []);
+                  }}
+                />)
               }
               case 'epic': {
-                return <SelectEpic required name={`${id}-value`} isProgram={isProgram} placeholder="值" />
+                return (
+                <SelectEpic  
+                  required 
+                  name={`${code}-value`} 
+                  isProgram={isProgram} 
+                  placeholder="值" 
+                  afterLoad={(data) => {
+                    systemDataRefMap.current.set(code, data || []);
+                  }} 
+                />
+              )
               }
               case 'sprint': {
-                return <SelectSprint required name={`${id}-value`} placeholder="值" />
+                return (
+                  <SelectSprint 
+                    required 
+                    name={`${code}-value`} 
+                    placeholder="值"
+                    afterLoad={(data) => {
+                      systemDataRefMap.current.set(code, data || []);
+                    }}
+                  />
+                )
               }
               case 'reporter':
               case 'assignee': {
-                return <SelectUser required name={`${id}-value`} placeholder="值" />
+                return (
+                <SelectUser 
+                  required
+                  name={`${code}-value`}
+                  placeholder="值"
+                  afterLoad={(data) => {
+                    systemDataRefMap.current.set(code, data || []);
+                  }} 
+                />
+                )
               }
-              case 'backlogType': {
-                return <SelectDemandType required name={`${id}-value`} placeholder="值" />
-              }
-              case 'backlogClassification': {
-                return <SelectTreeDemandClassification required name={`${id}-value`} placeholder="值" />
-              }
-              case 'urgent': {
-                return <SelectUrgent required name={`${id}-value`} placeholder="值" />
-              }
+              // case 'backlogType': {
+              //   return <SelectDemandType required name={`${code}-value`} placeholder="值" />
+              // }
+              // case 'backlogClassification': {
+              //   return <SelectTreeDemandClassification required name={`${code}-value`} placeholder="值" />
+              // }
+              // case 'urgent': {
+              //   return <SelectUrgent required name={`${code}-value`} placeholder="值" />
+              // }
           }
       }
       switch(fieldType) {
@@ -142,7 +222,7 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
               <Select
                 required
                 placeholder="值"
-                name={`${id}-value`}
+                name={`${code}-value`}
                 multiple={operation === 'in' || operation === 'not_in'}
                 maxTagCount={2}
                 maxTagTextLength={10}
@@ -165,13 +245,13 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
           }
           case 'member': {
               return (
-                <SelectUser required name={`${id}-value`} placeholder="值" />
+                <SelectUser required name={`${code}-value`} placeholder="值" />
               )
           }
           case 'text': {
               <TextArea
                   required
-                  name={`${id}-value`}
+                  name={`${code}-value`}
                   rows={3}
                   maxLength={255}
                   style={{ width: '100%' }}
@@ -182,7 +262,7 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
               return (
                 <TextField
                     required
-                    name={`${id}-value`}
+                    name={`${code}-value`}
                     maxLength={100}
                     placeholder="值"
                   />
@@ -193,7 +273,7 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
              return (
               <NumberField
                 required
-                name={`${id}-value`}
+                name={`${code}-value`}
                 placeholder="值"
               />
              )
@@ -201,7 +281,7 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
           case 'time': {
             return <TimePicker
             required
-            name={`${id}-value`}
+            name={`${code}-value`}
             placeholder="值"
           />
           }
@@ -209,19 +289,19 @@ const renderRule = (field: IField, fieldValue: Rule = {fieldId: '', operation: '
             // creationDate, lastUpdateDate,estimatedStartTime,estimatedEndTime,
             return (<DateTimePicker
               required
-              name={`${id}-value`}
+              name={`${code}-value`}
               placeholder="值"
           />)
           }
           case 'date': {
-              return (<DatePicker required name={`${id}-value`} placeholder="值" />)
+              return (<DatePicker required name={`${code}-value`} placeholder="值" />)
           }
           default:
            <Select required placeholder="值" />
       }
     }
     return (
-      <Select name="null" required placeholder="值" />
+      <Select name={`${code}-value`} required placeholder="值" />
     )
 }
 
