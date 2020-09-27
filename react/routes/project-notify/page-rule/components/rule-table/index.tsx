@@ -8,15 +8,36 @@ import { RenderProps } from 'choerodon-ui/pro/lib/field/FormField';
 import { Action } from 'choerodon-ui/pro/lib/trigger/enum';
 import { getProjectId } from '@choerodon/agile/lib/utils/common';
 const { Column  } = Table;
+import styles from '../../index.less';
+import RuleModal from '../rule-modal';
 interface Props{
     tableDataSet: DataSet,
 }
 
 const RuleTable: React.FC<Props> = ({ tableDataSet }) => {
-    // @ts-ignore
-    const renderReceiver = ({ record }) => {
-        const receiverList = record.get('receiverList') || [];
-        return receiverList.map((user: User) => user.realName).join('、');
+  const handleClickReceiver = (ruleId: string) => {
+    console.log(ruleId);
+    Modal.open({
+      className: styles.rule_modal,
+      drawer: true,
+      style: {
+      width: 740,
+      },
+      key: Modal.key(),
+      title: '编辑规则',
+      children: <RuleModal ruleTableDataSet={tableDataSet} ruleId={ruleId} />,
+  })
+  };
+    const renderReceiver = ({ record }: RenderProps) => {
+        const receiverList = record?.get('receiverList') || [];
+        return (
+          <span 
+            className={styles.receiver}
+            onClick={() => handleClickReceiver(record?.get('id'))}
+          >
+            {receiverList.map((user: User) => user.realName).join('、')}
+          </span>
+        );
     };
 
     const renderAction = ({ record }: RenderProps) => {

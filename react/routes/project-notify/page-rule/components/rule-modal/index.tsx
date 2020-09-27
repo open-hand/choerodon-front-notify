@@ -5,7 +5,9 @@ import { Divider } from 'choerodon-ui';
 import { axios, stores, Choerodon } from '@choerodon/boot';
 import { toJS } from 'mobx';
 import useFields from '@choerodon/agile/lib/routes/Issue/components/BatchModal/useFields';
-import { pageConfigApi, fieldApi } from '@choerodon/agile/lib/api';
+import { getProjectId } from '@choerodon/agile/lib/utils/common';
+import { User } from '@choerodon/agile/lib/common/types';
+import { fieldApi } from '@choerodon/agile/lib/api';
 import { find, map } from 'lodash';
 import styles from './index.less';
 import { ButtonColor } from 'choerodon-ui/pro/lib/button/enum';
@@ -26,6 +28,7 @@ interface IModalProps extends ModalProps { // pro 组件Modal 注入的modal
 interface Props {
     modal?: IModalProps,
     ruleTableDataSet: DataSet
+    ruleId?: string
 }
 
 interface Express {
@@ -33,7 +36,7 @@ interface Express {
   operation: Operation,
   relationshipWithPervious: 'and' | 'or',
   // text,input
-  valueStr?: string,
+  valueStr?: string, // 
   // 单选，member
   valueId?: string, 
   // 多选  
@@ -122,13 +125,14 @@ const formatMoment = (type: 'date' | 'datetime' | 'time', d: string) => {
   }
 };
 
-const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet }) => {
+const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   const formRef: React.MutableRefObject<Form | undefined> = useRef();
     const [rules, setRules] = useState<Rule[]>([]);
     const [fieldData, setFieldData] = useState<IFieldWithType[]>([]); 
     const [fields, Field] = useFields();
     const [updateCount, setUpdateCount] = useState<number>(0);
     const systemDataRefMap = useRef(new Map());
+    const [initRule, setInitRule] = useState({});
     
     const renderOperations = useCallback((field: IFieldWithType) => {
       const { fieldType, code } = field;
@@ -230,6 +234,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet }) => {
         })
         const transformedCustomFields = customFields.map((item: IField) => {
           return ({
+            ...initRule,
             ...item,
             type: customTypeMap.get(item.fieldType),
             system: false,
@@ -256,6 +261,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet }) => {
       }
       if(system) {
         const options = systemDataRefMap.current.get(code);
+        console.log(options, value);
         switch(code) {
           case 'priority':
           case 'status':
@@ -399,6 +405,39 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet }) => {
     useEffect(() => {
       modal?.handleOk(handleClickSubmit);
     });
+
+    useEffect(() => {
+      if(ruleId && fieldData) {
+        axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then(res => {
+          console.log('编辑查询:');
+          console.log(res);
+          const {ccList = [], receiverList = [], expressList = []} = res;
+          setFieldValue('ccList', ccList.map((item: User) => item.id));
+          setFieldValue('receiverList', receiverList.map((item: User) => item.id));
+          const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code}));
+          Field.init(existFields);
+          expressList.forEach((item: Express) => {
+            const { 
+              fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
+            } = item;
+            const field = find(fieldData, { code: fieldCode});
+            const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
+            if(field) {
+              const { fieldType, code } = field;
+              setFieldValue(`${code}-code`, fieldCode);
+              setFieldValue(`${code}-operation`, operation);
+              setFieldValue(`${code}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldValue) : fieldValue);
+              if(relationshipWithPervious) {
+                setFieldValue(`${code}-ao`, relationshipWithPervious);
+              }
+            }
+          });
+          setInitRule(res);
+        }).catch((e: ErrorEvent) => {
+          console.log(e);
+        });
+      }
+    }, [ruleId, fieldData]);
 
     const setFieldValue = useCallback((name: string, value: any) => {
       const fieldValues = formRef?.current?.getFields();
