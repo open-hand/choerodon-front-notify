@@ -47,7 +47,7 @@ const Content = () => {
         tabKey: 'choerodon.code.project.setting-notify-agile',
         component: AgileContent,
       }, {
-        route: '/notify/project-notify/pageRule',
+        route: '/notify/project-notify/page-rule',
         title: '页面规则',
         tabKey: 'choerodon.code.project.setting-notify-rule',
         component: PageRuleContent,
