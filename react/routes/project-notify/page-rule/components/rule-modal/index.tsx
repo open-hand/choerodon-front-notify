@@ -127,11 +127,10 @@ const formatMoment = (type: 'date' | 'datetime' | 'time', d: string) => {
 
 const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   const formRef: React.MutableRefObject<Form | undefined> = useRef();
-    const [rules, setRules] = useState<Rule[]>([]);
     const [fieldData, setFieldData] = useState<IFieldWithType[]>([]); 
     const [fields, Field] = useFields();
     const [updateCount, setUpdateCount] = useState<number>(0);
-    const systemDataRefMap = useRef(new Map());
+    const systemDataRefMap = useRef<Map<string, any>>(new Map());
     const [initRule, setInitRule] = useState({});
     
     const renderOperations = useCallback((field: IFieldWithType) => {
@@ -222,7 +221,9 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   }, []);
 
     useEffect(() => {
-      Field.add();
+      if(!ruleId) {
+        Field.add();
+      }
       Promise.all([getSystemFields(),fieldApi.getCustomFields()]).then(([systemFields, customFields]) => {
         const transformedSystemFields = systemFields.map((item: { fieldCode: string; }) => {
           return ({
@@ -261,7 +262,6 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
       }
       if(system) {
         const options = systemDataRefMap.current.get(code);
-        console.log(options, value);
         switch(code) {
           case 'priority':
           case 'status':
@@ -351,21 +351,21 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
               // text,input
               valueStr: (fieldType === 'input' || fieldType === 'text') && !valueIsNull ? value : undefined,
               // 单选，member
-              valueId: (fieldType === 'single' || fieldType === 'member' || fieldType === 'radio') ? value : undefined, 
+              valueId: (fieldType === 'single' || fieldType === 'member' || fieldType === 'radio') && !valueIsNull  ? value : undefined, 
               // 多选  
-              valueIdList: (fieldType === 'multiple' || fieldType === 'checkbox') ? value : undefined,
+              valueIdList: (fieldType === 'multiple' || fieldType === 'checkbox') && !valueIsNull  ? value : undefined,
               // number整数,需要判断是否允许小数
-              valueNum: fieldType === 'number' ? value : undefined,
+              valueNum: fieldType === 'number' && !valueIsNull  ? value : undefined,
               // number有小数， 需要判断是否允许小数
-              valueDecimal: fieldType === 'number' ? value : undefined,
+              valueDecimal: fieldType === 'number' && !valueIsNull  ? value : undefined,
               // date,datetime
-              valueDate: fieldType === 'date' || fieldType === 'datetime' ? formatMoment(fieldType, value) : undefined,
+              valueDate: (fieldType === 'date' || fieldType === 'datetime') && !valueIsNull  ? formatMoment(fieldType, value) : undefined,
               // time
-              valueDateHms: fieldType === 'time' ? formatMoment(fieldType, value) : undefined,
+              valueDateHms: fieldType === 'time' && !valueIsNull  ? formatMoment(fieldType, value) : undefined,
               predefined: system,
               fieldType: type,
               // 是否允许小数，需要判断是否允许小数
-              allowDecimals: fieldType === 'number' ? false : undefined,
+              allowDecimals: fieldType === 'number' && !valueIsNull  ? false : undefined,
             })
             const ao = getFieldValue(`${code}-ao`) && aoMap.get(getFieldValue(`${code}-ao`));
             expressQuery += `${ao ? `${ao} `: ''}${name} ${operationMap.get(getFieldValue(`${code}-operation`))} ${transformValue(fieldInfo, getFieldValue(`${code}-operation`), getFieldValue(`${code}-value`))} `;
@@ -383,18 +383,26 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         if(await formRef.current.checkValidity()) {
           const expressObj = transformSumitData();
           const data = {
-            receiverList: toJS(getFieldValue('receiverList')).map((id: string) => ({id})),
-            ccList: toJS(getFieldValue('ccList')).map((id: string) => ({id})),
+            receiverList: (toJS(getFieldValue('receiverList')) || []).map((id: string) => ({id})),
+            ccList: (toJS(getFieldValue('ccList')) || []).map((id: string) => ({id})),
             ...expressObj,
           }
-          // console.log('最后提交的数据：');
-          // console.log(data);
-          return axios.post(`/agile/v1/projects/${getProjectId()}/configuration_rule`, data).then(() => {
-            Choerodon.prompt('创建成功');
+          if(!ruleId) {
+            return axios.post(`/agile/v1/projects/${getProjectId()}/configuration_rule`, data).then(() => {
+              Choerodon.prompt('创建成功');
+              ruleTableDataSet.query();
+              return true;
+            }).catch(() => {
+              Choerodon.prompt('创建失败');
+              return false;
+            });
+          }
+          return axios.put(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`, data).then(() => {
+            Choerodon.prompt('编辑成功');
             ruleTableDataSet.query();
             return true;
           }).catch(() => {
-            Choerodon.prompt('创建失败');
+            Choerodon.prompt('编辑失败');
             return false;
           });
         }
@@ -409,8 +417,6 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     useEffect(() => {
       if(ruleId && fieldData) {
         axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then(res => {
-          console.log('编辑查询:');
-          console.log(res);
           const {ccList = [], receiverList = [], expressList = []} = res;
           setFieldValue('ccList', ccList.map((item: User) => item.id));
           setFieldValue('receiverList', receiverList.map((item: User) => item.id));
@@ -426,7 +432,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
               const { fieldType, code } = field;
               setFieldValue(`${code}-code`, fieldCode);
               setFieldValue(`${code}-operation`, operation);
-              setFieldValue(`${code}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldValue) : fieldValue);
+              setFieldValue(`${code}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
               if(relationshipWithPervious) {
                 setFieldValue(`${code}-ao`, relationshipWithPervious);
               }
@@ -454,7 +460,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     
     return (
         <div className={styles.rule_form}>
-         <Form ref={formRef} >
+         <Form ref={formRef as React.RefObject<Form>} >
            <div className={`${styles.rule_form_setting} ${styles.rule_form_objectSetting}`}>
                <p className={styles.rule_form_setting_title}>通知对象设置</p>
                 <SelectUser
@@ -465,6 +471,8 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                   name="receiverList"
                   label="通知对象"
                   multiple
+                  maxTagCount={6}
+                  maxTagTextLength={4}
                 />
                 <SelectUser
                   style={{
@@ -474,6 +482,8 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                   name="ccList"
                   label="抄送人"
                   multiple
+                  maxTagCount={6}
+                  maxTagTextLength={4}
                 />
            </div>
            <Divider />

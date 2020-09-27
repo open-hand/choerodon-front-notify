@@ -16,7 +16,6 @@ interface Props{
 
 const RuleTable: React.FC<Props> = ({ tableDataSet }) => {
   const handleClickReceiver = (ruleId: string) => {
-    console.log(ruleId);
     Modal.open({
       className: styles.rule_modal,
       drawer: true,
@@ -39,6 +38,15 @@ const RuleTable: React.FC<Props> = ({ tableDataSet }) => {
           </span>
         );
     };
+
+    const renderCcList = ({ record }: RenderProps) => {
+      const receiverList = record?.get('ccList') || [];
+      return (
+        <span>
+          {receiverList.map((user: User) => user.realName).join('、')}
+        </span>
+      );
+    }
 
     const renderAction = ({ record }: RenderProps) => {
         const handleDeleteRule = () => {
@@ -86,7 +94,7 @@ const RuleTable: React.FC<Props> = ({ tableDataSet }) => {
         <Table dataSet={tableDataSet} queryBar={"none" as TableQueryBarType}>
             <Column name="receiverList" width={250} renderer={renderReceiver} tooltip={"overflow" as TableColumnTooltip} />
             <Column name="action" width={50} renderer={renderAction} tooltip={"overflow" as TableColumnTooltip} />
-            <Column name="ccList" width={250} tooltip={"overflow" as TableColumnTooltip} />
+            <Column name="ccList" width={250} renderer={renderCcList} tooltip={"overflow" as TableColumnTooltip} />
             <Column name="expressQuery" tooltip={"overflow" as TableColumnTooltip} />
         </Table>
     )
