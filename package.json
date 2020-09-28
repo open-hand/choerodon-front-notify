@@ -20,16 +20,18 @@
     "@choerodon/agile-pro": "^0.24.0",
     "@choerodon/boot": "0.22.0",
     "@choerodon/master": "0.24.0",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
     "babel-eslint": "8.2.6",
     "babel-preset-c7n-app": "^0.0.1",
     "choerodon-ui": "^0.8.0",
-    "eslint": "^7.7.0",
+    "eslint": "^7.10.0",
     "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-c7n-app": "^0.0.1",
+    "eslint-config-c7n-app": "^0.0.2",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.1.0"
+    "eslint-plugin-react": "^7.21.2",
+    "eslint-plugin-react-hooks": "^4.1.2"
   },
   "scripts": {
     "start": "choerodon-front-boot start --config ./react/config.js",
