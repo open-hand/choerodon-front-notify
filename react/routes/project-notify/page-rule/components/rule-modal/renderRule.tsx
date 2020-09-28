@@ -91,6 +91,7 @@ const renderRule = (dataset: DataSet, fieldK: IFieldK, fieldData: IField[], syst
               name={`${key}-value`}
               isProgram={isProgram}
               label="值"
+              valueField="typeCode"
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}

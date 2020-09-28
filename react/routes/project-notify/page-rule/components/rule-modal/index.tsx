@@ -9,6 +9,7 @@ import { Divider } from 'choerodon-ui';
 import { axios, stores, Choerodon } from '@choerodon/boot';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
+import DataSetField from 'choerodon-ui/pro/lib/data-set/Field';
 import useFields from '@choerodon/agile/lib/routes/Issue/components/BatchModal/useFields';
 import { getProjectId } from '@choerodon/agile/lib/utils/common';
 import { User } from '@choerodon/agile/lib/common/types';
@@ -255,27 +256,37 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
 
   const getSystemFields = useCallback(() => axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/fields`), []);
 
-  const addRequired = useCallback((key, existFields = fields) => {
-    modalDataSet.addField(`${key}-code`, {
+  const addField = useCallback((name, props) => {
+    const field = new DataSetField({ ...props, name }, modalDataSet, modalDataSet.current);
+    modalDataSet?.current?.fields.set(name, field);
+  }, [modalDataSet]);
+
+  const removeField = useCallback((name) => {
+    console.log(name, modalDataSet?.current);
+    modalDataSet?.current?.fields.delete(name);
+  }, [modalDataSet]);
+
+  const addRequired = useCallback((key, i) => {
+    addField(`${key}-code`, {
       required: true,
     });
-    modalDataSet.addField(`${key}-operation`, {
+    addField(`${key}-operation`, {
       required: true,
     });
-    modalDataSet.addField(`${key}-value`, {
+    addField(`${key}-value`, {
       required: true,
     });
-    if (existFields.length > 0) {
-      modalDataSet.addField(`${key}-ao`, {
+    if (i > 0) {
+      addField(`${key}-ao`, {
         required: true,
       });
     }
-  }, [fields.length, modalDataSet]);
+  }, [addField]);
 
   useEffect(() => {
     if (!ruleId) {
       const newKey = Field.add();
-      addRequired(newKey);
+      addRequired(newKey, 0);
     }
     setLoading(true);
     Promise.all([getSystemFields(), fieldApi.getCustomFields()]).then(([systemFields, customFields]) => {
@@ -321,9 +332,12 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
       const options = systemDataRefMap.current.get(code);
       switch (code) {
         case 'priority':
-        case 'status':
-        case 'issue_type': {
+        case 'status': {
           const selectOption = find(options, { id: value });
+          return selectOption?.name;
+        }
+        case 'issue_type': {
+          const selectOption = find(options, { fieldCode: value });
           return selectOption?.name;
         }
         case 'component': {
@@ -422,9 +436,9 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
               operation: getFieldValue(`${key}-operation`),
               relationshipWithPervious: getFieldValue(`${key}-ao`),
               // text,input
-              valueStr: (fieldType === 'input' || fieldType === 'text') && !valueIsNull ? value : undefined,
+              valueStr: (fieldType === 'input' || fieldType === 'text' || code === 'issue_type') && !valueIsNull ? value : undefined,
               // 单选，member
-              valueId: (fieldType === 'single' || fieldType === 'member' || fieldType === 'radio') && !valueIsNull ? value : undefined,
+              valueId: (fieldType === 'single' || fieldType === 'member' || fieldType === 'radio') && code !== 'issue_type' && !valueIsNull ? value : undefined,
               // 多选
               valueIdList: (fieldType === 'multiple' || fieldType === 'checkbox') && !valueIsNull ? value : undefined,
               // number整数,需要判断是否允许小数
@@ -523,8 +537,8 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         setFieldValue('receiverList', receiverList.map((item: User) => item.id));
         const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code }));
         const initFields = Field.init(existFields);
-        initFields.forEach((item: IFieldK) => {
-          addRequired(item.key, initFields);
+        initFields.forEach((item: IFieldK, i: number) => {
+          addRequired(item.key, i);
         });
         expressList.forEach((item: Express, i) => {
           const {
@@ -663,9 +677,15 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                           onClick={() => {
                             // @ts-ignore
                             Field.remove(key);
-                            setFieldValue(`${key}-code`, undefined);
-                            setFieldValue(`${key}-operation`, undefined);
-                            setFieldValue(`${key}-value`, undefined);
+                            removeField(`${key}-code`);
+                            removeField(`${key}-operation`);
+                            removeField(`${key}-value`);
+                            removeField(`${key}-ao`);
+                            if (i === 0) {
+                              if (fields[i + 1]) {
+                                removeField(`${fields[i + 1].key}-ao`);
+                              }
+                            }
                           }}
                           icon="delete"
                         />
@@ -679,8 +699,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                 // @ts-ignore
               onClick={() => {
                 const newKey = Field.add();
-                addRequired(newKey);
-                console.log(modalDataSet.fields);
+                addRequired(newKey, fields.length);
               }}
               icon="add"
               color={'blue' as ButtonColor}

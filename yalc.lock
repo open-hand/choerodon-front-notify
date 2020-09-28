@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@choerodon/agile": {
-      "signature": "e34a95e31a57492e342ba26d2e9e9384"
+      "signature": "9991dec6b5c5ad0787aab42ec3229fbd"
     }
   }
 }
