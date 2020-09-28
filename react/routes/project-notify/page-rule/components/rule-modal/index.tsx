@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Form, DataSet, Select, Button, Row, Col, } from 'choerodon-ui/pro';
 import { ModalProps } from 'choerodon-ui/pro/lib/modal/Modal';
 import { Divider } from 'choerodon-ui';
 import { axios, stores, Choerodon } from '@choerodon/boot';
 import { toJS } from 'mobx';
+import { observer } from 'mobx-react-lite';
 import useFields from '@choerodon/agile/lib/routes/Issue/components/BatchModal/useFields';
 import { getProjectId } from '@choerodon/agile/lib/utils/common';
 import { User } from '@choerodon/agile/lib/common/types';
@@ -132,89 +133,109 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     const [updateCount, setUpdateCount] = useState<number>(0);
     const systemDataRefMap = useRef<Map<string, any>>(new Map());
     const [initRule, setInitRule] = useState({});
-    
-    const renderOperations = useCallback((field: IFieldWithType) => {
-      const { fieldType, code } = field;
-      let operations: {value: Operation, operation: string}[] = [];
-      switch(fieldType) {
-          case 'checkbox':
-          case 'multiple': {
-              operations = [
-                  { value: 'in', operation: '包含'},
-                  { value: 'not_in', operation: '不包含'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'radio':
-          case 'single': {
-              operations = [
-                  { value: 'eq', operation: '等于'},
-                  { value: 'not_eq', operation: '不等于'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'member': {
-              operations = [
-                  { value: 'eq', operation: '等于'},
-                  { value: 'not_eq', operation: '不等于'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'text':
-          case 'input': {
-              operations = [
-                  { value: 'like', operation: '包含'},
-                  { value: 'not_like', operation: '不包含'},
-                  { value: 'eq', operation: '等于'},
-                  { value: 'not_eq', operation: '不等于'},
-              ]
-              break;
-          }
-          case 'number': {
-              operations = [
-                  { value: 'gt', operation: '大于'},
-                  { value: 'gte', operation: '大于或等于'},
-                  { value: 'lt', operation: '小于'},
-                  { value: 'lte', operation: '小于或等于'},
-                  { value: 'eq', operation: '等于'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'time':
-          case 'datetime':
-          case 'date': {
-              operations = [
-                  { value: 'gt', operation: '大于'},
-                  { value: 'gte', operation: '大于或等于'},
-                  { value: 'lt', operation: '小于'},
-                  { value: 'lte', operation: '小于或等于'},
-                  { value: 'eq', operation: '等于'},
-              ]
-              break;
-          }
+
+    const modalDataSet = useMemo(() => new DataSet({
+      autoCreate: true,
+      events: {
+        update: ({
+          dataSet, record, name, value, oldValue,
+        }) => {
+          setUpdateCount((count) => count + 1);
+        },
       }
-      const handleChangeOperation = () => {
-        setUpdateCount((count) => count + 1);
-        setFieldValue(`${code}-value`, undefined);
+    }), []);
+    
+    const renderOperations = useCallback((fieldK: IFieldK) => {
+      const { key } = fieldK;
+      const code = modalDataSet?.current?.get(`${key}-code`);
+      const field = fieldData.find((field) => field.code = code);
+      console.log(field);
+      console.log(code);
+      if(field) {
+        const { fieldType } = field;
+        let operations: {value: Operation, operation: string}[] = [];
+        switch(fieldType) {
+            case 'checkbox':
+            case 'multiple': {
+                operations = [
+                    { value: 'in', operation: '包含'},
+                    { value: 'not_in', operation: '不包含'},
+                    { value: 'is', operation: '是'},
+                    { value: 'is_not', operation: '不是'},
+                ]
+                break;
+            }
+            case 'radio':
+            case 'single': {
+                operations = [
+                    { value: 'eq', operation: '等于'},
+                    { value: 'not_eq', operation: '不等于'},
+                    { value: 'is', operation: '是'},
+                    { value: 'is_not', operation: '不是'},
+                ]
+                break;
+            }
+            case 'member': {
+                operations = [
+                    { value: 'eq', operation: '等于'},
+                    { value: 'not_eq', operation: '不等于'},
+                    { value: 'is', operation: '是'},
+                    { value: 'is_not', operation: '不是'},
+                ]
+                break;
+            }
+            case 'text':
+            case 'input': {
+                operations = [
+                    { value: 'like', operation: '包含'},
+                    { value: 'not_like', operation: '不包含'},
+                    { value: 'eq', operation: '等于'},
+                    { value: 'not_eq', operation: '不等于'},
+                ]
+                break;
+            }
+            case 'number': {
+                operations = [
+                    { value: 'gt', operation: '大于'},
+                    { value: 'gte', operation: '大于或等于'},
+                    { value: 'lt', operation: '小于'},
+                    { value: 'lte', operation: '小于或等于'},
+                    { value: 'eq', operation: '等于'},
+                    { value: 'is', operation: '是'},
+                    { value: 'is_not', operation: '不是'},
+                ]
+                break;
+            }
+            case 'time':
+            case 'datetime':
+            case 'date': {
+                operations = [
+                    { value: 'gt', operation: '大于'},
+                    { value: 'gte', operation: '大于或等于'},
+                    { value: 'lt', operation: '小于'},
+                    { value: 'lte', operation: '小于或等于'},
+                    { value: 'eq', operation: '等于'},
+                ]
+                break;
+            }
+        }
+        // const handleChangeOperation = () => {
+        //   setFieldValue(`${key}-value`, undefined);
+        // }
+        return (
+            <Select clearButton={false} required name={`${key}-operation`} placeholder="关系">
+                {
+                    operations.map(item => (
+                        <Option key={`${key}-${item.value}`} value={item.value}>{item.operation}</Option>
+                    ))
+                }
+            </Select>
+        )
       }
       return (
-          <Select clearButton={false} required name={`${code}-operation`} placeholder="关系" onChange={handleChangeOperation}>
-              {
-                  operations.map(item => (
-                      <Option key={`${code}-${item.value}`} value={item.value}>{item.operation}</Option>
-                  ))
-              }
-          </Select>
+        <Select name={`${key}-operation`} required placeholder="关系" />
       )
-  }, []);
+  }, [fieldData]);
 
   const getSystemFields = useCallback(() => {
     return axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/fields`);
@@ -247,12 +268,17 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     }, []);
 
     const getFieldValue = useCallback((name) => {
-      const fieldValues = formRef?.current?.getFields();
-      const currentFieldValue = fieldValues?.find(item => item.name === name);
-      if(currentFieldValue) {
-        return currentFieldValue.value;
+      // const fieldValues = formRef?.current?.getFields();
+      // const currentFieldValue = fieldValues?.find(item => item.name === name);
+      // if(currentFieldValue) {
+      //   return currentFieldValue.value;
+      // }
+      // return undefined;
+      const { current } = modalDataSet;
+      if(current) {
+        return current.get(name);
       }
-      return undefined;
+      return ''
     }, []);
 
     const transformValue = useCallback((fieldInfo: IFieldWithType, operation: Operation, value: any) => {
@@ -331,23 +357,27 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     const transformSumitData = useCallback(() => {
       let expressQuery = '';
       const expressList: Express[] = [];
-      const values = (formRef?.current?.getFields().map(item => ({
-        name: item.name,
-        value: toJS(item.value),
-      })) || []);
+      const values = modalDataSet.toData();
+      // const values = (formRef?.current?.getFields().map(item => ({
+      //   name: item.name,
+      //   value: toJS(item.value),
+      // })) || []);
+      console.log('submitData：');
+      console.log(values);
       const codeValues = values.filter((item) => fieldData.find(field => item.name?.split('-')[1] === 'code'));
       codeValues.forEach((codeField) => {
-        const code = codeField.name?.split('-')[0];
-        if(code) {
+        const key = codeField.name?.split('-')[0];
+        const code = codeField.value;
+        if(key) {
           const fieldInfo = fieldData.find((item) => item.code === code);
           if(fieldInfo) {
             const { fieldType, type, system, name } = fieldInfo;
-            const valueIsNull = getFieldValue(`${code}-operation`) === 'is' || getFieldValue(`${code}-operation`) === 'is_not';
-            const value = toJS(getFieldValue(`${code}-value`));
+            const valueIsNull = getFieldValue(`${key}-operation`) === 'is' || getFieldValue(`${key}-operation`) === 'is_not';
+            const value = toJS(getFieldValue(`${key}-value`));
             expressList.push({
               fieldCode: code,
-              operation: getFieldValue(`${code}-operation`),
-              relationshipWithPervious: getFieldValue(`${code}-ao`),
+              operation: getFieldValue(`${key}-operation`),
+              relationshipWithPervious: getFieldValue(`${key}-ao`),
               // text,input
               valueStr: (fieldType === 'input' || fieldType === 'text') && !valueIsNull ? value : undefined,
               // 单选，member
@@ -367,8 +397,8 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
               // 是否允许小数，需要判断是否允许小数
               allowDecimals: fieldType === 'number' && !valueIsNull  ? false : undefined,
             })
-            const ao = getFieldValue(`${code}-ao`) && aoMap.get(getFieldValue(`${code}-ao`));
-            expressQuery += `${ao ? `${ao} `: ''}${name} ${operationMap.get(getFieldValue(`${code}-operation`))} ${transformValue(fieldInfo, getFieldValue(`${code}-operation`), getFieldValue(`${code}-value`))} `;
+            const ao = getFieldValue(`${key}-ao`) && aoMap.get(getFieldValue(`${key}-ao`));
+            expressQuery += `${ao ? `${ao} `: ''}${name} ${operationMap.get(getFieldValue(`${key}-operation`))} ${transformValue(fieldInfo, getFieldValue(`${key}-operation`), getFieldValue(`${key}-value`))} `;
           }
         }
       });
@@ -410,57 +440,62 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
       return false;
     }, [fieldData, transformSumitData]);
 
-    useEffect(() => {
-      modal?.handleOk(handleClickSubmit);
-    });
+    // useEffect(() => {
+    //   modal?.handleOk(handleClickSubmit);
+    // },[]);
 
-    useEffect(() => {
-      if(ruleId && fieldData) {
-        axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then(res => {
-          const {ccList = [], receiverList = [], expressList = []} = res;
-          setFieldValue('ccList', ccList.map((item: User) => item.id));
-          setFieldValue('receiverList', receiverList.map((item: User) => item.id));
-          const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code}));
-          Field.init(existFields);
-          expressList.forEach((item: Express) => {
-            const { 
-              fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
-            } = item;
-            const field = find(fieldData, { code: fieldCode});
-            const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
-            if(field) {
-              const { fieldType, code } = field;
-              setFieldValue(`${code}-code`, fieldCode);
-              setFieldValue(`${code}-operation`, operation);
-              setFieldValue(`${code}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
-              if(relationshipWithPervious) {
-                setFieldValue(`${code}-ao`, relationshipWithPervious);
-              }
-            }
-          });
-          setInitRule(res);
-        }).catch((e: ErrorEvent) => {
-          console.log(e);
-        });
-      }
-    }, [ruleId, fieldData]);
+    // useEffect(() => {
+    //   if(ruleId && fieldData) {
+    //     axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then(res => {
+    //       const {ccList = [], receiverList = [], expressList = []} = res;
+    //       setFieldValue('ccList', ccList.map((item: User) => item.id));
+    //       setFieldValue('receiverList', receiverList.map((item: User) => item.id));
+    //       const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code}));
+    //       Field.init(existFields);
+    //       expressList.forEach((item: Express, i) => {
+    //         const { 
+    //           fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
+    //         } = item;
+    //         const field = find(fieldData, { code: fieldCode});
+    //         const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
+    //         if(field) {
+    //           const { fieldType, code } = field;
+    //           const { key } = fields[i];
+    //           setFieldValue(`${key}-code`, fieldCode);
+    //           setFieldValue(`${key}-operation`, operation);
+    //           if(operation !== 'is' && operation !=='is_not') {
+    //             setFieldValue(`${key}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
+    //           } else {
+    //             setFieldValue(`${key}-value`, 'empty');
+    //           }
+    //           if(relationshipWithPervious) {
+    //             setFieldValue(`${key}-ao`, relationshipWithPervious);
+    //           }
+    //         }
+    //       });
+    //       setInitRule(res);
+    //     }).catch((e: ErrorEvent) => {
+    //       console.log(e);
+    //     });
+    //   }
+    // }, [ruleId, fieldData]);
 
     const setFieldValue = useCallback((name: string, value: any) => {
-      const fieldValues = formRef?.current?.getFields();
-      const currentFieldValue = fieldValues?.find(item => item.name === name);
-      if(currentFieldValue) {
-        currentFieldValue.value = value;
+      // const fieldValues = formRef?.current?.getFields();
+      // const currentFieldValue = fieldValues?.find(item => item.name === name);
+      // if(currentFieldValue) {
+      //   currentFieldValue.value = value;
+      // }
+      const { current } = modalDataSet;
+      if(current) {
+        current.set(name, value);
       }
     }, []);
 
-    const values = formRef?.current?.getFields().map(item => ({
-      name: item.name,
-      value: toJS(item.value),
-    })) || [];
-    
+    console.log('render');
     return (
         <div className={styles.rule_form}>
-         <Form ref={formRef as React.RefObject<Form>} >
+         <Form dataSet={modalDataSet} ref={formRef as React.RefObject<Form>} >
            <div className={`${styles.rule_form_setting} ${styles.rule_form_objectSetting}`}>
                <p className={styles.rule_form_setting_title}>通知对象设置</p>
                 <SelectUser
@@ -491,7 +526,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                <p className={styles.rule_form_setting_title}>通知规则设置</p>
                {
                 fields.map((f: IFieldK, i: number, arr: IFieldK[]) => {
-                    const { key, id, code } = f;
+                    const { key } = f;
                     return (
                         <Row key={key} gutter={20} style={{
                           marginBottom: 15,
@@ -504,7 +539,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                                     <Select
                                       required
                                       placeholder="关系"
-                                      name={`${code}-ao`}
+                                      name={`${key}-ao`}
                                       >
                                         <Option value="and">且</Option>
                                         <Option value="or">或</Option>
@@ -520,25 +555,23 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                                     }}
                                       required
                                       placeholder="属性"
-                                      name={`${code}-code`}
-                                      onChange={(value, oldValue) => {
-                                          setFieldValue(`${oldValue}-operation`, undefined);
-                                          setFieldValue(`${oldValue}-value`, undefined);
-                                          const field = find(fieldData, { code: value });
-                                          // @ts-ignore
-                                          Field.set(key, field);
-                                      }}
+                                      name={`${key}-code`}
                                   >
                                   {
-                                      fieldData.filter((field: IFieldWithType) => (
-                                      code === field.code
-                                      ) || !find(fields, {
-                                      code: field.code,
-                                      })).map((field:IFieldWithType) => (
-                                      <Option value={field.code}>
-                                          {field.name}
-                                      </Option>
-                                      ))
+                                      // fieldData.filter((field: IFieldWithType) => (
+                                      // modalDataSet?.current.get('') === field.code
+                                      // ) || !find(fields, {
+                                      // code: field.code,
+                                      // })).map((field:IFieldWithType) => (
+                                      // <Option value={field.code}>
+                                      //     {field.name}
+                                      // </Option>
+                                      // ))
+                                      fieldData.map((field:IFieldWithType) => (
+                                        <Option value={field.code}>
+                                            {field.name}
+                                        </Option>
+                                        ))
                                   }
                                   </Select>
                                 </Col>
@@ -547,13 +580,9 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                             <Col span={4}>
                                 {renderOperations(f)}
                             </Col>
-                            <Col span={8} key={id}>
+                            <Col span={8}>
                                 {
-                                  renderRule(f, {
-                                    code,
-                                    operation: values.find(fieldValue => fieldValue.name === `${code}-operation`)?.value, 
-                                    value: values.find(fieldValue => fieldValue.name === `${code}-value`)?.value,
-                                  }, systemDataRefMap)
+                                  renderRule(modalDataSet, f, fieldData, systemDataRefMap)
                                 }
                             </Col>
                             <Col span={2}>
@@ -587,4 +616,4 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     )
 };
 
-export default RuleModal;
+export default observer(RuleModal);
