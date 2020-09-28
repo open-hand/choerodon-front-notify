@@ -1,0 +1,8 @@
+{
+  "version": "v1",
+  "packages": {
+    "@choerodon/agile": {
+      "signature": "9991dec6b5c5ad0787aab42ec3229fbd"
+    }
+  }
+}

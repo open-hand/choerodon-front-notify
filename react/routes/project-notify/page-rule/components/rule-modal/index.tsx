@@ -1,19 +1,29 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Form, DataSet, Select, Button, Row, Col, } from 'choerodon-ui/pro';
+import React, {
+  useState, useEffect, useRef, useCallback, useMemo,
+} from 'react';
+import {
+  Form, DataSet, Select, Button, Row, Col,
+} from 'choerodon-ui/pro';
 import { ModalProps } from 'choerodon-ui/pro/lib/modal/Modal';
 import { Divider } from 'choerodon-ui';
 import { axios, stores, Choerodon } from '@choerodon/boot';
 import { toJS } from 'mobx';
+import { observer } from 'mobx-react-lite';
+import DataSetField from 'choerodon-ui/pro/lib/data-set/Field';
 import useFields from '@choerodon/agile/lib/routes/Issue/components/BatchModal/useFields';
 import { getProjectId } from '@choerodon/agile/lib/utils/common';
 import { User } from '@choerodon/agile/lib/common/types';
 import { fieldApi } from '@choerodon/agile/lib/api';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import { find, map } from 'lodash';
-import styles from './index.less';
 import { ButtonColor } from 'choerodon-ui/pro/lib/button/enum';
-import renderRule, { Rule, IField, Operation, IFieldK, IFieldWithType, IFieldType, FieldType } from './renderRule';
 import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import moment from 'moment';
+import dataSet from '@/routes/setting-content/Store/dataSet';
+import renderRule, {
+  Rule, IField, Operation, IFieldK, IFieldWithType, IFieldType, FieldType,
+} from './renderRule';
+import styles from './index.less';
 
 const { Option } = Select;
 
@@ -23,7 +33,6 @@ interface IModalProps extends ModalProps { // pro 组件Modal 注入的modal
     close: (destroy?: boolean) => void,
     update: (modalProps: ModalProps) => void
 }
-
 
 interface Props {
     modal?: IModalProps,
@@ -36,10 +45,10 @@ interface Express {
   operation: Operation,
   relationshipWithPervious: 'and' | 'or',
   // text,input
-  valueStr?: string, // 
+  valueStr?: string, //
   // 单选，member
-  valueId?: string, 
-  // 多选  
+  valueId?: string,
+  // 多选
   valueIdList?: string[],
   // number整数,需要判断是否允许小数
   valueNum?: number,
@@ -68,7 +77,7 @@ const operationMap = new Map([
   ['lte', '小于或等于'],
   ['like', '包含'],
   ['not_like', '不包含'],
-])
+]);
 
 const systemFieldTypeMap = new Map([
   ['assignee', 'member'],
@@ -101,13 +110,13 @@ const customTypeMap = new Map([
   ['single', 'option'],
   ['multiple', 'option'],
   ['member', 'option'],
-  ['date','date'],
+  ['date', 'date'],
 ]);
 
 const aoMap = new Map([
   ['or', '或'],
   ['and', '且'],
-])
+]);
 
 const excludeCode = ['summary', 'description', 'epicName', 'timeTrace', 'belongToBacklog', 'progressFeedback', 'email'];
 
@@ -127,464 +136,582 @@ const formatMoment = (type: 'date' | 'datetime' | 'time', d: string) => {
 
 const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   const formRef: React.MutableRefObject<Form | undefined> = useRef();
-    const [fieldData, setFieldData] = useState<IFieldWithType[]>([]); 
-    const [fields, Field] = useFields();
-    const [updateCount, setUpdateCount] = useState<number>(0);
-    const systemDataRefMap = useRef<Map<string, any>>(new Map());
-    const [initRule, setInitRule] = useState({});
-    
-    const renderOperations = useCallback((field: IFieldWithType) => {
-      const { fieldType, code } = field;
-      let operations: {value: Operation, operation: string}[] = [];
-      switch(fieldType) {
-          case 'checkbox':
-          case 'multiple': {
-              operations = [
-                  { value: 'in', operation: '包含'},
-                  { value: 'not_in', operation: '不包含'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'radio':
-          case 'single': {
-              operations = [
-                  { value: 'eq', operation: '等于'},
-                  { value: 'not_eq', operation: '不等于'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'member': {
-              operations = [
-                  { value: 'eq', operation: '等于'},
-                  { value: 'not_eq', operation: '不等于'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'text':
-          case 'input': {
-              operations = [
-                  { value: 'like', operation: '包含'},
-                  { value: 'not_like', operation: '不包含'},
-                  { value: 'eq', operation: '等于'},
-                  { value: 'not_eq', operation: '不等于'},
-              ]
-              break;
-          }
-          case 'number': {
-              operations = [
-                  { value: 'gt', operation: '大于'},
-                  { value: 'gte', operation: '大于或等于'},
-                  { value: 'lt', operation: '小于'},
-                  { value: 'lte', operation: '小于或等于'},
-                  { value: 'eq', operation: '等于'},
-                  { value: 'is', operation: '是'},
-                  { value: 'is_not', operation: '不是'},
-              ]
-              break;
-          }
-          case 'time':
-          case 'datetime':
-          case 'date': {
-              operations = [
-                  { value: 'gt', operation: '大于'},
-                  { value: 'gte', operation: '大于或等于'},
-                  { value: 'lt', operation: '小于'},
-                  { value: 'lte', operation: '小于或等于'},
-                  { value: 'eq', operation: '等于'},
-              ]
-              break;
-          }
-      }
-      const handleChangeOperation = () => {
-        setUpdateCount((count) => count + 1);
-        setFieldValue(`${code}-value`, undefined);
-      }
-      return (
-          <Select clearButton={false} required name={`${code}-operation`} placeholder="关系" onChange={handleChangeOperation}>
-              {
-                  operations.map(item => (
-                      <Option key={`${code}-${item.value}`} value={item.value}>{item.operation}</Option>
-                  ))
-              }
-          </Select>
-      )
-  }, []);
+  const [fieldData, setFieldData] = useState<IFieldWithType[]>([]);
+  const [fields, Field] = useFields();
+  const [updateCount, setUpdateCount] = useState<number>(0);
+  const systemDataRefMap = useRef<Map<string, any>>(new Map());
+  const [initRule, setInitRule] = useState({});
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const getSystemFields = useCallback(() => {
-    return axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/fields`);
-  }, []);
-
-    useEffect(() => {
-      if(!ruleId) {
-        Field.add();
-      }
-      Promise.all([getSystemFields(),fieldApi.getCustomFields()]).then(([systemFields, customFields]) => {
-        const transformedSystemFields = systemFields.map((item: { fieldCode: string; }) => {
-          return ({
-            ...item,
-            code: item.fieldCode,
-            fieldType:systemFieldTypeMap.get(item.fieldCode),
-            system: true,
-          })
-        })
-        const transformedCustomFields = customFields.map((item: IField) => {
-          return ({
-            ...initRule,
-            ...item,
-            type: customTypeMap.get(item.fieldType),
-            system: false,
-          })
-        });
-        const data = [...transformedSystemFields, ...transformedCustomFields].filter((item) => !find(excludeCode, (code) => code === item.code));
-        setFieldData(data);
-      })
-    }, []);
-
-    const getFieldValue = useCallback((name) => {
-      const fieldValues = formRef?.current?.getFields();
-      const currentFieldValue = fieldValues?.find(item => item.name === name);
-      if(currentFieldValue) {
-        return currentFieldValue.value;
-      }
-      return undefined;
-    }, []);
-
-    const transformValue = useCallback((fieldInfo: IFieldWithType, operation: Operation, value: any) => {
-      const { fieldType, type, system, name, fieldOptions, code } = fieldInfo;
-      if(operation === 'is' || operation ==='is_not') {
-        return '空';
-      }
-      if(system) {
-        const options = systemDataRefMap.current.get(code);
-        switch(code) {
-          case 'priority':
-          case 'status':
-          case 'issue_type': {
-            const selectOption = find(options, { id: value });
-            return selectOption?.name
-          }
-          case 'component': {
-              const selectOptions = options.filter((option: { componentId: string; }) => value.indexOf(option.componentId)>-1);
-              return `[${map(selectOptions, 'name').join(',')}]`;
-          }
-          case 'label': {
-            const selectOptions = options.filter((option: { labelId: string; }) => value.indexOf(option.labelId)>-1);
-            return `[${map(selectOptions, 'labelName').join(',')}]`;
-          }
-          case 'influence_version':
-          case 'fix_version': {
-            const selectOptions = options.filter((option: { versionId: string; }) => value.indexOf(option.versionId)>-1);
-            return `[${map(selectOptions, 'name').join(',')}]`;
-          }
-          case 'epic': {
-            const selectOption = find(options, { issueId: value });
-            return selectOption?.epicName;
-          }
-          case 'sprint': {
-            const selectOption = find(options, { sprintId: value });
-            return selectOption?.sprintName;
-          }
-          case 'reporter':
-          case 'assignee': {
-            const selectOption = find(options, { id: value });
-            return selectOption?.realName;
-          } 
+  const modalDataSet = useMemo(() => new DataSet({
+    autoCreate: true,
+    fields: [{
+      name: 'receiverList',
+      required: true,
+    }],
+    events: {
+      update: ({
+        // @ts-ignore
+        dataSet, record, name, value, oldValue,
+      }) => {
+        const key = name.split('-')[0];
+        if (name.indexOf('code') > -1) {
+          dataSet.current.set(`${key}-operation`, undefined);
+          dataSet.current.set(`${key}-value`, undefined);
         }
-      }
-      switch(fieldType) {
-        case 'multiple':
-        case 'checkbox': {
-          const selectOptions = fieldOptions?.filter(option => value.indexOf(option.id)>-1);
-          return `[${map(selectOptions, 'value').join(',')}]`;
+        if (name.indexOf('operation') > -1) {
+          dataSet.current.set(`${key}-value`, undefined);
+        }
+        setUpdateCount((count) => count + 1);
+      },
+    },
+  }), []);
+
+  const renderOperations = useCallback((fieldK: IFieldK) => {
+    const { key } = fieldK;
+    const code = modalDataSet?.current?.get(`${key}-code`);
+    const field = fieldData.find((item: IFieldWithType) => item.code === code);
+    if (field) {
+      const { fieldType } = field;
+      let operations: {value: Operation, operation: string}[] = [];
+      switch (fieldType) {
+        case 'checkbox':
+        case 'multiple': {
+          operations = [
+            { value: 'in', operation: '包含' },
+            { value: 'not_in', operation: '不包含' },
+            { value: 'is', operation: '是' },
+            { value: 'is_not', operation: '不是' },
+          ];
+          break;
         }
         case 'radio':
         case 'single': {
-          const selectOption = find(fieldOptions, { id: value});
-          return selectOption?.value;
+          operations = [
+            { value: 'eq', operation: '等于' },
+            { value: 'not_eq', operation: '不等于' },
+            { value: 'is', operation: '是' },
+            { value: 'is_not', operation: '不是' },
+          ];
+          break;
         }
         case 'member': {
-              const memberOptions = systemDataRefMap.current.get(code);
-              const selectMembers = find(memberOptions, { id: value });
-              return selectMembers?.realName;
+          operations = [
+            { value: 'eq', operation: '等于' },
+            { value: 'not_eq', operation: '不等于' },
+            { value: 'is', operation: '是' },
+            { value: 'is_not', operation: '不是' },
+          ];
+          break;
         }
-        case 'number':
         case 'text':
         case 'input': {
-            return value;
+          operations = [
+            { value: 'like', operation: '包含' },
+            { value: 'not_like', operation: '不包含' },
+            { value: 'eq', operation: '等于' },
+            { value: 'not_eq', operation: '不等于' },
+          ];
+          break;
         }
-        case 'time': 
+        case 'number': {
+          operations = [
+            { value: 'gt', operation: '大于' },
+            { value: 'gte', operation: '大于或等于' },
+            { value: 'lt', operation: '小于' },
+            { value: 'lte', operation: '小于或等于' },
+            { value: 'eq', operation: '等于' },
+            { value: 'is', operation: '是' },
+            { value: 'is_not', operation: '不是' },
+          ];
+          break;
+        }
+        case 'time':
         case 'datetime':
         case 'date': {
-            return formatMoment(fieldType, value)
+          operations = [
+            { value: 'gt', operation: '大于' },
+            { value: 'gte', operation: '大于或等于' },
+            { value: 'lt', operation: '小于' },
+            { value: 'lte', operation: '小于或等于' },
+            { value: 'eq', operation: '等于' },
+          ];
+          break;
         }
-        default:
-         return value;
       }
-    }, []);
+      return (
+        <Select clearButton={false} required name={`${key}-operation`} label="关系">
+          {
+              operations.map((item) => (
+                <Option key={`${key}-${item.value}`} value={item.value}>{item.operation}</Option>
+              ))
+          }
+        </Select>
+      );
+    }
+    return (
+      <Select name={`${key}-operation`} required label="关系" />
+    );
+  }, [fieldData, modalDataSet]);
 
-    const transformSumitData = useCallback(() => {
-      let expressQuery = '';
-      const expressList: Express[] = [];
-      const values = (formRef?.current?.getFields().map(item => ({
-        name: item.name,
-        value: toJS(item.value),
-      })) || []);
-      const codeValues = values.filter((item) => fieldData.find(field => item.name?.split('-')[1] === 'code'));
-      codeValues.forEach((codeField) => {
-        const code = codeField.name?.split('-')[0];
-        if(code) {
-          const fieldInfo = fieldData.find((item) => item.code === code);
-          if(fieldInfo) {
-            const { fieldType, type, system, name } = fieldInfo;
-            const valueIsNull = getFieldValue(`${code}-operation`) === 'is' || getFieldValue(`${code}-operation`) === 'is_not';
-            const value = toJS(getFieldValue(`${code}-value`));
+  const getSystemFields = useCallback(() => axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/fields`), []);
+
+  const addField = useCallback((name, props) => {
+    const field = new DataSetField({ ...props, name }, modalDataSet, modalDataSet.current);
+    modalDataSet?.current?.fields.set(name, field);
+  }, [modalDataSet]);
+
+  const removeField = useCallback((name) => {
+    console.log(name, modalDataSet?.current);
+    modalDataSet?.current?.fields.delete(name);
+  }, [modalDataSet]);
+
+  const addRequired = useCallback((key, i) => {
+    addField(`${key}-code`, {
+      required: true,
+    });
+    addField(`${key}-operation`, {
+      required: true,
+    });
+    addField(`${key}-value`, {
+      required: true,
+    });
+    if (i > 0) {
+      addField(`${key}-ao`, {
+        required: true,
+      });
+    }
+  }, [addField]);
+
+  useEffect(() => {
+    if (!ruleId) {
+      const newKey = Field.add();
+      addRequired(newKey, 0);
+    }
+    setLoading(true);
+    Promise.all([getSystemFields(), fieldApi.getCustomFields()]).then(([systemFields, customFields]) => {
+      const transformedSystemFields = systemFields.map((item: { fieldCode: string; }) => ({
+        ...item,
+        code: item.fieldCode,
+        fieldType: systemFieldTypeMap.get(item.fieldCode),
+        system: true,
+      }));
+      const transformedCustomFields = customFields.map((item: IField) => ({
+        ...item,
+        type: customTypeMap.get(item.fieldType),
+        system: false,
+      }));
+      const data = [...transformedSystemFields, ...transformedCustomFields].filter((item) => !find(excludeCode, (code) => code === item.code));
+      setFieldData(data);
+      setLoading(false);
+    });
+  }, [getSystemFields, ruleId]);
+
+  const getFieldValue = useCallback((name) => {
+    // const fieldValues = formRef?.current?.getFields();
+    // const currentFieldValue = fieldValues?.find(item => item.name === name);
+    // if(currentFieldValue) {
+    //   return currentFieldValue.value;
+    // }
+    // return undefined;
+    const { current } = modalDataSet;
+    if (current) {
+      return current.get(name);
+    }
+    return '';
+  }, [modalDataSet]);
+
+  const transformValue = useCallback((fieldInfo: IFieldWithType, operation: Operation, value: any) => {
+    const {
+      fieldType, type, system, name, fieldOptions, code,
+    } = fieldInfo;
+    if (operation === 'is' || operation === 'is_not') {
+      return '空';
+    }
+    if (system) {
+      const options = systemDataRefMap.current.get(code);
+      switch (code) {
+        case 'priority':
+        case 'status': {
+          const selectOption = find(options, { id: value });
+          return selectOption?.name;
+        }
+        case 'issue_type': {
+          const selectOption = find(options, { fieldCode: value });
+          return selectOption?.name;
+        }
+        case 'component': {
+          const selectOptions = options.filter((option: { componentId: string; }) => value.indexOf(option.componentId) > -1);
+          return `[${map(selectOptions, 'name').join(',')}]`;
+        }
+        case 'label': {
+          const selectOptions = options.filter((option: { labelId: string; }) => value.indexOf(option.labelId) > -1);
+          return `[${map(selectOptions, 'labelName').join(',')}]`;
+        }
+        case 'influence_version':
+        case 'fix_version': {
+          const selectOptions = options.filter((option: { versionId: string; }) => value.indexOf(option.versionId) > -1);
+          return `[${map(selectOptions, 'name').join(',')}]`;
+        }
+        case 'epic': {
+          const selectOption = find(options, { issueId: value });
+          return selectOption?.epicName;
+        }
+        case 'sprint': {
+          const selectOption = find(options, { sprintId: value });
+          return selectOption?.sprintName;
+        }
+        case 'reporter':
+        case 'assignee': {
+          const selectOption = find(options, { id: value });
+          return selectOption?.realName;
+        }
+      }
+    }
+    switch (fieldType) {
+      case 'multiple':
+      case 'checkbox': {
+        const selectOptions = fieldOptions?.filter((option) => value.indexOf(option.id) > -1);
+        return `[${map(selectOptions, 'value').join(',')}]`;
+      }
+      case 'radio':
+      case 'single': {
+        const selectOption = find(fieldOptions, { id: value });
+        return selectOption?.value;
+      }
+      case 'member': {
+        const memberOptions = systemDataRefMap.current.get(code);
+        const selectMembers = find(memberOptions, { id: value });
+        return selectMembers?.realName;
+      }
+      case 'number':
+      case 'text':
+      case 'input': {
+        return value;
+      }
+      case 'time':
+      case 'datetime':
+      case 'date': {
+        return formatMoment(fieldType as 'time' | 'datetime' | 'date', value);
+      }
+      default:
+        return value;
+    }
+  }, []);
+
+  const transformSumitData = useCallback(() => {
+    let expressQuery = '';
+    const expressList: Express[] = [];
+    const values = modalDataSet.toData()[0];
+    const codeValues = [];
+    // const values = (formRef?.current?.getFields().map(item => ({
+    //   name: item.name,
+    //   value: toJS(item.value),
+    // })) || []);
+    console.log('submitData：');
+    console.log(values);
+
+    for (const [key, value] of Object.entries(values)) {
+      if (key.split('-')[1] === 'code' && fieldData.find((field) => field.code === value)) {
+        codeValues.push({
+          name: key,
+          value,
+        });
+      }
+    }
+    codeValues.forEach((codeField) => {
+      const key = codeField.name?.split('-')[0];
+      const code = codeField.value;
+      if (key) {
+        const fieldInfo = fieldData.find((item) => item.code === code);
+        if (fieldInfo) {
+          const {
+            fieldType, type, system, name, extraConfig,
+          } = fieldInfo;
+          const valueIsNull = getFieldValue(`${key}-operation`) === 'is' || getFieldValue(`${key}-operation`) === 'is_not';
+          const value = toJS(getFieldValue(`${key}-value`));
+          if (value || valueIsNull) {
             expressList.push({
               fieldCode: code,
-              operation: getFieldValue(`${code}-operation`),
-              relationshipWithPervious: getFieldValue(`${code}-ao`),
+              operation: getFieldValue(`${key}-operation`),
+              relationshipWithPervious: getFieldValue(`${key}-ao`),
               // text,input
-              valueStr: (fieldType === 'input' || fieldType === 'text') && !valueIsNull ? value : undefined,
+              valueStr: (fieldType === 'input' || fieldType === 'text' || code === 'issue_type') && !valueIsNull ? value : undefined,
               // 单选，member
-              valueId: (fieldType === 'single' || fieldType === 'member' || fieldType === 'radio') && !valueIsNull  ? value : undefined, 
-              // 多选  
-              valueIdList: (fieldType === 'multiple' || fieldType === 'checkbox') && !valueIsNull  ? value : undefined,
+              valueId: (fieldType === 'single' || fieldType === 'member' || fieldType === 'radio') && code !== 'issue_type' && !valueIsNull ? value : undefined,
+              // 多选
+              valueIdList: (fieldType === 'multiple' || fieldType === 'checkbox') && !valueIsNull ? value : undefined,
               // number整数,需要判断是否允许小数
-              valueNum: fieldType === 'number' && !valueIsNull  ? value : undefined,
+              valueNum: fieldType === 'number' && !extraConfig && !valueIsNull ? value : undefined,
               // number有小数， 需要判断是否允许小数
-              valueDecimal: fieldType === 'number' && !valueIsNull  ? value : undefined,
+              valueDecimal: fieldType === 'number' && extraConfig && !valueIsNull ? value : undefined,
               // date,datetime
-              valueDate: (fieldType === 'date' || fieldType === 'datetime') && !valueIsNull  ? formatMoment(fieldType, value) : undefined,
+              valueDate: (fieldType === 'date' || fieldType === 'datetime') && !valueIsNull ? formatMoment(fieldType, value) : undefined,
               // time
-              valueDateHms: fieldType === 'time' && !valueIsNull  ? formatMoment(fieldType, value) : undefined,
+              valueDateHms: fieldType === 'time' && !valueIsNull ? formatMoment(fieldType, value) : undefined,
               predefined: system,
               fieldType: type,
               // 是否允许小数，需要判断是否允许小数
-              allowDecimals: fieldType === 'number' && !valueIsNull  ? false : undefined,
-            })
-            const ao = getFieldValue(`${code}-ao`) && aoMap.get(getFieldValue(`${code}-ao`));
-            expressQuery += `${ao ? `${ao} `: ''}${name} ${operationMap.get(getFieldValue(`${code}-operation`))} ${transformValue(fieldInfo, getFieldValue(`${code}-operation`), getFieldValue(`${code}-value`))} `;
-          }
-        }
-      });
-      return {
-        expressQuery,
-        expressList,
-      }
-    }, [fieldData]);
-
-    const handleClickSubmit = useCallback(async () => {
-      if(formRef && formRef.current) {
-        if(await formRef.current.checkValidity()) {
-          const expressObj = transformSumitData();
-          const data = {
-            receiverList: (toJS(getFieldValue('receiverList')) || []).map((id: string) => ({id})),
-            ccList: (toJS(getFieldValue('ccList')) || []).map((id: string) => ({id})),
-            ...expressObj,
-          }
-          if(!ruleId) {
-            return axios.post(`/agile/v1/projects/${getProjectId()}/configuration_rule`, data).then(() => {
-              Choerodon.prompt('创建成功');
-              ruleTableDataSet.query();
-              return true;
-            }).catch(() => {
-              Choerodon.prompt('创建失败');
-              return false;
+              allowDecimals: fieldType === 'number' && !valueIsNull ? extraConfig : undefined,
             });
+            const ao = getFieldValue(`${key}-ao`) && aoMap.get(getFieldValue(`${key}-ao`));
+            expressQuery += `${ao ? `${ao} ` : ''}${name} ${operationMap.get(getFieldValue(`${key}-operation`))} ${transformValue(fieldInfo, getFieldValue(`${key}-operation`), getFieldValue(`${key}-value`))} `;
           }
-          return axios.put(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`, data).then(() => {
-            Choerodon.prompt('编辑成功');
-            ruleTableDataSet.query();
-            return true;
-          }).catch(() => {
-            Choerodon.prompt('编辑失败');
-            return false;
-          });
         }
       }
-      return false;
-    }, [fieldData, transformSumitData]);
-
-    useEffect(() => {
-      modal?.handleOk(handleClickSubmit);
     });
+    return {
+      expressQuery,
+      expressList,
+    };
+  }, [fieldData, getFieldValue, modalDataSet, transformValue]);
 
-    useEffect(() => {
-      if(ruleId && fieldData) {
-        axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then(res => {
-          const {ccList = [], receiverList = [], expressList = []} = res;
-          setFieldValue('ccList', ccList.map((item: User) => item.id));
-          setFieldValue('receiverList', receiverList.map((item: User) => item.id));
-          const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code}));
-          Field.init(existFields);
-          expressList.forEach((item: Express) => {
-            const { 
-              fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
-            } = item;
-            const field = find(fieldData, { code: fieldCode});
-            const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
-            if(field) {
-              const { fieldType, code } = field;
-              setFieldValue(`${code}-code`, fieldCode);
-              setFieldValue(`${code}-operation`, operation);
-              setFieldValue(`${code}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
-              if(relationshipWithPervious) {
-                setFieldValue(`${code}-ao`, relationshipWithPervious);
-              }
-            }
-          });
-          setInitRule(res);
-        }).catch((e: ErrorEvent) => {
-          console.log(e);
+  const validateFields = useCallback(async () => {
+    const allFields = formRef?.current?.getFields() || [];
+    let flag = true;
+    for (let i = 0; i < allFields?.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const validateRes = await allFields[i].validate();
+      if (!validateRes) {
+        flag = false;
+      }
+    }
+    return flag;
+  }, []);
+
+  const handleClickSubmit = useCallback(async () => {
+    // console.log(await validateFields());
+    console.log(await modalDataSet.validate());
+    if (await modalDataSet.validate()) {
+      const expressObj = transformSumitData();
+      const data = {
+        ...initRule,
+        receiverList: (toJS(getFieldValue('receiverList')) || []).map((id: string) => ({ id })),
+        ccList: (toJS(getFieldValue('ccList')) || []).map((id: string) => ({ id })),
+        ...expressObj,
+      };
+      if (!ruleId) {
+        return axios.post(`/agile/v1/projects/${getProjectId()}/configuration_rule`, data).then(() => {
+          Choerodon.prompt('创建成功');
+          ruleTableDataSet.query();
+          return true;
+        }).catch(() => {
+          Choerodon.prompt('创建失败');
+          return false;
         });
       }
-    }, [ruleId, fieldData]);
+      return axios.put(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`, data).then(() => {
+        Choerodon.prompt('编辑成功');
+        ruleTableDataSet.query();
+        return true;
+      }).catch(() => {
+        Choerodon.prompt('编辑失败');
+        return false;
+      });
+    }
+    return false;
+  }, [modalDataSet, ruleId, ruleTableDataSet, transformSumitData, initRule]);
 
-    const setFieldValue = useCallback((name: string, value: any) => {
-      const fieldValues = formRef?.current?.getFields();
-      const currentFieldValue = fieldValues?.find(item => item.name === name);
-      if(currentFieldValue) {
-        currentFieldValue.value = value;
-      }
-    }, []);
+  useEffect(() => {
+    modal?.handleOk(handleClickSubmit);
+  }, [handleClickSubmit, modal]);
 
-    const values = formRef?.current?.getFields().map(item => ({
-      name: item.name,
-      value: toJS(item.value),
-    })) || [];
-    
-    return (
-        <div className={styles.rule_form}>
-         <Form ref={formRef as React.RefObject<Form>} >
-           <div className={`${styles.rule_form_setting} ${styles.rule_form_objectSetting}`}>
-               <p className={styles.rule_form_setting_title}>通知对象设置</p>
-                <SelectUser
-                  required
-                  style={{
-                    width: 600,
-                  }}
-                  name="receiverList"
-                  label="通知对象"
-                  multiple
-                  maxTagCount={6}
-                  maxTagTextLength={4}
-                />
-                <SelectUser
-                  style={{
-                    width: 600,
-                    marginTop: 27,
-                  }}
-                  name="ccList"
-                  label="抄送人"
-                  multiple
-                  maxTagCount={6}
-                  maxTagTextLength={4}
-                />
-           </div>
-           <Divider />
-           <div className={`${styles.rule_form_setting} ${styles.rule_form_ruleSetting}`}>
-               <p className={styles.rule_form_setting_title}>通知规则设置</p>
-               {
+  const setFieldValue = useCallback((name: string, value: any) => {
+    // const fieldValues = formRef?.current?.getFields();
+    // const currentFieldValue = fieldValues?.find(item => item.name === name);
+    // if(currentFieldValue) {
+    //   currentFieldValue.value = value;
+    // }
+    const { current } = modalDataSet;
+    if (current) {
+      current.set(name, value);
+    }
+  }, [modalDataSet]);
+
+  useEffect(() => {
+    if (ruleId && fieldData.length) {
+      setLoading(true);
+      axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then((res) => {
+        const { ccList = [], receiverList = [], expressList = [] } = res;
+        setFieldValue('ccList', ccList.map((item: User) => item.id));
+        setFieldValue('receiverList', receiverList.map((item: User) => item.id));
+        const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code }));
+        const initFields = Field.init(existFields);
+        initFields.forEach((item: IFieldK, i: number) => {
+          addRequired(item.key, i);
+        });
+        expressList.forEach((item: Express, i) => {
+          const {
+            fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
+          } = item;
+          const field = find(fieldData, { code: fieldCode });
+          const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
+          if (field) {
+            const { fieldType, code } = field;
+            const { key } = initFields[i];
+            setFieldValue(`${key}-code`, fieldCode);
+            setFieldValue(`${key}-operation`, operation);
+            if (operation !== 'is' && operation !== 'is_not') {
+              setFieldValue(`${key}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
+            } else {
+              setFieldValue(`${key}-value`, 'empty');
+            }
+            if (relationshipWithPervious) {
+              setFieldValue(`${key}-ao`, relationshipWithPervious);
+            }
+          }
+        });
+        setInitRule(res);
+        setLoading(false);
+      }).catch((e: ErrorEvent) => {
+        console.log(e);
+        setLoading(false);
+      });
+    }
+  }, [ruleId, fieldData]);
+
+  const existsFieldCodes: string[] = [];
+  fields.forEach((fieldWithKey: IFieldK) => {
+    const { key } = fieldWithKey;
+    const keyCode = modalDataSet?.current?.get(`${key}-code`);
+    const field = fieldData.find((item) => item.code === keyCode);
+    if (field) {
+      existsFieldCodes.push(field.code);
+    }
+  });
+
+  return (
+    <div className={styles.rule_form}>
+      <Loading loading={loading} />
+      <Form dataSet={modalDataSet} ref={formRef as React.RefObject<Form>}>
+        <div className={`${styles.rule_form_setting} ${styles.rule_form_objectSetting}`}>
+          <p className={styles.rule_form_setting_title}>通知对象设置</p>
+          <SelectUser
+            required
+            style={{
+              width: 600,
+            }}
+            name="receiverList"
+            label="通知对象"
+            multiple
+            maxTagCount={6}
+            maxTagTextLength={4}
+          />
+          <SelectUser
+            style={{
+              width: 600,
+              marginTop: 27,
+            }}
+            name="ccList"
+            label="抄送人"
+            multiple
+            maxTagCount={6}
+            maxTagTextLength={4}
+          />
+        </div>
+        <Divider />
+        <div className={`${styles.rule_form_setting} ${styles.rule_form_ruleSetting}`}>
+          <p className={styles.rule_form_setting_title}>通知规则设置</p>
+          {
                 fields.map((f: IFieldK, i: number, arr: IFieldK[]) => {
-                    const { key, id, code } = f;
-                    return (
-                        <Row key={key} gutter={20} style={{
-                          marginBottom: 15,
-                        }}>
-                            <Col span={10}>
-                              <Row gutter={20}>
+                  const { key } = f;
+                  return (
+                    <Row
+                      key={key}
+                      gutter={20}
+                      style={{
+                        marginBottom: 15,
+                      }}
+                    >
+                      <Col span={10}>
+                        <Row gutter={20}>
+                          {
+                            i !== 0 && (
+                              <Col span={8}>
+                                <Select
+                                  required
+                                  label="关系"
+                                  name={`${key}-ao`}
+                                  clearButton={false}
+                                >
+                                  <Option value="and">且</Option>
+                                  <Option value="or">或</Option>
+                                </Select>
+                              </Col>
+
+                            )
+                          }
+                          <Col span={i !== 0 ? 16 : 24}>
+                            <Select
+                              style={{
+                                width: '100%',
+                              }}
+                              label="属性"
+                              name={`${key}-code`}
+                              clearButton={false}
+                            >
                               {
-                                  i !== 0 && (
-                                    <Col span={8}>
-                                    <Select
-                                      required
-                                      placeholder="关系"
-                                      name={`${code}-ao`}
-                                      >
-                                        <Option value="and">且</Option>
-                                        <Option value="or">或</Option>
-                                    </Select>
-                                    </Col>
-                                    
-                                    )
-                                }
-                                <Col span={i !== 0 ? 16 : 24}>
-                                  <Select
-                                    style={{
-                                      width: '100%',
-                                    }}
-                                      required
-                                      placeholder="属性"
-                                      name={`${code}-code`}
-                                      onChange={(value, oldValue) => {
-                                          setFieldValue(`${oldValue}-operation`, undefined);
-                                          setFieldValue(`${oldValue}-value`, undefined);
-                                          const field = find(fieldData, { code: value });
-                                          // @ts-ignore
-                                          Field.set(key, field);
-                                      }}
-                                  >
-                                  {
                                       fieldData.filter((field: IFieldWithType) => (
-                                      code === field.code
-                                      ) || !find(fields, {
-                                      code: field.code,
-                                      })).map((field:IFieldWithType) => (
-                                      <Option value={field.code}>
+                                        modalDataSet?.current?.get(`${key}-code`) === field.code
+                                      ) || !existsFieldCodes.find((code: string) => code === field.code)).map((field:IFieldWithType) => (
+                                        <Option value={field.code}>
                                           {field.name}
-                                      </Option>
+                                        </Option>
                                       ))
-                                  }
-                                  </Select>
-                                </Col>
-                              </Row>
-                            </Col>
-                            <Col span={4}>
-                                {renderOperations(f)}
-                            </Col>
-                            <Col span={8} key={id}>
-                                {
-                                  renderRule(f, {
-                                    code,
-                                    operation: values.find(fieldValue => fieldValue.name === `${code}-operation`)?.value, 
-                                    value: values.find(fieldValue => fieldValue.name === `${code}-value`)?.value,
-                                  }, systemDataRefMap)
-                                }
-                            </Col>
-                            <Col span={2}>
-                            <Button
-                                disabled={arr.length === 1 && i === 0}
-                                onClick={() => {
-                                    // @ts-ignore
-                                    Field.remove(key);
-                                }}
-                                icon="delete"
-                            />
-                        </Col>
+                              }
+                            </Select>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={4}>
+                        {renderOperations(f)}
+                      </Col>
+                      <Col span={8}>
+                        {
+                          renderRule(modalDataSet, f, fieldData, systemDataRefMap)
+                        }
+                      </Col>
+                      <Col span={2}>
+                        <Button
+                          disabled={arr.length === 1 && i === 0}
+                          onClick={() => {
+                            // @ts-ignore
+                            Field.remove(key);
+                            removeField(`${key}-code`);
+                            removeField(`${key}-operation`);
+                            removeField(`${key}-value`);
+                            removeField(`${key}-ao`);
+                            if (i === 0) {
+                              if (fields[i + 1]) {
+                                removeField(`${fields[i + 1].key}-ao`);
+                              }
+                            }
+                          }}
+                          icon="delete"
+                        />
+                      </Col>
                     </Row>
-                    );
+                  );
                 })
                }
-            <div>
+          <div>
             <Button
                 // @ts-ignore
-              onClick={Field.add}
+              onClick={() => {
+                const newKey = Field.add();
+                addRequired(newKey, fields.length);
+              }}
               icon="add"
               color={'blue' as ButtonColor}
             >
               添加字段
             </Button>
+          </div>
         </div>
-           </div>
-        </Form>
-        </div>
-        
-    )
+      </Form>
+    </div>
+
+  );
 };
 
-export default RuleModal;
+export default observer(RuleModal);
