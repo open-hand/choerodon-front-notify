@@ -80,7 +80,7 @@ const renderRule = (dataset: DataSet, fieldK: IFieldK, fieldData: IField[], syst
   }
   if (field) {
     const {
-      fieldType, system, code, fieldOptions,
+      fieldType, system, code, fieldOptions, extraConfig,
     } = field;
     if (system) {
       switch (code) {
@@ -258,14 +258,16 @@ const renderRule = (dataset: DataSet, fieldK: IFieldK, fieldData: IField[], syst
         );
       }
       case 'text': {
-        <TextArea
-          required
-          name={`${key}-value`}
-          rows={3}
-          maxLength={255}
-          style={{ width: '100%' }}
-          label="值"
-        />;
+        return (
+          <TextArea
+            required
+            name={`${key}-value`}
+            rows={3}
+            maxLength={255}
+            style={{ width: '100%' }}
+            label="值"
+          />
+        );
       }
       case 'input': {
         return (
@@ -278,12 +280,15 @@ const renderRule = (dataset: DataSet, fieldK: IFieldK, fieldData: IField[], syst
         );
       }
       case 'number': {
-        // remainingTime, storyPoints
+        // remain_time, story_point
         return (
           <NumberField
             required
             name={`${key}-value`}
             label="值"
+            step={extraConfig ? 0.01 : 1}
+            min={(code === 'story_point' || code === 'remain_time') ? 0 : undefined}
+            max={(code === 'story_point' || code === 'remain_time') ? 100 : undefined}
           />
         );
       }

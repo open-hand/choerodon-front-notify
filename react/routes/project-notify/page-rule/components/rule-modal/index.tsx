@@ -262,7 +262,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   }, [modalDataSet]);
 
   const removeField = useCallback((name) => {
-    console.log(name, modalDataSet?.current);
+    modalDataSet?.fields?.delete(name);
     modalDataSet?.current?.fields.delete(name);
   }, [modalDataSet]);
 
@@ -308,12 +308,6 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   }, [getSystemFields, ruleId]);
 
   const getFieldValue = useCallback((name) => {
-    // const fieldValues = formRef?.current?.getFields();
-    // const currentFieldValue = fieldValues?.find(item => item.name === name);
-    // if(currentFieldValue) {
-    //   return currentFieldValue.value;
-    // }
-    // return undefined;
     const { current } = modalDataSet;
     if (current) {
       return current.get(name);
@@ -337,7 +331,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
           return selectOption?.name;
         }
         case 'issue_type': {
-          const selectOption = find(options, { fieldCode: value });
+          const selectOption = find(options, { typeCode: value });
           return selectOption?.name;
         }
         case 'component': {
@@ -402,23 +396,37 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   const transformSumitData = useCallback(() => {
     let expressQuery = '';
     const expressList: Express[] = [];
-    const values = modalDataSet.toData()[0];
-    const codeValues = [];
-    // const values = (formRef?.current?.getFields().map(item => ({
-    //   name: item.name,
-    //   value: toJS(item.value),
-    // })) || []);
-    console.log('submitData：');
-    console.log(values);
+    const codeValues:{name:string, value:any}[] = [];
+    const submitData: {name: string, value: any}[] = [];
 
-    for (const [key, value] of Object.entries(values)) {
-      if (key.split('-')[1] === 'code' && fieldData.find((field) => field.code === value)) {
+    fields.forEach(({ key }: { key: number}, i: number) => {
+      submitData.push({
+        name: `${key}-code`,
+        value: getFieldValue(`${key}-code`),
+      }, {
+        name: `${key}-operation`,
+        value: getFieldValue(`${key}-operation`),
+      }, {
+        name: `${key}-value`,
+        value: getFieldValue(`${key}-value`),
+      });
+      if (i > 0) {
+        submitData.push({
+          name: `${key}-ao`,
+          value: getFieldValue(`${key}-ao`),
+        });
+      }
+    });
+
+    submitData.forEach(({ name, value }) => {
+      if (name.split('-')[1] === 'code' && fieldData.find((field) => field.code === value)) {
         codeValues.push({
-          name: key,
+          name,
           value,
         });
       }
-    }
+    });
+
     codeValues.forEach((codeField) => {
       const key = codeField.name?.split('-')[0];
       const code = codeField.value;
@@ -426,15 +434,16 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         const fieldInfo = fieldData.find((item) => item.code === code);
         if (fieldInfo) {
           const {
-            fieldType, type, system, name, extraConfig,
+            fieldType, type, system, name, extraConfig, code,
           } = fieldInfo;
           const valueIsNull = getFieldValue(`${key}-operation`) === 'is' || getFieldValue(`${key}-operation`) === 'is_not';
           const value = toJS(getFieldValue(`${key}-value`));
-          if (value || valueIsNull) {
+          const hasAo = submitData.find(({ name: fieldName }) => fieldName === `${key}-ao`);
+          if (value || value === 0 || valueIsNull) {
             expressList.push({
               fieldCode: code,
               operation: getFieldValue(`${key}-operation`),
-              relationshipWithPervious: getFieldValue(`${key}-ao`),
+              relationshipWithPervious: hasAo && getFieldValue(`${key}-ao`),
               // text,input
               valueStr: (fieldType === 'input' || fieldType === 'text' || code === 'issue_type') && !valueIsNull ? value : undefined,
               // 单选，member
@@ -454,7 +463,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
               // 是否允许小数，需要判断是否允许小数
               allowDecimals: fieldType === 'number' && !valueIsNull ? extraConfig : undefined,
             });
-            const ao = getFieldValue(`${key}-ao`) && aoMap.get(getFieldValue(`${key}-ao`));
+            const ao = hasAo && getFieldValue(`${key}-ao`) && aoMap.get(getFieldValue(`${key}-ao`));
             expressQuery += `${ao ? `${ao} ` : ''}${name} ${operationMap.get(getFieldValue(`${key}-operation`))} ${transformValue(fieldInfo, getFieldValue(`${key}-operation`), getFieldValue(`${key}-value`))} `;
           }
         }
@@ -464,24 +473,9 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
       expressQuery,
       expressList,
     };
-  }, [fieldData, getFieldValue, modalDataSet, transformValue]);
-
-  const validateFields = useCallback(async () => {
-    const allFields = formRef?.current?.getFields() || [];
-    let flag = true;
-    for (let i = 0; i < allFields?.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      const validateRes = await allFields[i].validate();
-      if (!validateRes) {
-        flag = false;
-      }
-    }
-    return flag;
-  }, []);
+  }, [fieldData, getFieldValue, modalDataSet, transformValue, fields]);
 
   const handleClickSubmit = useCallback(async () => {
-    // console.log(await validateFields());
-    console.log(await modalDataSet.validate());
     if (await modalDataSet.validate()) {
       const expressObj = transformSumitData();
       const data = {
@@ -517,11 +511,6 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   }, [handleClickSubmit, modal]);
 
   const setFieldValue = useCallback((name: string, value: any) => {
-    // const fieldValues = formRef?.current?.getFields();
-    // const currentFieldValue = fieldValues?.find(item => item.name === name);
-    // if(currentFieldValue) {
-    //   currentFieldValue.value = value;
-    // }
     const { current } = modalDataSet;
     if (current) {
       current.set(name, value);
@@ -536,7 +525,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         setFieldValue('ccList', ccList.map((item: User) => item.id));
         setFieldValue('receiverList', receiverList.map((item: User) => item.id));
         const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code }));
-        const initFields = Field.init(existFields);
+        const initFields = Field.init(new Array(existFields.length).fill({}));
         initFields.forEach((item: IFieldK, i: number) => {
           addRequired(item.key, i);
         });
@@ -564,7 +553,6 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         setInitRule(res);
         setLoading(false);
       }).catch((e: ErrorEvent) => {
-        console.log(e);
         setLoading(false);
       });
     }
