@@ -1,6 +1,7 @@
 import { uniqBy } from 'lodash/uniqBy';
 import { map } from 'lodash/map';
 import { includes } from 'lodash/includes';
+import JSONBig from 'json-bigint';
 
 export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
   function parentItemIsChecked({ dataSet, record, name }) {
@@ -41,7 +42,7 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
         method: 'get',
         transformResponse(response) {
           try {
-            const data = JSON.parse(response);
+            const data = JSONBig.parse(response);
             if (data && data.failed) {
               return data;
             } else {
