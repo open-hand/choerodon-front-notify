@@ -3,7 +3,6 @@ import {
   Select, DatePicker, TimePicker, DateTimePicker, TextArea, TextField, NumberField, DataSet,
 } from 'choerodon-ui/pro';
 import { stores } from '@choerodon/boot';
-import moment from 'moment';
 import SelectIssueType from '@choerodon/agile/lib/components/select/select-issue-type';
 import SelectStatus from '@choerodon/agile/lib/components/issue-filter-form/components/field/StatusField';
 import SelectPriority from '@choerodon/agile/lib/components/select/select-priority';
@@ -23,14 +22,6 @@ const { AppState } = stores;
 export type Operation = 'in' | 'not_in' | 'is' | 'is_not' | 'eq' | 'not_eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'not_like' | '';
 export type IFieldType = 'radio' | 'checkbox' | 'single' | 'multiple' | 'date' | 'datetime' | 'time' | 'number' | 'member' | 'text' | 'input';
 export type FieldType = 'option' | 'date_hms' | 'date' | 'number' | 'string' | 'text';
-interface FieldOption {
-  code: string
-  fieldId: string
-  id: string
-  value: string
-  enabled: boolean
-}
-
 export interface Rule {
   ao?: 'and' | 'or',
   code: string,
@@ -66,7 +57,7 @@ export interface IFieldK extends IField {
   type: FieldType,
 }
 
-const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField[], systemDataRefMap: React.MutableRefObject<Map<string, any>>) => {
+const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField[], systemDataRefMap: React.MutableRefObject<Map<string, any>>, getFieldValue) => {
   const isProgram = AppState.currentMenuType.category === 'PROGRAM';
   const { key } = fieldK;
   const field = fieldData.find((item: IField) => item.code === dataset?.current?.get(`${key}-code`));
@@ -207,6 +198,10 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
+              // @ts-ignore
+              autoQueryConfig={{
+                selectedUserIds: getFieldValue(`${key}-value`) ? [getFieldValue(`${key}-value`)] : [],
+              }}
             />
           );
         }
@@ -254,7 +249,18 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
       }
       case 'member': {
         return (
-          <SelectUser required name={`${key}-value`} label="值" />
+          <SelectUser
+            required
+            name={`${key}-value`}
+            label="值"
+            afterLoad={(data) => {
+              systemDataRefMap.current.set(code, data || []);
+            }}
+            // @ts-ignore
+            autoQueryConfig={{
+              selectedUserIds: getFieldValue(`${key}-value`) ? [getFieldValue(`${key}-value`)] : [],
+            }}
+          />
         );
       }
       case 'text': {

@@ -21,9 +21,8 @@ import { find, map } from 'lodash';
 import { ButtonColor } from 'choerodon-ui/pro/lib/button/enum';
 import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import moment from 'moment';
-import dataSet from '@/routes/setting-content/Store/dataSet';
 import renderRule, {
-  Rule, IField, Operation, IFieldWithType, IFieldType, FieldType,
+  IField, Operation, IFieldWithType, FieldType,
 } from './renderRule';
 import styles from './index.less';
 
@@ -585,6 +584,10 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
             style={{
               width: 600,
             }}
+            // @ts-ignore
+            autoQueryConfig={{
+              selectedUserIds: getFieldValue('receiverList'),
+            }}
             name="receiverList"
             label="通知对象"
             multiple
@@ -595,6 +598,10 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
             style={{
               width: 600,
               marginTop: 27,
+            }}
+            // @ts-ignore
+            autoQueryConfig={{
+              selectedUserIds: getFieldValue('ccList'),
             }}
             name="ccList"
             label="抄送人"
@@ -662,7 +669,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                       </Col>
                       <Col span={8}>
                         {
-                          renderRule(modalDataSet, f, fieldData, systemDataRefMap)
+                          renderRule(modalDataSet, f, fieldData, systemDataRefMap, getFieldValue)
                         }
                       </Col>
                       <Col span={2}>
