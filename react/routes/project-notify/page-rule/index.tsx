@@ -14,6 +14,7 @@ const PageRule = () => {
   const ruleTableDataSet = useMemo(() => new DataSet({
     autoQuery: true,
     selection: false,
+    paging: false,
     transport: {
       read: () => ({
         url: `/agile/v1/projects/${getProjectId()}/configuration_rule`,
