@@ -66,7 +66,7 @@ export interface IFieldK extends IField {
   type: FieldType,
 }
 
-const renderRule = (dataset: DataSet, fieldK: IFieldK, fieldData: IField[], systemDataRefMap: React.MutableRefObject<Map<string, any>>) => {
+const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField[], systemDataRefMap: React.MutableRefObject<Map<string, any>>) => {
   const isProgram = AppState.currentMenuType.category === 'PROGRAM';
   const { key } = fieldK;
   const field = fieldData.find((item: IField) => item.code === dataset?.current?.get(`${key}-code`));
