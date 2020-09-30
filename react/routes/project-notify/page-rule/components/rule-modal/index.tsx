@@ -1,9 +1,11 @@
 import React, {
   useState, useEffect, useRef, useCallback, useMemo,
 } from 'react';
+
 import {
   Form, DataSet, Select, Button, Row, Col,
 } from 'choerodon-ui/pro';
+import { unstable_batchedUpdates as batchedUpdates } from 'react-dom';
 import { ModalProps } from 'choerodon-ui/pro/lib/modal/Modal';
 import { Divider } from 'choerodon-ui';
 import { axios, stores, Choerodon } from '@choerodon/boot';
@@ -21,7 +23,7 @@ import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import moment from 'moment';
 import dataSet from '@/routes/setting-content/Store/dataSet';
 import renderRule, {
-  Rule, IField, Operation, IFieldK, IFieldWithType, IFieldType, FieldType,
+  Rule, IField, Operation, IFieldWithType, IFieldType, FieldType,
 } from './renderRule';
 import styles from './index.less';
 
@@ -167,7 +169,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     },
   }), []);
 
-  const renderOperations = useCallback((fieldK: IFieldK) => {
+  const renderOperations = useCallback((fieldK: { key: number }) => {
     const { key } = fieldK;
     const code = modalDataSet?.current?.get(`${key}-code`);
     const field = fieldData.find((item: IFieldWithType) => item.code === code);
@@ -302,10 +304,12 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         system: false,
       }));
       const data = [...transformedSystemFields, ...transformedCustomFields].filter((item) => !find(excludeCode, (code) => code === item.code));
-      setFieldData(data);
-      setLoading(false);
+      batchedUpdates(() => {
+        setFieldData(data);
+        setLoading(false);
+      });
     });
-  }, [getSystemFields, ruleId]);
+  }, [addRequired, getSystemFields, ruleId]);
 
   const getFieldValue = useCallback((name) => {
     const { current } = modalDataSet;
@@ -317,7 +321,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
 
   const transformValue = useCallback((fieldInfo: IFieldWithType, operation: Operation, value: any) => {
     const {
-      fieldType, type, system, name, fieldOptions, code,
+      fieldType, system, fieldOptions, code,
     } = fieldInfo;
     if (operation === 'is' || operation === 'is_not') {
       return '空';
@@ -521,45 +525,47 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     if (ruleId && fieldData.length) {
       setLoading(true);
       axios.get(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`).then((res) => {
-        const { ccList = [], receiverList = [], expressList = [] } = res;
-        setFieldValue('ccList', ccList.map((item: User) => item.id));
-        setFieldValue('receiverList', receiverList.map((item: User) => item.id));
-        const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code }));
-        const initFields = Field.init(new Array(existFields.length).fill({}));
-        initFields.forEach((item: IFieldK, i: number) => {
-          addRequired(item.key, i);
-        });
-        expressList.forEach((item: Express, i) => {
-          const {
-            fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
-          } = item;
-          const field = find(fieldData, { code: fieldCode });
-          const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
-          if (field) {
-            const { fieldType, code } = field;
-            const { key } = initFields[i];
-            setFieldValue(`${key}-code`, fieldCode);
-            setFieldValue(`${key}-operation`, operation);
-            if (operation !== 'is' && operation !== 'is_not') {
-              setFieldValue(`${key}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
-            } else {
-              setFieldValue(`${key}-value`, 'empty');
+        batchedUpdates(() => {
+          const { ccList = [], receiverList = [], expressList = [] } = res;
+          setFieldValue('ccList', ccList.map((item: User) => item.id));
+          setFieldValue('receiverList', receiverList.map((item: User) => item.id));
+          const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code }));
+          const initFields = Field.init(new Array(existFields.length).fill({}));
+          initFields.forEach((item: { key: number }, i: number) => {
+            addRequired(item.key, i);
+          });
+          expressList.forEach((item: Express, i) => {
+            const {
+              fieldCode, relationshipWithPervious, operation, valueStr, valueId, valueIdList, valueNum, valueDecimal, valueDate, valueDateHms,
+            } = item;
+            const field = find(fieldData, { code: fieldCode });
+            const fieldValue = valueStr || valueId || valueIdList || valueNum || valueDecimal || valueDate || valueDateHms;
+            if (field) {
+              const { fieldType, code } = field;
+              const { key } = initFields[i];
+              setFieldValue(`${key}-code`, fieldCode);
+              setFieldValue(`${key}-operation`, operation);
+              if (operation !== 'is' && operation !== 'is_not') {
+                setFieldValue(`${key}-value`, fieldType === 'date' || fieldType === 'datetime' || fieldType === 'time' ? moment(fieldType === 'time' ? `${moment().format('YYYY-MM-DD')} ${fieldValue}` : fieldValue) : fieldValue);
+              } else {
+                setFieldValue(`${key}-value`, 'empty');
+              }
+              if (relationshipWithPervious) {
+                setFieldValue(`${key}-ao`, relationshipWithPervious);
+              }
             }
-            if (relationshipWithPervious) {
-              setFieldValue(`${key}-ao`, relationshipWithPervious);
-            }
-          }
+          });
+          setInitRule(res);
+          setLoading(false);
         });
-        setInitRule(res);
-        setLoading(false);
       }).catch((e: ErrorEvent) => {
         setLoading(false);
       });
     }
-  }, [ruleId, fieldData]);
+  }, [ruleId, fieldData, setFieldValue, addRequired]);
 
   const existsFieldCodes: string[] = [];
-  fields.forEach((fieldWithKey: IFieldK) => {
+  fields.forEach((fieldWithKey: { key: number }) => {
     const { key } = fieldWithKey;
     const keyCode = modalDataSet?.current?.get(`${key}-code`);
     const field = fieldData.find((item) => item.code === keyCode);
@@ -601,7 +607,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         <div className={`${styles.rule_form_setting} ${styles.rule_form_ruleSetting}`}>
           <p className={styles.rule_form_setting_title}>通知规则设置</p>
           {
-                fields.map((f: IFieldK, i: number, arr: IFieldK[]) => {
+                fields.map((f: { key: number }, i: number, arr: { key: number }[]) => {
                   const { key } = f;
                   return (
                     <Row
