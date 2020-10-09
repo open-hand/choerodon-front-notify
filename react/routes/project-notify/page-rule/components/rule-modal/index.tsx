@@ -8,7 +8,7 @@ import {
 import { unstable_batchedUpdates as batchedUpdates } from 'react-dom';
 import { ModalProps } from 'choerodon-ui/pro/lib/modal/Modal';
 import { Divider } from 'choerodon-ui';
-import { axios, stores, Choerodon } from '@choerodon/boot';
+import { axios, Choerodon } from '@choerodon/boot';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import DataSetField from 'choerodon-ui/pro/lib/data-set/Field';
@@ -21,8 +21,9 @@ import { find, map } from 'lodash';
 import { ButtonColor } from 'choerodon-ui/pro/lib/button/enum';
 import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import moment from 'moment';
+import { FieldType } from 'choerodon-ui/pro/lib/data-set/enum';
 import renderRule, {
-  IField, Operation, IFieldWithType, FieldType,
+  IField, Operation, IFieldWithType, IFieldType,
 } from './renderRule';
 import styles from './index.less';
 
@@ -60,7 +61,7 @@ interface Express {
   // time
   valueDateHms?: string,
   predefined?: boolean,
-  fieldType?: FieldType,
+  fieldType?: IFieldType,
   // 是否允许小数，需要判断是否允许小数
   allowDecimals?: boolean,
 }
@@ -138,6 +139,7 @@ const formatMoment = (type: 'date' | 'datetime' | 'time', d: string) => {
 const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   const formRef: React.MutableRefObject<Form | undefined> = useRef();
   const [fieldData, setFieldData] = useState<IFieldWithType[]>([]);
+  const fieldDataRef = useRef<IFieldWithType[]>([]);
   const [fields, Field] = useFields();
   const [updateCount, setUpdateCount] = useState<number>(0);
   const systemDataRefMap = useRef<Map<string, any>>(new Map());
@@ -157,6 +159,36 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
       }) => {
         const key = name.split('-')[0];
         if (name.indexOf('code') > -1) {
+          const field = (fieldDataRef?.current || []).find((item) => item.code === value);
+          if (field) {
+            const {
+              system, extraConfig, code, fieldType,
+            } = field;
+            if (fieldType === 'number') {
+              const valueField = dataSet.current.getField(`${key}-value`);
+              if (system && (code === 'story_point' || code === 'remain_time')) {
+                valueField.set('max', 100);
+                valueField.set('min', 0);
+                valueField.set('step', 0.1);
+                valueField.set('validator', (numberValue: number) => {
+                  if (numberValue && /(^\d{1,3}\.{1}\d{1}$)|(^[1-9]\d{0,2}$)/.test(numberValue.toString())) {
+                    return true;
+                  }
+                  return '请输入小于3位的整数或者整数位小于3位小数点后一位的小数';
+                });
+              } else if (extraConfig) {
+                valueField.set('step', 0.01);
+                valueField.set('validator', (numberValue: number) => {
+                  if (numberValue && /(^-?[0-9]+$)|(^[-]?[0-9]+(\.[0-9]{1,2})?$)/.test(numberValue.toString())) {
+                    return true;
+                  }
+                  return '请输入整数或者小数点后一位或两位的小数';
+                });
+              } else {
+                valueField.set('step', 1);
+              }
+            }
+          }
           dataSet.current.set(`${key}-operation`, undefined);
           dataSet.current.set(`${key}-value`, undefined);
         }
@@ -166,7 +198,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         setUpdateCount((count) => count + 1);
       },
     },
-  }), []);
+  }), [fieldDataRef]);
 
   const renderOperations = useCallback((fieldK: { key: number }) => {
     const { key } = fieldK;
@@ -267,7 +299,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
     modalDataSet?.current?.fields.delete(name);
   }, [modalDataSet]);
 
-  const addRequired = useCallback((key, i) => {
+  const addFieldRule = useCallback((key, i) => {
     addField(`${key}-code`, {
       required: true,
     });
@@ -287,7 +319,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
   useEffect(() => {
     if (!ruleId) {
       const newKey = Field.add();
-      addRequired(newKey, 0);
+      addFieldRule(newKey, 0);
     }
     setLoading(true);
     Promise.all([getSystemFields(), fieldApi.getCustomFields()]).then(([systemFields, customFields]) => {
@@ -303,12 +335,13 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         system: false,
       }));
       const data = [...transformedSystemFields, ...transformedCustomFields].filter((item) => !find(excludeCode, (code) => code === item.code));
+      fieldDataRef.current = data;
       batchedUpdates(() => {
         setFieldData(data);
         setLoading(false);
       });
     });
-  }, [addRequired, getSystemFields, ruleId]);
+  }, [addFieldRule, getSystemFields, ruleId]);
 
   const getFieldValue = useCallback((name) => {
     const { current } = modalDataSet;
@@ -454,9 +487,9 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
               // 多选
               valueIdList: (fieldType === 'multiple' || fieldType === 'checkbox') && !valueIsNull ? value : undefined,
               // number整数,需要判断是否允许小数
-              valueNum: fieldType === 'number' && !extraConfig && !valueIsNull ? value : undefined,
+              valueNum: fieldType === 'number' && !extraConfig && !valueIsNull && code !== 'remain_time' && code !== 'story_point' ? value : undefined,
               // number有小数， 需要判断是否允许小数
-              valueDecimal: fieldType === 'number' && extraConfig && !valueIsNull ? value : undefined,
+              valueDecimal: fieldType === 'number' && (extraConfig || code === 'remain_time' || code === 'story_point') && !valueIsNull ? value : undefined,
               // date,datetime
               valueDate: (fieldType === 'date' || fieldType === 'datetime') && !valueIsNull ? formatMoment(fieldType, value) : undefined,
               // time
@@ -531,7 +564,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
           const existFields = fieldData.filter((item: IFieldWithType) => find(expressList, { fieldCode: item.code }));
           const initFields = Field.init(new Array(existFields.length).fill({}));
           initFields.forEach((item: { key: number }, i: number) => {
-            addRequired(item.key, i);
+            addFieldRule(item.key, i);
           });
           expressList.forEach((item: Express, i) => {
             const {
@@ -561,7 +594,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
         setLoading(false);
       });
     }
-  }, [ruleId, fieldData, setFieldValue, addRequired]);
+  }, [ruleId, fieldData, setFieldValue, addFieldRule]);
 
   const existsFieldCodes: string[] = [];
   fields.forEach((fieldWithKey: { key: number }) => {
@@ -700,7 +733,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
                 // @ts-ignore
               onClick={() => {
                 const newKey = Field.add();
-                addRequired(newKey, fields.length);
+                addFieldRule(newKey, fields.length);
               }}
               icon="add"
               color={'blue' as ButtonColor}
