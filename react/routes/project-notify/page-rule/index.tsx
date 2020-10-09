@@ -14,11 +14,11 @@ const PageRule = () => {
   const ruleTableDataSet = useMemo(() => new DataSet({
     autoQuery: true,
     selection: false,
-    paging: false,
     transport: {
-      read: () => ({
+      read: ({ params }) => ({
         url: `/agile/v1/projects/${getProjectId()}/configuration_rule`,
         method: 'get',
+        params,
       }),
     },
     fields: [
