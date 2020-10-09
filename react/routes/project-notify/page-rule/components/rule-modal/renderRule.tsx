@@ -21,7 +21,7 @@ const { AppState } = stores;
 
 export type Operation = 'in' | 'not_in' | 'is' | 'is_not' | 'eq' | 'not_eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'not_like' | '';
 export type IFieldType = 'radio' | 'checkbox' | 'single' | 'multiple' | 'date' | 'datetime' | 'time' | 'number' | 'member' | 'text' | 'input';
-export type FieldType = 'option' | 'date_hms' | 'date' | 'number' | 'string' | 'text';
+export type IMiddleFieldType = 'option' | 'date_hms' | 'date' | 'number' | 'string' | 'text';
 export interface Rule {
   ao?: 'and' | 'or',
   code: string,
@@ -34,6 +34,7 @@ interface FieldOption {
   fieldId: string,
   code: string,
   value: string,
+  enabled: boolean,
 }
 
 export interface IField {
@@ -48,13 +49,7 @@ export interface IField {
 }
 
 export interface IFieldWithType extends IField {
-  type: FieldType,
-}
-
-export interface IFieldK extends IField {
-  key: number,
-  request: boolean,
-  type: FieldType,
+  type: IMiddleFieldType,
 }
 
 const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField[], systemDataRefMap: React.MutableRefObject<Map<string, any>>, getFieldValue) => {
@@ -64,7 +59,7 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
   const operation = dataset?.current?.get(`${key}-operation`);
   if (operation === 'is' || operation === 'is_not') {
     return (
-      <Select required name={`${key}-value`} label="值">
+      <Select name={`${key}-value`} label="值">
         <Option value="empty">空</Option>
       </Select>
     );
@@ -78,7 +73,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         case 'issue_type': {
           return (
             <SelectIssueType
-              required
               name={`${key}-value`}
               isProgram={isProgram}
               label="值"
@@ -92,7 +86,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         case 'status': {
           return (
             <SelectStatus
-              required
               name={`${key}-value`}
               isProgram={isProgram}
               label="值"
@@ -105,7 +98,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         case 'priority': {
           return (
             <SelectPriority
-              required
               name={`${key}-value`}
               label="值"
               afterLoad={(data) => {
@@ -119,7 +111,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             <SelectComponent
               valueField="componentId"
               multiple
-              required
               name={`${key}-value`}
               label="值"
               maxTagCount={2}
@@ -135,7 +126,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             <SelectLabel
               valueField="labelId"
               multiple
-              required
               name={`${key}-value`}
               label="值"
               maxTagCount={2}
@@ -152,7 +142,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             <SelectVersion
               valueField="versionId"
               multiple
-              required
               name={`${key}-value`}
               label="值"
               maxTagCount={2}
@@ -166,7 +155,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         case 'epic': {
           return (
             <SelectEpic
-              required
               name={`${key}-value`}
               isProgram={isProgram}
               label="值"
@@ -179,7 +167,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         case 'sprint': {
           return (
             <SelectSprint
-              required
               name={`${key}-value`}
               label="值"
               afterLoad={(data) => {
@@ -192,7 +179,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         case 'assignee': {
           return (
             <SelectUser
-              required
               name={`${key}-value`}
               label="值"
               afterLoad={(data) => {
@@ -224,7 +210,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         return (
           <Select
             key={code}
-            required
             label="值"
             name={`${key}-value`}
             multiple={fieldType === 'checkbox' || fieldType === 'multiple'}
@@ -250,7 +235,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
       case 'member': {
         return (
           <SelectUser
-            required
             name={`${key}-value`}
             label="值"
             afterLoad={(data) => {
@@ -266,7 +250,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
       case 'text': {
         return (
           <TextArea
-            required
             name={`${key}-value`}
             rows={3}
             maxLength={255}
@@ -278,7 +261,6 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
       case 'input': {
         return (
           <TextField
-            required
             name={`${key}-value`}
             maxLength={100}
             label="值"
@@ -289,19 +271,14 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         // remain_time, story_point
         return (
           <NumberField
-            required
             name={`${key}-value`}
             label="值"
-            step={extraConfig ? 0.01 : 1}
-            min={(code === 'story_point' || code === 'remain_time') ? 0 : undefined}
-            max={(code === 'story_point' || code === 'remain_time') ? 100 : undefined}
           />
         );
       }
       case 'time': {
         return (
           <TimePicker
-            required
             name={`${key}-value`}
             label="值"
           />
@@ -311,22 +288,21 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
         // creationDate, lastUpdateDate,estimatedStartTime,estimatedEndTime,
         return (
           <DateTimePicker
-            required
             name={`${key}-value`}
             label="值"
           />
         );
       }
       case 'date': {
-        return (<DatePicker required name={`${key}-value`} label="值" />);
+        return (<DatePicker name={`${key}-value`} label="值" />);
       }
       default:
-  <Select required label="值" />;
+        return (<Select name={`${key}-value`} label="值" />);
     }
   }
 
   return (
-    <Select name={`${key}-value`} required label="值" />
+    <Select name={`${key}-value`} label="值" />
   );
 };
 
