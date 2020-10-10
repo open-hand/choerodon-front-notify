@@ -6,6 +6,7 @@ import WebhookContent from '../WebhooksSetting';
 import AgileContent from './agile';
 import DevopsContent from './devops';
 import ResourceContent from './resource';
+import PageRuleContent from './page-rule';
 import Tips from '../../components/tips';
 
 import './index.less';
@@ -45,18 +46,23 @@ const Content = () => {
         title: '敏捷消息',
         tabKey: 'choerodon.code.project.setting-notify-agile',
         component: AgileContent,
+      }, {
+        route: '/notify/project-notify/page-rule',
+        title: '页面规则',
+        tabKey: 'choerodon.code.project.setting-notify-rule',
+        component: PageRuleContent,
       });
     }
     return (
       <PageWrap noHeader={['choerodon.code.project.setting-notify-agile', 'choerodon.code.project.setting-notify-devops', 'choerodon.code.project.setting-notify-resource']}>
-        {origin.map(o => <PageTab route={o.route} title={o.title} tabKey={o.tabKey} component={o.component} />)}
+        {origin.map((o) => <PageTab route={o.route} title={o.title} tabKey={o.tabKey} component={o.component} />)}
       </PageWrap>
     );
   };
   return renderPageTab();
 };
 
-export default withRouter(props => (
+export default withRouter((props) => (
   <StoreProvider {...props}>
     <Content />
   </StoreProvider>
