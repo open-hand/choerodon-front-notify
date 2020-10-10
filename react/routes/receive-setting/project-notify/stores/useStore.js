@@ -59,7 +59,7 @@ export default function useStore() {
         const newSendingType = type === 'pm' ? 'WEB' : 'EMAIL';
         const hasTemplateId = item[templateIdName] && item[enabledName];
         const isCheck = hasTemplateId && !that.getReceiveData.some(({ sendSettingId, sourceId, sendingType }) => (
-          sendSettingId === item.id && Number(item.sourceId.split('-')[0]) === sourceId && sendingType === newSendingType
+          sendSettingId === item.id && item.sourceId.split('-')[0] === String(sourceId) && sendingType === newSendingType
         ));
         item[`${type}Disabled`] = !hasTemplateId;
         return isCheck;
