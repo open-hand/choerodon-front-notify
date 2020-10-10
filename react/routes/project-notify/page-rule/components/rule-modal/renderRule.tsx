@@ -59,7 +59,13 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
   const operation = dataset?.current?.get(`${key}-operation`);
   if (operation === 'is' || operation === 'is_not') {
     return (
-      <Select name={`${key}-value`} label="值">
+      <Select
+        name={`${key}-value`}
+        label="值"
+        style={{
+          width: '100%',
+        }}
+      >
         <Option value="empty">空</Option>
       </Select>
     );
@@ -77,6 +83,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               isProgram={isProgram}
               label="值"
               valueField="typeCode"
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -89,6 +98,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               name={`${key}-value`}
               isProgram={isProgram}
               label="值"
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -100,6 +112,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             <SelectPriority
               name={`${key}-value`}
               label="值"
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -115,6 +130,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               label="值"
               maxTagCount={2}
               maxTagTextLength={10}
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -130,6 +148,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               label="值"
               maxTagCount={2}
               maxTagTextLength={10}
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -146,6 +167,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               label="值"
               maxTagCount={2}
               maxTagTextLength={10}
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -158,6 +182,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
               name={`${key}-value`}
               isProgram={isProgram}
               label="值"
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -169,6 +196,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             <SelectSprint
               name={`${key}-value`}
               label="值"
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -181,6 +211,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             <SelectUser
               name={`${key}-value`}
               label="值"
+              style={{
+                width: '100%',
+              }}
               afterLoad={(data) => {
                 systemDataRefMap.current.set(code, data || []);
               }}
@@ -215,6 +248,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             multiple={fieldType === 'checkbox' || fieldType === 'multiple'}
             maxTagCount={2}
             maxTagTextLength={10}
+            style={{
+              width: '100%',
+            }}
           >
             {(fieldOptions || []).map((item: FieldOption) => {
               if (item.enabled) {
@@ -240,6 +276,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             afterLoad={(data) => {
               systemDataRefMap.current.set(code, data || []);
             }}
+            style={{
+              width: '100%',
+            }}
             // @ts-ignore
             autoQueryConfig={{
               selectedUserIds: getFieldValue(`${key}-value`) ? [getFieldValue(`${key}-value`)] : [],
@@ -264,6 +303,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
             name={`${key}-value`}
             maxLength={100}
             label="值"
+            style={{
+              width: '100%',
+            }}
           />
         );
       }
@@ -273,6 +315,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
           <NumberField
             name={`${key}-value`}
             label="值"
+            style={{
+              width: '100%',
+            }}
           />
         );
       }
@@ -281,6 +326,9 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
           <TimePicker
             name={`${key}-value`}
             label="值"
+            style={{
+              width: '100%',
+            }}
           />
         );
       }
@@ -290,19 +338,44 @@ const renderRule = (dataset: DataSet, fieldK: { key: number }, fieldData: IField
           <DateTimePicker
             name={`${key}-value`}
             label="值"
+            style={{
+              width: '100%',
+            }}
           />
         );
       }
       case 'date': {
-        return (<DatePicker name={`${key}-value`} label="值" />);
+        return (
+          <DatePicker
+            name={`${key}-value`}
+            label="值"
+            style={{
+              width: '100%',
+            }}
+          />
+        );
       }
       default:
-        return (<Select name={`${key}-value`} label="值" />);
+        return (
+          <Select
+            name={`${key}-value`}
+            label="值"
+            style={{
+              width: '100%',
+            }}
+          />
+        );
     }
   }
 
   return (
-    <Select name={`${key}-value`} label="值" />
+    <Select
+      name={`${key}-value`}
+      label="值"
+      style={{
+        width: '100%',
+      }}
+    />
   );
 };
 
