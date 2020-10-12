@@ -58,12 +58,12 @@ const RuleTable: React.FC<Props> = ({ tableDataSet }) => {
     const handleDeleteRule = () => {
       axios.delete(`/agile/v1/projects/${getProjectId()}/configuration_rule/${record?.get('id')}`).then(() => {
         Choerodon.prompt('删除成功');
-        tableDataSet.query();
+        tableDataSet.query(tableDataSet.toData().length === 1 ? tableDataSet.currentPage - 1 : tableDataSet.currentPage);
       }).catch(() => {
         Choerodon.prompt('删除失败');
       });
     };
-    const handleMenuClick = (record: any, e: { key: 'delete' }) => {
+    const handleMenuClick = () => {
       Modal.open({
         style: {
           width: 416,
