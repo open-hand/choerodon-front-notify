@@ -22,7 +22,7 @@ export default function (organizationId) {
         data,
       }),
       update: ({ data: [data] }) => ({
-        url: '/v1/message/templates',
+        url: 'hmsg/v1/message/templates',
         method: 'put',
         data,
       }),
