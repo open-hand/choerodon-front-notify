@@ -25,7 +25,7 @@ export default function (organizationId) {
       update: ({ data: [data] }) => {
         const postData = omit(data, ['messageCategoryCode', 'messageSubcategoryCode']);
         return ({
-          url: '/hmsg/v1/0/message/templates',
+          url: '/hmsg/v1/message/templates',
           method: 'put',
           data: postData,
         });
