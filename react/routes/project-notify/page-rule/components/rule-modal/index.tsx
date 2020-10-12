@@ -532,7 +532,7 @@ const RuleModal: React.FC<Props> = ({ modal, ruleTableDataSet, ruleId }) => {
       }
       return axios.put(`/agile/v1/projects/${getProjectId()}/configuration_rule/${ruleId}`, data).then(() => {
         Choerodon.prompt('编辑成功');
-        ruleTableDataSet.query();
+        ruleTableDataSet.query(ruleTableDataSet.currentPage);
         return true;
       }).catch(() => {
         Choerodon.prompt('编辑失败');
