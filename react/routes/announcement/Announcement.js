@@ -20,7 +20,7 @@ const modalKey = ProModal.key();
 const iconType = {
   // COMPLETED: 'COMPLETED',
   // SENDING: 'RUNNING',
-  // WAITING: 'UN_START',
+  WAITING: 'WAITING',
   // FAILED: 'FAILED',
   PUBLISHED: 'COMPLETED',
   DRAFT: 'UN_START',
