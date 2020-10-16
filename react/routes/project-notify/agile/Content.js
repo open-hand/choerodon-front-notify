@@ -3,7 +3,7 @@ import {
   TabPage, Content, Breadcrumb, Choerodon, Permission,
 } from '@choerodon/boot';
 import {
-  Table, CheckBox, Select, Icon,
+  Table, CheckBox, Select, Icon, Tooltip,
 } from 'choerodon-ui/pro';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -96,11 +96,11 @@ export default observer((props) => {
           />
         )}
         renderer={() => (
-          <div className={`${prefixCls}-object-select`}>
-            <MouserOverWrapper width={0.15} text={data.join()}>
+          <Tooltip title={data.join()}>
+            <div className={`${prefixCls}-object-select-render`}>
               {data.join() || '-'}
-            </MouserOverWrapper>
-          </div>
+            </div>
+          </Tooltip>
         )}
         trigger={['click']}
         placement="bottomLeft"
