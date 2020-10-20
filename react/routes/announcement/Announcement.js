@@ -20,17 +20,17 @@ const modalKey = ProModal.key();
 const iconType = {
   // COMPLETED: 'COMPLETED',
   // SENDING: 'RUNNING',
-  // WAITING: 'UN_START',
+  // WAITING: 'WAITING',
   // FAILED: 'FAILED',
   PUBLISHED: 'COMPLETED',
-  DRAFT: 'UN_START',
-  DELETED: 'DELETED',
+  WAITING: 'UN_START',
+  // DELETED: 'DELETED',
 };
 
 const colorCode = {
   PUBLISHED: '#00BFA5',
-  DELETED: '#d3d3d3',
-  DRAFT: '#ffb100',
+  // DELETED: '#d3d3d3',
+  WAITING: '#ffb100',
 };
 
 const FormItem = Form.Item;

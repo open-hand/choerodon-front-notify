@@ -17,9 +17,8 @@ export default () => {
       const diffSeconds = diffDuration.seconds();
 
       return `${diffYears ? `${diffYears}年` : ''}${diffMonths ? `${diffMonths}月` : ''}${diffDays ? `${diffDays}日` : ''}${diffHours ? `${diffHours}小时` : ''}${diffMinutes ? `${diffMinutes}分钟` : ''}${diffSeconds ? `${diffSeconds}秒` : ''}`;
-    } else {
-      return '正在计算时间...';
     }
+    return '正在计算时间...';
   }
 
   return ({
@@ -47,7 +46,7 @@ export default () => {
       type: 'string',
       label: '发送时间',
     }, {
-      name: 'timeConsuming',
+      name: 'statusMeaning',
       type: 'string',
       label: '执行状态',
     }, {

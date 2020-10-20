@@ -1,6 +1,10 @@
 import React from 'react';
-import { TabPage, Content, Breadcrumb, Choerodon, Permission } from '@choerodon/boot';
-import { Table, CheckBox, Dropdown, Icon } from 'choerodon-ui/pro';
+import {
+  TabPage, Content, Breadcrumb, Choerodon, Permission,
+} from '@choerodon/boot';
+import {
+  Table, CheckBox, Select, Icon, Tooltip,
+} from 'choerodon-ui/pro';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useAgileContentStore } from './stores';
@@ -11,7 +15,7 @@ import { useProjectNotifyStore } from '../stores';
 
 const { Column } = Table;
 
-export default observer(props => {
+export default observer((props) => {
   const {
     intlPrefix,
     prefixCls,
@@ -84,18 +88,24 @@ export default observer(props => {
     });
 
     return record.get('code') !== 'ISSUECHANGESTATUS' ? (
-      <Dropdown
-        overlay={<NotifyObject record={record} allSendRoleList={allSendRoleList} />}
-        trigger={['click', 'focus']}
+      <Select
+        popupContent={(
+          <NotifyObject
+            record={record}
+            allSendRoleList={allSendRoleList}
+          />
+        )}
+        renderer={() => (
+          <Tooltip title={data.join()}>
+            <div className={`${prefixCls}-object-select-render`}>
+              {data.join() || '-'}
+            </div>
+          </Tooltip>
+        )}
+        trigger={['click']}
         placement="bottomLeft"
-      >
-        <div className={`${prefixCls}-object-select`}>
-          <MouserOverWrapper width={0.15} text={data.join()}>
-            {data.join() || '-'}
-          </MouserOverWrapper>
-          <Icon type="arrow_drop_down" className={`${prefixCls}-object-select-icon`} />
-        </div>
-      </Dropdown>
+        className={`${prefixCls}-object-select`}
+      />
     ) : '-';
   }
 

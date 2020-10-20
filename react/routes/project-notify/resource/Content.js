@@ -1,6 +1,10 @@
 import React, { Fragment } from 'react';
-import { TabPage, Content, Breadcrumb, Choerodon, Permission } from '@choerodon/boot';
-import { Table, CheckBox, Icon, Dropdown, Spin } from 'choerodon-ui/pro';
+import {
+  TabPage, Content, Breadcrumb, Choerodon, Permission,
+} from '@choerodon/boot';
+import {
+  Table, CheckBox, Icon, Dropdown, Spin, Select, Tooltip,
+} from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { Prompt } from 'react-router-dom';
 import { useResourceContentStore } from './stores';
@@ -13,7 +17,7 @@ import EmptyPage from '../../../components/empty-page';
 
 const { Column } = Table;
 
-export default observer(props => {
+export default observer((props) => {
   const {
     intlPrefix,
     prefixCls,
@@ -61,7 +65,9 @@ export default observer(props => {
     );
   }
 
-  function handleCheckBoxChange({ record, value, name, flagName }) {
+  function handleCheckBoxChange({
+    record, value, name, flagName,
+  }) {
     record.set(name, value);
     if (!record.get('envId')) {
       tableDs.forEach((tableRecord) => {
@@ -87,7 +93,9 @@ export default observer(props => {
         checked={checked}
         disabled={disabled}
         indeterminate={!checked && isIndeterminate}
-        onChange={(value) => handleCheckBoxChange({ record, value, name, flagName })}
+        onChange={(value) => handleCheckBoxChange({
+          record, value, name, flagName,
+        })}
       />
     );
   }
@@ -110,18 +118,24 @@ export default observer(props => {
     });
 
     return (
-      <Dropdown
-        overlay={<NotifyObject record={record} allSendRoleList={allSendRoleList} />}
-        trigger={['click', 'focus']}
+      <Select
+        popupContent={(
+          <NotifyObject
+            record={record}
+            allSendRoleList={allSendRoleList}
+          />
+        )}
+        renderer={() => (
+          <Tooltip title={data.join()}>
+            <div className={`${prefixCls}-object-select-render`}>
+              {data.join() || '-'}
+            </div>
+          </Tooltip>
+        )}
+        trigger={['click']}
         placement="bottomLeft"
-      >
-        <div className={`${prefixCls}-object-select`}>
-          <MouserOverWrapper width={0.15} text={data.join()}>
-            {data.join() || '-'}
-          </MouserOverWrapper>
-          <Icon type="arrow_drop_down" className={`${prefixCls}-object-select-icon`} />
-        </div>
-      </Dropdown>
+        className={`${prefixCls}-object-select`}
+      />
     );
   }
 
@@ -131,7 +145,7 @@ export default observer(props => {
     }
     if (getEnabled) {
       return (
-        <Fragment>
+        <>
           <Table dataSet={tableDs} mode="tree">
             <Column name="name" />
             <Column
@@ -165,16 +179,15 @@ export default observer(props => {
           >
             <FooterButtons onOk={saveSettings} onCancel={refresh} />
           </Permission>
-        </Fragment>
-      );
-    } else {
-      return (
-        <EmptyPage
-          title={formatMessage({ id: `${intlPrefix}.empty.title` })}
-          describe={formatMessage({ id: `${intlPrefix}.empty.des` })}
-        />
+        </>
       );
     }
+    return (
+      <EmptyPage
+        title={formatMessage({ id: `${intlPrefix}.empty.title` })}
+        describe={formatMessage({ id: `${intlPrefix}.empty.des` })}
+      />
+    );
   }
 
   return (

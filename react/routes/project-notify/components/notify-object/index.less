@@ -11,11 +11,16 @@
   }
 
   &-select {
-    display: flex;
-    align-items: center;
+    width: 100%;
 
-    &-icon {
-      margin-left: auto;
+    &-render {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .c7n-pro-select {
+      border: none;
     }
   }
 }
