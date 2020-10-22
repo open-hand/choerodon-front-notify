@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { PageTab, PageWrap } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import { StoreProvider, useProjectNotifyStore } from './stores';
@@ -6,7 +6,6 @@ import WebhookContent from '../WebhooksSetting';
 import AgileContent from './agile';
 import DevopsContent from './devops';
 import ResourceContent from './resource';
-import PageRuleContent from './page-rule';
 import Tips from '../../components/tips';
 
 import './index.less';
@@ -46,11 +45,6 @@ const Content = () => {
         title: '敏捷消息',
         tabKey: 'choerodon.code.project.setting-notify-agile',
         component: AgileContent,
-      }, {
-        route: '/notify/project-notify/page-rule',
-        title: '页面规则',
-        tabKey: 'choerodon.code.project.setting-notify-rule',
-        component: PageRuleContent,
       });
     }
     return (
