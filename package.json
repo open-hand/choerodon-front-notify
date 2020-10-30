@@ -1,11 +1,10 @@
 {
   "name": "@choerodon/notify",
   "routeName": "notify",
-  "version": "0.23.4",
+  "version": "0.23.5",
   "description": "",
   "main": "./lib/index.js",
   "dependencies": {
-    "choerodon-ui": "^0.8.0",
     "react-codemirror": "^1.0.0",
     "react-contenteditable": "^3.3.2",
     "react-draggable": "^4.4.3",
@@ -22,7 +21,8 @@
   },
   "devDependencies": {
     "@choerodon/boot": "0.21.4",
-    "@choerodon/master": "0.23.0"
+    "@choerodon/master": "0.23.0",
+    "choerodon-ui": "^0.8.0"
   },
   "scripts": {
     "start": "choerodon-front-boot start --config ./react/config.js",
