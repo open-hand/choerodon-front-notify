@@ -13,8 +13,8 @@ export default (intl, intlPrefix) => {
     dataKey: null,
     fields: [
       { name: 'account', type: 'string', label: account, required: true },
-      { name: 'password', type: 'string', label: password, required: true },
-      { name: 'sendName', type: 'string', label: sendName },
+      { name: 'password', type: 'string', label: password },
+      { name: 'sendName', type: 'string', label: sendName, required: true },
       { name: 'protocol', type: 'string', label: protocal },
       { name: 'host', type: 'string', label: host, required: true },
       { name: 'ssl', type: 'boolean', label: ssl },

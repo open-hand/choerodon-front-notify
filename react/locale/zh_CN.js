@@ -219,7 +219,7 @@ const pageDetail = {
   'global.notifySetting.mailsetting.link': `${docServer}/user-guide/system-configuration/message/email-config/`,
   'global.notifySetting.mailsetting.account': '邮箱账号',
   'global.notifySetting.mailsetting.password': '密码',
-  'global.notifySetting.mailsetting.sendName': '发件人签名',
+  'global.notifySetting.mailsetting.sendName': '发送人',
   'global.notifySetting.mailsetting.protocal': '服务器类型',
   'global.notifySetting.mailsetting.host': '服务器地址',
   'global.notifySetting.mailsetting.ssl': '是否使用ssl',
