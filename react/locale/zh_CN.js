@@ -170,12 +170,12 @@ const pageDetail = {
   'global.sendsetting.delete.title': '删除触发类型',
   'global.sendsetting.delete.content.has-template': '该触发类型下已有邮件模板或者站内信模板，确定要删除"{name}"触发类型？删除触发类型不会删除该类型下的模板。',
   'global.sendsetting.delete.content': '确定要删除触发类型为"{name}"的记录吗？',
-  
+
   // 消息记录
   'global.msgrecord.title': '平台"{name}"的邮件发送记录',
   'global.msgrecord.description': '通过此平台，您可以查看邮件发送状态回执，并且了解发送失败的原因，手动重发发送失败的消息。',
   'global.msgrecord.link': `${docServer}/user-guide/system-configuration/message/record/`,
-  
+
   // 邮件模板
   'global.mailtemplate.title': '平台"{name}"的邮件模板',
   'global.mailtemplate.description': '由特定的事件触发后，系统自动发送邮件给用户，邮件模板统一了用户接受的邮件内容。',
@@ -682,6 +682,7 @@ const projectNotify = {
   'project.notify.object.reporter': '报告人',
   'project.notify.object.assignee': '经办人',
   'project.notify.object.projectOwner': '项目所有者',
+  'project.notify.object.pipelineTriggers': '流水线触发者',
   'project.notify.choose': '请选择',
   'project.notify.empty.title': '验证通知已停用',
   'project.notify.empty.des': '该类型的消息通知已在平台管理中被停用，若想启用，请联系平台管理员操作',

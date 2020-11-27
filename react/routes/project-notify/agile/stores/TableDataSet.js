@@ -7,6 +7,7 @@ export default ({
   autoQuery: true,
   selection: false,
   paging: false,
+  autoQueryAfterSubmit: false,
   transport: {
     read: {
       url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/agile`,

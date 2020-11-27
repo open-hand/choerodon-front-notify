@@ -50,6 +50,7 @@ export default ({
   autoQuery: false,
   selection: false,
   paging: false,
+  autoQueryAfterSubmit: false,
   parentField: 'envId',
   idField: 'key',
   primaryKey: 'key',
