@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 import JSONBig from 'json-bigint';
 
 function formatData(data) {
@@ -40,10 +42,13 @@ function handleLoad({ dataSet }) {
   });
 }
 
-export default ({ formatMessage, intlPrefix, projectId }) => ({
+export default ({
+  formatMessage, intlPrefix, projectId, userDs,
+}) => ({
   autoQuery: true,
   selection: false,
   paging: false,
+  autoQueryAfterSubmit: false,
   parentField: 'groupId',
   idField: 'key',
   primaryKey: 'key',
@@ -67,10 +72,20 @@ export default ({ formatMessage, intlPrefix, projectId }) => ({
     },
     submit: ({ data }) => {
       const res = data.filter(({ groupId }) => groupId);
+      const newRes = [];
+      res.forEach((item) => {
+        if (!item.sendRoleList.includes('specifier')) {
+          item.specifierIds = [];
+          item.userList = [];
+        } else {
+          item.specifierIds = item.userList.map(({ id }) => id);
+        }
+        newRes.push(item);
+      });
       return ({
         url: `/hmsg/choerodon/v1/projects/${projectId}/message_settings/devops/batch`,
         method: 'put',
-        data: res,
+        data: newRes,
       });
     },
   },
@@ -79,6 +94,10 @@ export default ({ formatMessage, intlPrefix, projectId }) => ({
     { name: 'pmEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.pmEnable` }) },
     { name: 'emailEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.emailEnable` }) },
     { name: 'notifyObject', type: 'string', label: formatMessage({ id: `${intlPrefix}.noticeObject` }) },
+    { name: 'sendRoleList', multiple: true },
+    {
+      name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: formatMessage({ id: `${intlPrefix}.choose` }),
+    },
   ],
   queryFields: [],
   events: {

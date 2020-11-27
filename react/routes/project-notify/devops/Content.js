@@ -1,16 +1,21 @@
 import React from 'react';
-import { TabPage, Content, Breadcrumb, Choerodon, Permission } from '@choerodon/boot';
-import { Table, CheckBox } from 'choerodon-ui/pro';
+import {
+  TabPage, Content, Breadcrumb, Choerodon, Permission,
+} from '@choerodon/boot';
+import {
+  Table, CheckBox, Select, Tooltip,
+} from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { Prompt } from 'react-router-dom';
 import { useDevopsContentStore } from './stores';
 import FooterButtons from '../components/footer-buttons';
 import { useProjectNotifyStore } from '../stores';
 import Tips from '../../../components/tips';
+import NotifyObject from '../components/notify-object';
 
 const { Column } = Table;
 
-export default observer(props => {
+export default observer((props) => {
   const {
     intlPrefix,
     prefixCls,
@@ -56,7 +61,9 @@ export default observer(props => {
     );
   }
 
-  function handleCheckBoxChange({ record, value, name, flagName }) {
+  function handleCheckBoxChange({
+    record, value, name, flagName,
+  }) {
     record.set(name, value);
     if (!record.get('groupId')) {
       tableDs.forEach((tableRecord) => {
@@ -82,7 +89,9 @@ export default observer(props => {
         checked={checked}
         indeterminate={!checked && isIndeterminate}
         disabled={disabled}
-        onChange={(value) => handleCheckBoxChange({ record, value, name, flagName })}
+        onChange={(value) => handleCheckBoxChange({
+          record, value, name, flagName,
+        })}
       />
     );
   }
@@ -90,6 +99,33 @@ export default observer(props => {
   function renderNotifyObject({ record, value }) {
     if (!record.get('groupId')) {
       return '-';
+    }
+    if (record.get('code') === 'PIPELINESUCCESS' || record.get('code') === 'PIPELINEFAILED') {
+      const data = [value];
+      const userList = record.get('userList');
+      userList.forEach(({ realName }) => {
+        data.push(realName);
+      });
+      return (
+        <Select
+          popupContent={(
+            <NotifyObject
+              record={record}
+              allSendRoleList={['pipelineTriggers', 'specifier']}
+            />
+          )}
+          renderer={() => (
+            <Tooltip title={data.join()}>
+              <div className={`${prefixCls}-object-select-render`}>
+                {data.join() || '-'}
+              </div>
+            </Tooltip>
+          )}
+          trigger={['click']}
+          placement="bottomLeft"
+          className={`${prefixCls}-object-select`}
+        />
+      );
     }
     return value;
   }

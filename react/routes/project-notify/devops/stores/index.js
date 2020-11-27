@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
 import { DataSet } from 'choerodon-ui/pro';
 import TableDataSet from './TableDataSet';
+import { useProjectNotifyStore } from '../../stores';
 
 const Store = createContext();
 
@@ -17,9 +18,15 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     intl: { formatMessage },
     AppState: { currentMenuType: { projectId } },
   } = props;
+  const {
+    userDs,
+  } = useProjectNotifyStore();
+
   const intlPrefix = 'project.notify';
 
-  const tableDs = useMemo(() => new DataSet(TableDataSet({ formatMessage, intlPrefix, projectId })), [projectId]);
+  const tableDs = useMemo(() => new DataSet(TableDataSet({
+    formatMessage, intlPrefix, projectId, userDs,
+  })), [projectId]);
   const value = {
     ...props,
     intlPrefix,
