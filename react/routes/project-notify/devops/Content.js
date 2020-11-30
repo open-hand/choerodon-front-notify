@@ -101,10 +101,16 @@ export default observer((props) => {
       return '-';
     }
     if (record.get('code') === 'PIPELINESUCCESS' || record.get('code') === 'PIPELINEFAILED') {
-      const data = [value];
+      const data = [];
       const userList = record.get('userList');
-      userList.forEach(({ realName }) => {
-        data.push(realName);
+      const sendRoleList = record.get('sendRoleList');
+      sendRoleList.forEach((key) => {
+        if (key !== 'specifier') {
+          data.push(formatMessage({ id: `${intlPrefix}.object.${key}` }));
+        } else if (userList && userList.length) {
+          const names = userList.map(({ realName }) => realName);
+          data.push(...names);
+        }
       });
       return (
         <Select
