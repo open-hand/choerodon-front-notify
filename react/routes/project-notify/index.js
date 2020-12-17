@@ -39,7 +39,7 @@ const Content = () => {
         component: ResourceContent,
       });
     }
-    if (category !== 'OPERATIONS') {
+    if (!['OPERATIONS', 'WATERFALL'].includes(category)) {
       origin.unshift({
         route: '/notify/project-notify/agile',
         title: '敏捷消息',
