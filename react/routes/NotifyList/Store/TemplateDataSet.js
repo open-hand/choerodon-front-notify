@@ -17,12 +17,18 @@ export default function (organizationId) {
         url: '/hmsg/choerodon/v1/notices/send_settings',
         method: 'get',
       },
-      create: ({ data: [data] }) => ({
-        url: '/hmsg/choerodon/v1/notices/send_settings/template',
-        method: 'post',
-        data,
-      }),
+      create: ({ data: [data] }) => {
+        const newData = data;
+        delete newData.isNew;
+        return ({
+          url: '/hmsg/choerodon/v1/notices/send_settings/template',
+          method: 'post',
+          data,
+        });
+      },
       update: ({ data: [data] }) => {
+        const newData = data;
+        delete newData.isNew;
         const postData = omit(data, ['messageCategoryCode', 'messageSubcategoryCode']);
         return ({
           url: '/hmsg/v1/message/templates',
