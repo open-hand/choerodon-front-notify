@@ -12,12 +12,20 @@ export default (intl, intlPrefix, serverTypeDs) => {
     dataKey: false,
     fields: [
       { name: 'id', type: 'string' },
-      { name: 'signName', type: 'string', label: signature, required: true },
-      { name: 'accessKey', type: 'string', label: accessKey, required: true },
+      {
+        name: 'signName', type: 'string', label: signature, required: true,
+      },
+      {
+        name: 'accessKey', type: 'string', label: accessKey, required: true,
+      },
       { name: 'accessKeySecret', type: 'string', label: accessKeySecret },
       { name: 'endPoint', type: 'string', label: endPoint },
-      { name: 'serverCode', type: 'string', label: code, required: true },
-      { name: 'serverTypeCode', type: 'string', label: serviceType, required: true, textField: 'meaning', valueField: 'value', options: serverTypeDs },
+      {
+        name: 'serverCode', disabled: true, type: 'string', label: code, required: true,
+      },
+      {
+        name: 'serverTypeCode', type: 'string', label: serviceType, required: true, textField: 'meaning', valueField: 'value', options: serverTypeDs,
+      },
     ],
     transport: {
       read: {
