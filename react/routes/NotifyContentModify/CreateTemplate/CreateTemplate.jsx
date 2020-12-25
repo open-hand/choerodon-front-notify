@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from 'react/index';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Form, TextField, Select, SelectBox, TextArea, message } from 'choerodon-ui/pro';
 import { Button, Modal } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
