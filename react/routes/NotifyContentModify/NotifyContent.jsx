@@ -1,4 +1,4 @@
-import React, { Component, useContext, useState, useEffect } from 'react/index';
+import React, { Component, useContext, useState, useEffect } from 'react';
 import { observer, useComputed } from 'mobx-react-lite';
 import { DataSet, Table, Modal, Button, Tabs, Tooltip } from 'choerodon-ui/pro';
 import { axios, Content, Header, Page, Permission, Breadcrumb } from '@choerodon/boot';

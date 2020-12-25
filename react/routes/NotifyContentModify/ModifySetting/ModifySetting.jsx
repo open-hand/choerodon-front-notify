@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, Fragment } from 'react/index';
+import React, { useContext, useState, useEffect, Fragment } from 'react';
 import { Form, TextField, Select, SelectBox, NumberField } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import store from '../Store';
