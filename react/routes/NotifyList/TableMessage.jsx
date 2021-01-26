@@ -1,6 +1,8 @@
 import React, { useContext, useRef } from 'react/index';
 import { Table, Button, Modal } from 'choerodon-ui/pro';
-import { Header, Page, Breadcrumb, Content, Permission } from '@choerodon/boot';
+import {
+  Header, Page, Breadcrumb, Content, Permission,
+} from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import EditSendSettings from './Sider/EditSendSettings';
 import EditTemplate from './Sider/EditTemplate';
@@ -69,7 +71,7 @@ export default observer(() => {
       <Content className={cssPrefix}>
         <div
           ref={rootRef}
-          style={{ width: '100%', height: '100%', position: 'relative', display: 'flex' }}
+          style={{ width: '100%', position: 'relative', display: 'flex' }}
         >
           <DragBar parentRef={rootRef} store={messageStore} />
           <div className={`${cssPrefix}-tree`}>
