@@ -116,6 +116,7 @@ const WebhooksSetting = () => {
           dataSet={editWebhooksFormDataSet}
           triggerEventsSettingDataSet={editTriggerEventsSettingDataSet}
           useStore={webhooksSettingUseStore}
+          isEdit
         />
       ),
       afterClose: () => {
