@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite';
 const { Column } = Table;
 
 const CreateAndEditWebhooksForm = observer(({
-  dataSet, triggerEventsSettingDataSet, modal, useStore,
+  dataSet, triggerEventsSettingDataSet, modal, useStore, isEdit = false,
 }) => {
   const handleQueryTriggerEvent = async (type) => {
     let typeParams;
@@ -94,7 +94,11 @@ const CreateAndEditWebhooksForm = observer(({
   return (
     <>
       <Form dataSet={dataSet} style={{ width: '5.12rem' }}>
-        <SelectBox onChange={(value) => handleQueryTriggerEvent(value)} name="serverType" />
+        <SelectBox
+          disabled={isEdit}
+          onChange={(value) => handleQueryTriggerEvent(value)}
+          name="serverType"
+        />
         <TextArea name="webhookAddress" />
         {/* { */}
         {/* (function () { */}
