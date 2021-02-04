@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PageTab, PageWrap } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
+import map from 'lodash/map';
+import intersection from 'lodash/intersection';
+import isEmpty from 'lodash/isEmpty';
 import { StoreProvider, useProjectNotifyStore } from './stores';
 import WebhookContent from '../WebhooksSetting';
 import AgileContent from './agile';
@@ -12,8 +15,11 @@ import './index.less';
 
 const Content = () => {
   const {
-    AppState: { currentMenuType: { category } },
+    AppState: { currentMenuType: { categories } },
+    AppState: { currentMenuType },
   } = useProjectNotifyStore();
+
+  const categoryCodes = useMemo(() => map(categories || [], 'code'), [categories]);
 
   const renderPageTab = () => {
     const origin = [{
@@ -22,7 +28,7 @@ const Content = () => {
       tabKey: 'choerodon.code.project.setting-notify-webhook',
       component: WebhookContent,
     }];
-    if (category !== 'AGILE') {
+    if (!isEmpty(intersection(categoryCodes, ['N_DEVOPS', 'N_OPERATIONS']))) {
       origin.unshift({
         route: '/notify/project-notify/devops',
         title: 'Devops消息',
@@ -39,7 +45,7 @@ const Content = () => {
         component: ResourceContent,
       });
     }
-    if (category !== 'OPERATIONS') {
+    if (categoryCodes.includes('N_AGILE')) {
       origin.unshift({
         route: '/notify/project-notify/agile',
         title: '敏捷消息',

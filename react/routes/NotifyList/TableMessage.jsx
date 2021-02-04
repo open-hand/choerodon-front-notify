@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react/index';
+import React, { useContext, useRef } from 'react';
 import { Table, Button, Modal } from 'choerodon-ui/pro';
 import {
   Header, Page, Breadcrumb, Content, Permission,

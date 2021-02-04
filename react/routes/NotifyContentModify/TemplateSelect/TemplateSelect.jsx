@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react/index';
+import React, { useContext, useState, useEffect } from 'react';
 import { DataSet, Form, Output, message, Table, Modal } from 'choerodon-ui/pro';
 import { Modal as OldModal } from 'choerodon-ui/';
 import { injectIntl, FormattedMessage } from 'react-intl';
