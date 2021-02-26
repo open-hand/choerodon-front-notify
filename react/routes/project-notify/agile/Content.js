@@ -106,7 +106,7 @@ export default observer((props) => {
         placement="bottomLeft"
         className={`${prefixCls}-object-select`}
       />
-    ) : '-';
+    ) : '请前往状态机-自定义流转设置';
   }
 
   return (
