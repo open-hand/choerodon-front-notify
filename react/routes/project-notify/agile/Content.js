@@ -5,7 +5,7 @@ import {
 import {
   Table, CheckBox, Select, Icon, Tooltip,
 } from 'choerodon-ui/pro';
-import { Prompt } from 'react-router-dom';
+import { Prompt, useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useAgileContentStore } from './stores';
 import NotifyObject from '../components/notify-object';
@@ -24,6 +24,7 @@ export default observer((props) => {
     allSendRoleList,
     permissions,
   } = useAgileContentStore();
+  const history = useHistory();
   const {
     promptMsg,
   } = useProjectNotifyStore();
@@ -73,7 +74,9 @@ export default observer((props) => {
       />
     );
   }
-
+  function handleLinkStateMachine() {
+    history.push(`/agile/state-machine${history.location.search}&activeKey=custom`);
+  }
   function renderNotifyObject({ record }) {
     const data = [];
     const userList = record.get('userList');
@@ -106,7 +109,7 @@ export default observer((props) => {
         placement="bottomLeft"
         className={`${prefixCls}-object-select`}
       />
-    ) : '请前往状态机-自定义流转设置';
+    ) : <span role="none" className={`${prefixCls}-page-content-link`} onClick={handleLinkStateMachine}>请前往状态机-自定义流转设置</span>;
   }
 
   return (
