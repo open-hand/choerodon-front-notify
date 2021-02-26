@@ -1,7 +1,11 @@
 import React, { Fragment, useEffect } from 'react';
-import { Content, Breadcrumb, Choerodon, TabPage } from '@choerodon/boot';
+import {
+  Content, Breadcrumb, Choerodon, TabPage,
+} from '@choerodon/boot';
 import { Spin } from 'choerodon-ui';
-import { Table, CheckBox, Button, Pagination, message } from 'choerodon-ui/pro';
+import {
+  Table, CheckBox, Button, Pagination, message,
+} from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -12,7 +16,7 @@ import './index.less';
 
 const { Column } = Table;
 
-export default observer(props => {
+export default observer((props) => {
   const {
     intlPrefix,
     prefixCls,
@@ -149,7 +153,7 @@ export default observer(props => {
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-content`}>
         <Table loading={receiveStore.getSpinning} dataSet={tableDs} mode="tree">
-          <Column name="name" />
+          <Column name="name" tooltip="overflow" />
           <Column name="organizationName" />
           <Column
             header={(dataSet) => renderCheckBoxHeader(dataSet, 'pm')}
@@ -197,7 +201,8 @@ export default observer(props => {
             funcType="raised"
             onClick={refresh}
             style={{ marginLeft: 16, color: '#3F51B5' }}
-          ><FormattedMessage id="cancel" />
+          >
+            <FormattedMessage id="cancel" />
           </Button>
         </div>
       </Content>
