@@ -1,5 +1,13 @@
+@import '~choerodon-ui/lib/style/themes/default';
 .project-notify-page-content {
   padding-top: 0;
   max-height: ~"calc(100% - 180px)";
   overflow-y: scroll;
+  &-link {
+    cursor: pointer;
+    &:hover {
+      color: @primary-color;
+      text-decoration: underline;
+    }
+  }
 }

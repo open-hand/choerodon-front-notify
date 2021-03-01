@@ -676,7 +676,7 @@ const projectNotify = {
   'project.notify.smsEnable': '短信',
   'project.notify.noticeObject': '通知对象',
   'project.notify.noticeObject.resource.tips': '此处的通知对象为验证码的接收者',
-  'project.notify.noticeObject.devops.tips': 'DevOps消息的通知对象不支持修改',
+  'project.notify.noticeObject.devops.tips': 'DevOps消息中，除流水线通知外，均不支持修改通知对象',
   'project.notify.object.handler': '操作者',
   'project.notify.object.specifier': '指定用户',
   'project.notify.object.reporter': '报告人',
