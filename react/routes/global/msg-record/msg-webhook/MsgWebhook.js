@@ -4,7 +4,7 @@ import { Table } from 'choerodon-ui/pro';
 import {
   Permission, Content, TabPage, Breadcrumb, StatusTag,
 } from '@choerodon/boot';
-import { FormattedMessage } from 'react-intl';
+import { useWebhookRecordStore } from './stores';
 import { useStore } from '../stores';
 
 const { Column } = Table;
@@ -12,11 +12,15 @@ const { Column } = Table;
 function MsgWebhook() {
   const {
     AppState,
-    msgWebhookDataSet,
     ENABLED_GREEN,
     DISABLED_GRAY,
     intl: { formatMessage },
   } = useStore();
+
+  const {
+    msgWebhookDataSet,
+    permissions,
+  } = useWebhookRecordStore();
 
   const StatusCard = ({ value }) => (
     <StatusTag
@@ -28,7 +32,7 @@ function MsgWebhook() {
   return (
     <TabPage>
       <Breadcrumb />
-      <Permission service={['choerodon.code.site.manager.message-log.ps.webhook']}>
+      <Permission service={permissions}>
         <Content
           values={{ name: AppState.getSiteInfo.systemName || 'Choerodon' }}
           style={{ paddingTop: 0 }}

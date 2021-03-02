@@ -20,8 +20,9 @@ export default (orgId, type, intl, intlPrefix) => {
       { name: 'value', type: 'string' },
     ],
     data: [
-      { key: 'COMPLETED', value: '完成' },
-      { key: 'FAILED', value: '失败' },
+      { key: 'S', value: '成功' },
+      { key: 'F', value: '失败' },
+      { key: 'P', value: '就绪' },
     ],
   });
 
@@ -45,7 +46,7 @@ export default (orgId, type, intl, intlPrefix) => {
       // receiveEmail 字段
       { name: 'receiveEmail', type: 'string', label: email },
       {
-        name: 'trxStatusMeaning', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined,
+        name: 'status', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined,
       },
       { name: 'messageName', type: 'string', label: templateType },
       { name: 'failedReason', type: 'string', label: failedReason },
