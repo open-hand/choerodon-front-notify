@@ -1,10 +1,11 @@
-import React, { Component, useState, useEffect } from 'react';
+import React from 'react';
 import {
-  Permission, StatusTag, axios, Content, Header, TabPage, Breadcrumb, Action, Choerodon,
+  Permission, StatusTag, axios, Content, TabPage, Breadcrumb, Action, Choerodon,
 } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { Table, Tooltip } from 'choerodon-ui/pro';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+import { useMsgRecordStore } from './stores';
 import { useStore } from '../stores';
 
 const { Column } = Table;
@@ -12,19 +13,18 @@ function MsgEmail(props) {
   const {
     AppState,
     intl,
-    permissions,
-    msgRecordDataSet,
     ENABLED_GREEN,
     DISABLED_GRAY,
   } = useStore();
 
+  const {
+    msgRecordDataSet,
+    permissions,
+  } = useMsgRecordStore();
+
   // 重发
   function retry(record) {
-    const { type, id: orgId, organizationId } = AppState.currentMenuType;
-    // const getTypePath = () => (type === 'site' ? '' : `/organizations/${orgId}`);
     return axios({
-      // url: `/notify/v1/records/emails/${record.get('id')}/retry${getTypePath()}`,
-      // method: type === 'site' ? 'post' : 'get',
       url: `/hmsg/v1/messages/resend?transactionId=${record.get('id')}`,
       method: 'post',
     }).then((data) => {

@@ -1,9 +1,11 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useMemo, useContext } from 'react';
+import { DataSet } from 'choerodon-ui/pro';
 import { inject } from 'mobx-react';
 import { injectIntl } from 'react-intl';
+import MsgRecordDataSet from './MsgRecordDataSet';
 
 const Store = createContext();
-export function useStore() {
+export function useMsgRecordStore() {
   return useContext(Store);
 }
 export default Store;
@@ -12,11 +14,14 @@ export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
     const { AppState: { currentMenuType: { type, id, organizationId } }, intl, children } = props;
     const intlPrefix = 'msgrecord';
+    const msgRecordDataSet = useMemo(() => new DataSet(MsgRecordDataSet(organizationId, type, intl, intlPrefix)), []);
     const value = {
       ...props,
       intlPrefix,
-      ENABLED_GREEN: 'rgba(0, 191, 165, 1)',
-      DISABLED_GRAY: 'rgba(0, 0, 0, 0.2)',
+      permissions: [
+        'choerodon.code.site.manager.message-log.ps.email',
+      ],
+      msgRecordDataSet,
     };
     return (
       <Store.Provider value={value}>
