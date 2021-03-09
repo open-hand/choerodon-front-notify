@@ -96,6 +96,7 @@ export default observer((props) => {
           <NotifyObject
             record={record}
             allSendRoleList={allSendRoleList}
+            excludesRole={record.get('code') === 'SPRINT_DELAY' ? ['assignee', 'reporter'] : []}
           />
         )}
         renderer={() => (
