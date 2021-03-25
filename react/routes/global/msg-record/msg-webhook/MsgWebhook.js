@@ -35,7 +35,7 @@ function MsgWebhook() {
       <Permission service={permissions}>
         <Content
           values={{ name: AppState.getSiteInfo.systemName || 'Choerodon' }}
-          style={{ paddingTop: 0 }}
+          className="c7ncd-notify-page-content"
         >
           <Table dataSet={msgWebhookDataSet}>
             <Column align="left" name="creationDate" width={160} />

@@ -148,7 +148,7 @@ export default observer((props) => {
   }
 
   return (
-    <TabPage className="projectNotify">
+    <TabPage className={`${prefixCls}-page`}>
       <Breadcrumb />
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-content`}>
@@ -169,6 +169,7 @@ export default observer((props) => {
           />
         </Table>
         <Pagination
+          className={`${prefixCls}-pagination`}
           total={receiveStore.getPagination.total}
           pageSize={5}
           page={receiveStore.getPagination.page}

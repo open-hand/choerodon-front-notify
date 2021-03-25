@@ -67,7 +67,7 @@ function MsgEmail(props) {
         <Permission service={permissions}>
           <Content
             values={{ name: AppState.getSiteInfo.systemName || 'Choerodon' }}
-            style={{ paddingTop: 0 }}
+            className="c7ncd-notify-page-content"
           >
             <Table dataSet={msgRecordDataSet} style={{ paddingTop: 0 }}>
               <Column align="left" name="email" renderer={renderEmail} />
