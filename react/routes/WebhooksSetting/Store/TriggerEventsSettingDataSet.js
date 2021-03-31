@@ -7,6 +7,7 @@ export default (type, id, orgType, orgId, useStore) => ({
   autoQuery: false,
   parentField: 'categoryCode',
   idField: 'code',
+  dataToJSON: 'selected',
   queryFields: [
     { name: 'name', type: 'string', label: '类型/触发事件' },
     { name: 'description', type: 'string', label: '描述' },
