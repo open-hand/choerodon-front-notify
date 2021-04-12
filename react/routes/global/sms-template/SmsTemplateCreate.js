@@ -114,17 +114,17 @@ export default class SmsTemplateCreate extends Component {
         });
         this.handleSave(values);
         return;
-        // eslint-disable-next-line no-unreachable
-        const pattern = /^((<[^(>|img)]+>)*\s*)*$/g;
-        // 判断富文本编辑器是否为空
-        if (this.state.editorContent && (!pattern.test(this.state.editorContent))) {
-          this.setState({
-            isSubmitting: true,
-          });
-          this.handleSave(values);
-        } else {
-          Choerodon.prompt(intl.formatMessage({ id: 'mailtemplate.mailcontent.required' }));
-        }
+        // // eslint-disable-next-line no-unreachable
+        // const pattern = /^((<[^(>|img)]+>)*\s*)*$/g;
+        // // 判断富文本编辑器是否为空
+        // if (this.state.editorContent && (!pattern.test(this.state.editorContent))) {
+        //   this.setState({
+        //     isSubmitting: true,
+        //   });
+        //   this.handleSave(values);
+        // } else {
+        //   Choerodon.prompt(intl.formatMessage({ id: 'mailtemplate.mailcontent.required' }));
+        // }
       }
     });
   }

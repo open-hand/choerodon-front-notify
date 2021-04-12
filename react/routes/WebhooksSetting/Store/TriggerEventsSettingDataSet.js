@@ -42,7 +42,7 @@ export default (type, id, orgType, orgId, useStore) => ({
           s.id = s.tempServerId;
           return s;
         });
-        const list = (arrCategories || []).map((item) => ({ ...item, description: null }));
+        const list = arrCategories.map((item) => ({ ...item, description: null }));
         return [...list, ...(sendSettings2 || [])];
       },
       params: {
