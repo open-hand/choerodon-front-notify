@@ -21,7 +21,7 @@ export default ({ record, allSendRoleList, excludesRole = [] }) => {
           {allSendRoleList.filter((item) => !includes(excludesRole, item)).map((item) => (
             <Option value={item} key={item}>
               <span className={`${prefixCls}-object-content-checkbox`}>
-                {formatMessage({ id: `${intlPrefix}.object.${item}` })}
+                {formatMessage({ id: `${intlPrefix}.object.${record.get('code') === 'BACKLOG_FEEDBACK' ? `backlog_${item}` : item}` })}
               </span>
             </Option>
           ))}
