@@ -1,0 +1,33 @@
+.c7ncd-msgDetails {
+  &-item {
+    display: flex;
+    & + & {
+      margin-top: 14px;
+    }
+    > span:first-of-type {
+      display: inline-block;
+      width: 112px;
+      flex-grow: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+      color: #000;
+      text-align: left;
+    }
+    > span + * {
+      flex: 1;
+      max-width: 90%;
+    }
+    &-email {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.65);
+      &-link {
+        cursor: pointer;
+        margin-left: 5px;
+        font-size: 14px;
+        color: #3f51b5;
+        font-weight: 500;
+      }
+    }
+  }
+}
