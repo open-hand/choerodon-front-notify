@@ -43,7 +43,6 @@ export default (orgId, type, intl, intlPrefix) => {
       {
         name: 'status', type: 'string', label: status, textField: 'value', valueField: 'key', options: queryPredefined,
       },
-      { name: 'failedReason', type: 'string', label: failedReason },
     ],
     transport: {
       read: {
