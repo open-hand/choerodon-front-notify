@@ -33,7 +33,7 @@ function MsgEmail(props) {
   // 重发
   function retry(record) {
     return axios({
-      url: `/hmsg/v1/messages/resend?transactionId=${record.get('id')}`,
+      url: `/hmsg/v1/messages/resend?transactionId=${record.get('transactionId')}`,
       method: 'post',
     })
       .then((data) => {
@@ -110,7 +110,7 @@ function MsgEmail(props) {
             className="c7ncd-notify-page-content"
           >
             <Table dataSet={msgRecordDataSet} style={{ paddingTop: 0 }}>
-              <Column align="left" name="messageName" renderer={renderEmail} />
+              <Column align="left" name="messageName" renderer={renderEmail} width={150} />
               <Column renderer={actionRenderer} width={48} />
               <Column
                 align="left"
@@ -119,7 +119,7 @@ function MsgEmail(props) {
                 renderer={StatusCard}
               />
               <Column name="failedReason" tooltip="overflow" />
-              <Column name="creationDate" width={160} />
+              <Column name="creationDate" />
             </Table>
           </Content>
         </Permission>

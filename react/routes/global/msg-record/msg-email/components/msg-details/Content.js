@@ -40,7 +40,7 @@ const MsgDetail = (props) => {
         <span>
           邮件内容
         </span>
-        <div dangerouslySetInnerHTML={{ __html: msgDetailDs.current && msgDetailDs.current.get('content') }} />
+        <div className={`${prefixCls}-item-doc`} dangerouslySetInnerHTML={{ __html: msgDetailDs.current && msgDetailDs.current.get('content') }} />
       </div>
     </div>
   );
