@@ -77,7 +77,7 @@ function MsgEmail(props) {
   const actionRenderer = ({ value, record }) => {
     const actionArr = [
       {
-        service: [],
+        service: ['choerodon.code.site.manager.message-log.ps.log-detail'],
         text: <FormattedMessage id="msgrecord.details" />,
         action: () => opendModalDetail(record),
       },
