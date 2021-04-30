@@ -31,7 +31,7 @@ const Content = () => {
     if (!isEmpty(intersection(categoryCodes, ['N_DEVOPS', 'N_OPERATIONS']))) {
       origin.unshift({
         route: '/notify/project-notify/devops',
-        title: 'Devops消息',
+        title: 'DevOps消息',
         tabKey: 'choerodon.code.project.setting-notify-devops',
         component: DevopsContent,
       }, {

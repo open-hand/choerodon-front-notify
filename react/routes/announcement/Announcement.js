@@ -3,11 +3,15 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { observable, action, configure } from 'mobx';
 import moment from 'moment';
-import { Button, Table, Modal, Tooltip, Form, DatePicker, Input, Radio } from 'choerodon-ui';
+import {
+  Button, Table, Modal, Tooltip, Form, DatePicker, Input, Radio,
+} from 'choerodon-ui';
 import { Modal as ProModal } from 'choerodon-ui/pro';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
-import { Content, Header, Page, Permission, Breadcrumb, Action, Choerodon, StatusTag } from '@choerodon/boot';
+import {
+  Content, Header, Page, Permission, Breadcrumb, Action, Choerodon, StatusTag,
+} from '@choerodon/boot';
 import './Announcement.scss';
 import Editor from '../../components/editor';
 import MouseOverWrapper from '../../components/mouseOverWrapper';
@@ -101,7 +105,9 @@ export default class Announcement extends Component {
   };
 
   handleOk = () => {
-    const { AnnouncementStore: { editorContent, currentRecord, selectType }, AnnouncementStore, form, intl } = this.props;
+    const {
+      AnnouncementStore: { editorContent, currentRecord, selectType }, AnnouncementStore, form, intl,
+    } = this.props;
     if (selectType !== 'detail') {
       form.validateFields((err, values) => {
         if (!err) {
@@ -218,7 +224,13 @@ export default class Announcement extends Component {
         width: '20%',
         render: (text, record) => (
           <MouseOverWrapper text={text} width={0.2}>
-            <span className="link" onClick={() => this.handleOpen('detail', record)}>{text}</span>
+            <span
+              className="link"
+              onClick={() => this.handleOpen('detail', record)}
+              role="none"
+            >
+              {text}
+            </span>
           </MouseOverWrapper>
         ),
       }, {
@@ -233,17 +245,22 @@ export default class Announcement extends Component {
         dataIndex: 'textContent',
         key: 'textContent',
         className: 'nowarp text-gray',
+        render: (text) => (
+          <Tooltip title={text}>
+            <span>{text}</span>
+          </Tooltip>
+        ),
       }, {
         title: <FormattedMessage id="status" />,
         dataIndex: 'status',
         key: 'status',
         width: '12%',
-        filters: Object.keys(iconType).map(value => ({
+        filters: Object.keys(iconType).map((value) => ({
           text: intl.formatMessage({ id: `announcement.${value.toLowerCase()}` }),
           value,
         })),
         filteredValue: filters.status || [],
-        render: status => (
+        render: (status) => (
           <StatusTag
             name={intl.formatMessage({ id: status ? `announcement.${status.toLowerCase()}` : 'announcement.completed' })}
             color={colorCode[status]}
@@ -255,7 +272,7 @@ export default class Announcement extends Component {
         key: 'sendDate',
         width: '10%',
         className: 'text-gray',
-        render: text => (
+        render: (text) => (
           <MouseOverWrapper text={text} width={0.15}>
             {text}
           </MouseOverWrapper>
@@ -314,9 +331,8 @@ export default class Announcement extends Component {
     const endDate = moment(this.props.form.getFieldValue('sendDate'));
     if (endDate) {
       return current < endDate.add(1, 'days');
-    } else {
-      return current < moment().subtract(1, 'days');
     }
+    return current < moment().subtract(1, 'days');
   };
 
   /* 时间选择器处理 -- start */
@@ -327,9 +343,8 @@ export default class Announcement extends Component {
     }
     if (endDate.format().split('T')[1] === '00:00:00+08:00') {
       return sendDate.format().split('T')[0] >= endDate.format().split('T')[0];
-    } else {
-      return sendDate.format().split('T')[0] > endDate.format().split('T')[0];
     }
+    return sendDate.format().split('T')[0] > endDate.format().split('T')[0];
   };
 
   disabledEndDate = (endDate) => {
@@ -358,16 +373,15 @@ export default class Announcement extends Component {
           disabledMinutes: () => this.range(this.endDates.minute() + 1, 60),
           disabledSeconds: () => this.range(this.endDates.second(), 60),
         };
-      } else if (this.endDates.hour() === date.hour()) {
+      } if (this.endDates.hour() === date.hour()) {
         return {
           disabledHours: () => this.range(this.endDates.hour() + 1, 24),
           disabledMinutes: () => this.range(this.endDates.minute() + 1, 60),
         };
-      } else {
-        return {
-          disabledHours: () => this.range(this.endDates.hour() + 1, 24),
-        };
       }
+      return {
+        disabledHours: () => this.range(this.endDates.hour() + 1, 24),
+      };
     }
   };
 
@@ -395,16 +409,15 @@ export default class Announcement extends Component {
           disabledMinutes: () => this.range(0, this.sendDates.minute()),
           disabledSeconds: () => this.range(0, this.sendDates.second() + 1),
         };
-      } else if (this.sendDates.hour() === date.hour()) {
+      } if (this.sendDates.hour() === date.hour()) {
         return {
           disabledHours: () => this.range(0, this.sendDates.hour()),
           disabledMinutes: () => this.range(0, this.sendDates.minute()),
         };
-      } else {
-        return {
-          disabledHours: () => this.range(0, this.sendDates.hour()),
-        };
       }
+      return {
+        disabledHours: () => this.range(0, this.sendDates.hour()),
+      };
     }
   };
 
@@ -451,7 +464,7 @@ export default class Announcement extends Component {
                 disabledDate={this.disabledStartDate}
                 disabledTime={this.disabledDateStartTime}
                 showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-                getCalendarContainer={that => that}
+                getCalendarContainer={(that) => that}
                 onChange={this.onStartChange}
                 onOpenChange={this.clearStartTimes}
               />,
@@ -489,7 +502,7 @@ export default class Announcement extends Component {
                     disabledDate={this.disabledEndDate}
                     disabledTime={this.disabledDateEndTime}
                     showTime={{ defaultValue: moment() }}
-                    getCalendarContainer={that => that}
+                    getCalendarContainer={(that) => that}
                     onChange={this.onEndChange}
                     onOpenChange={this.clearEndTimes}
                   />,
@@ -554,11 +567,14 @@ export default class Announcement extends Component {
     this.setState({ fullscreen: true });
   }
 
-  renderDetail({ content, status, sendDate, endDate, sticky }) {
+  renderDetail({
+    content, status, sendDate, endDate, sticky,
+  }) {
     const { intl } = this.props;
     return (
       <div className="c7n-iam-announcement-detail">
-        <div><span>{intl.formatMessage({ id: 'status' })}</span>
+        <div>
+          <span>{intl.formatMessage({ id: 'status' })}</span>
           <div className="inline">
             <StatusTag
               name={intl.formatMessage({ id: status ? `announcement.${status.toLowerCase()}` : 'announcement.completed' })}
@@ -566,9 +582,20 @@ export default class Announcement extends Component {
             />
           </div>
         </div>
-        <div><span>{intl.formatMessage({ id: 'announcement.send.date' })}</span><span className="send-time">{sendDate}</span></div>
-        <div><span>{intl.formatMessage({ id: 'announcement.send.is-sticky' })}</span><span className="send-time">{intl.formatMessage({ id: sticky ? 'yes' : 'no' })}</span></div>
-        {sticky ? <div><span>{intl.formatMessage({ id: 'announcement.end-date' })}</span><span className="send-time">{endDate}</span></div> : null}
+        <div>
+          <span>{intl.formatMessage({ id: 'announcement.send.date' })}</span>
+          <span className="send-time">{sendDate}</span>
+        </div>
+        <div>
+          <span>{intl.formatMessage({ id: 'announcement.send.is-sticky' })}</span>
+          <span className="send-time">{intl.formatMessage({ id: sticky ? 'yes' : 'no' })}</span>
+        </div>
+        {sticky ? (
+          <div>
+            <span>{intl.formatMessage({ id: 'announcement.end-date' })}</span>
+            <span className="send-time">{endDate}</span>
+          </div>
+        ) : null}
         <div><span>{intl.formatMessage({ id: 'global.announcement.content' })}</span></div>
         <div className="c7n-iam-announcement-detail-wrapper">
           <div
@@ -582,7 +609,11 @@ export default class Announcement extends Component {
   }
 
   render() {
-    const { intl, AnnouncementStore: { announcementData, loading, pagination, params, sidebarVisible, currentRecord, submitting } } = this.props;
+    const {
+      intl, AnnouncementStore: {
+        announcementData, loading, pagination, params, sidebarVisible, currentRecord, submitting,
+      },
+    } = this.props;
     const { intlPrefix } = this.announcementType;
     const { AnnouncementStore: { selectType } } = this.props;
     return (
