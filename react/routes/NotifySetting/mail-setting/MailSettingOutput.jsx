@@ -18,7 +18,7 @@ export default (props) => {
       Choerodon.prompt(context.intl.formatMessage({ id: `${context.intlPrefix}.connect.success` }));
     }
   }).catch((error) => {
-    message.error('连接超时');
+    throw new Error(error);
   });
 
   const submitFunc = () => new Promise((resolve, reject) => {
