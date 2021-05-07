@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
 import { runInAction } from 'mobx';
-import { Tree, Icon, TextField, Modal, Tooltip } from 'choerodon-ui/pro';
+import {
+  Tree, Icon, TextField, Modal, Tooltip,
+} from 'choerodon-ui/pro';
 import { axios, Action, Permission } from '@choerodon/boot';
 
 import Store from './Store';
@@ -77,14 +79,14 @@ export default observer(() => {
 
   function getTitle(record) {
     const name = record.get('name') && record.get('name').toLowerCase();
-    const searchValue = inputValue.toLowerCase();
+    const searchValue = inputValue?.toLowerCase();
     const index = name.indexOf(searchValue);
     const beforeStr = name.substr(0, index).toLowerCase();
-    const afterStr = name.substr(index + searchValue.length).toLowerCase();
+    const afterStr = name.substr(index + searchValue?.length).toLowerCase();
     const title = index > -1 ? (
       <span className={`${cssPrefix}-text-title`}>
         {beforeStr}
-        <span style={{ color: '#f50' }}>{inputValue.toLowerCase()}</span>
+        <span style={{ color: '#f50' }}>{inputValue?.toLowerCase()}</span>
         {afterStr}
       </span>
     ) : (<span className={`${cssPrefix}-text-title`}>{name}</span>);
@@ -164,23 +166,25 @@ export default observer(() => {
   }
 
   function handleExpand(e) {
-    runInAction(() => {
-      queryTreeDataSet.forEach((record) => {
-        record.set('expand', false);
-        messageStore.setExpandedKeys([]);
-      });
-      const expandedKeys = [];
-      queryTreeDataSet.forEach((record) => {
-        if (record.get('name').toLowerCase().includes(inputValue.toLowerCase())) {
-          while (record.parent) {
-            record.parent.set('expand', true);
-            record = record.parent;
-            expandedKeys.push(String(record.get('id')));
+    if (inputValue) {
+      runInAction(() => {
+        queryTreeDataSet.forEach((record) => {
+          record.set('expand', false);
+          messageStore.setExpandedKeys([]);
+        });
+        const expandedKeys = [];
+        queryTreeDataSet.forEach((record) => {
+          if (record.get('name').toLowerCase().includes(inputValue?.toLowerCase())) {
+            while (record.parent) {
+              record.parent.set('expand', true);
+              record = record.parent;
+              expandedKeys.push(String(record.get('id')));
+            }
           }
-        }
+        });
+        messageStore.setExpandedKeys(expandedKeys);
       });
-      messageStore.setExpandedKeys(expandedKeys);
-    });
+    }
   }
 
   function handleExpanded(keys) {
@@ -199,6 +203,14 @@ export default observer(() => {
         onChange={handleSearch}
         value={inputValue}
         onEnterDown={handleExpand}
+        clearButton
+        onClear={() => {
+          setInputValue('');
+          queryTreeDataSet.forEach((record) => {
+            record.set('expand', false);
+            messageStore.setExpandedKeys([]);
+          });
+        }}
       />
       <Tree
         dataSet={queryTreeDataSet}
