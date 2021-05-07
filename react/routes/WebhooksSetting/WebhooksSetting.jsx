@@ -141,19 +141,27 @@ const WebhooksSetting = () => {
 
   // eslint-disable-next-line consistent-return
   const toggleWebhooks = async (record) => {
-    try {
-      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/update_status?enable_flag=${record.get('enabledFlag') ? 0 : 1}`, JSON.stringify());
-      if (res.failed) {
-        message(res.message);
-        throw Error();
+    Modal.confirm({
+      title: '提示',
+      children: `是否${record.get('enabledFlag') ? '停用' : '启用'}`,
+      // eslint-disable-next-line consistent-return
+    }).then(async (button) => {
+      if (button === 'ok') {
+        try {
+          const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/update_status?enable_flag=${record.get('enabledFlag') ? 0 : 1}`, JSON.stringify());
+          if (res.failed) {
+            message(res.message);
+            throw Error();
+          }
+          // if (!res) {
+          //   throw Error(res);
+          // }
+          webhooksDataSet.query();
+        } catch (e) {
+          return false;
+        }
       }
-      // if (!res) {
-      //   throw Error(res);
-      // }
-      webhooksDataSet.query();
-    } catch (e) {
-      return false;
-    }
+    });
   };
 
   useEffect(() => {
