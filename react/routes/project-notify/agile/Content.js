@@ -83,7 +83,7 @@ export default observer((props) => {
     const sendRoleList = record.get('sendRoleList');
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
-        data.push(formatMessage({ id: `${intlPrefix}.object.${key}` }));
+        data.push(formatMessage({ id: `${intlPrefix}.object.${record.get('code') === 'BACKLOG_FEEDBACK' ? `backlog_${key}` : key}` }));
       } else if (userList && userList.length) {
         const names = userList.map(({ realName }) => realName);
         data.push(...names);

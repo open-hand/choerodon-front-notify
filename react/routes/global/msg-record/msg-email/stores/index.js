@@ -15,6 +15,7 @@ export const StoreProvider = injectIntl(inject('AppState')(
     const { AppState: { currentMenuType: { type, id, organizationId } }, intl, children } = props;
     const intlPrefix = 'msgrecord';
     const msgRecordDataSet = useMemo(() => new DataSet(MsgRecordDataSet(organizationId, type, intl, intlPrefix)), []);
+
     const value = {
       ...props,
       intlPrefix,

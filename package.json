@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/notify",
   "routeName": "notify",
-  "version": "0.25.2",
+  "version": "0.26.0",
   "description": "",
   "main": "./lib/index.js",
   "dependencies": {
@@ -18,7 +18,7 @@
   ],
   "devDependencies": {
     "@choerodon/boot": "0.23.1",
-    "@choerodon/master": "0.25.5",
+    "@choerodon/master": "0.26.0",
     "@types/react": "^16.9.44",
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.5",
