@@ -1,7 +1,12 @@
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Form, Output, Spin, Modal, NumberField, Password, EmailField, UrlField, DatePicker, Select, SelectBox, Switch, Lov, Button, TextArea } from 'choerodon-ui/pro';
-import { axios, Content, Header, Page, Permission, Breadcrumb } from '@choerodon/boot';
+import {
+  Form, Output, Spin, Modal, Button,
+} from 'choerodon-ui/pro';
+import {
+  axios, Content, Header, Page, Permission, Breadcrumb,
+} from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import store from '../Store';
 import './SmsSetting.scss';
 import SmsSettingForm from './SmsSettingForm';
@@ -58,17 +63,14 @@ export default observer((props) => {
       <Header
         title="通知配置"
       >
-        <Permission
-          service={['choerodon.code.site.setting.notify.msg-config.ps.edit-sms']}
-        >
-          <Button
-            color="blue"
-            onClick={() => openSideBar()}
-            icon="mode_edit"
-          >
-            修改
-          </Button>
-        </Permission>
+        <HeaderButtons items={[{
+          name: '修改',
+          icon: 'mode_edit',
+          display: true,
+          permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit-sms'],
+          handler: openSideBar
+        }]}
+        />
       </Header>
       <Breadcrumb />
       <Content
