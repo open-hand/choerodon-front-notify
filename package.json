@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/notify",
   "routeName": "notify",
-  "version": "0.25.3",
+  "version": "0.26.0",
   "description": "",
   "main": "./lib/index.js",
   "dependencies": {
@@ -18,14 +18,14 @@
   ],
   "devDependencies": {
     "@choerodon/boot": "0.23.1",
-    "@choerodon/master": "0.25.5",
+    "@choerodon/master": "0.26.0",
     "@types/react": "^16.9.44",
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.5",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",
     "babel-eslint": "8.2.6",
-    "babel-preset-c7n": "^0.0.1",
+    "babel-preset-c7n": "^0.0.2",
     "eslint": "^7.10.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-c7n-app": "^0.0.2",
