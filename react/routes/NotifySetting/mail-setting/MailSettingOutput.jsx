@@ -1,6 +1,11 @@
 import React, { useContext } from 'react';
-import { message, Form, Output, Spin, Modal, NumberField, Password, EmailField, UrlField, DatePicker, Select, SelectBox, Switch, Lov, Button, TextArea } from 'choerodon-ui/pro';
-import { axios, Content, Header, Page, Permission, Breadcrumb, Choerodon } from '@choerodon/boot';
+import {
+  Form, Output, Spin, Modal, Button,
+} from 'choerodon-ui/pro';
+import {
+  axios, Content, Header, Page, Permission, Breadcrumb, Choerodon,
+} from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import store from '../Store';
 import MailSettingForm from './MailSettingForm';
 import './MailSetting.scss';
@@ -59,28 +64,20 @@ export default (props) => {
       <Header
         title="通知配置"
       >
-        <Permission
-          service={['choerodon.code.site.setting.notify.msg-config.ps.connect']}
-        >
-          <Button
-            onClick={testConnection}
-            color="blue"
-            icon="low_priority"
-          >
-            <span>连接测试</span>
-          </Button>
-        </Permission>
-        <Permission
-          service={['choerodon.code.site.setting.notify.msg-config.ps.edit']}
-        >
-          <Button
-            color="blue"
-            onClick={() => openSideBar()}
-            icon="mode_edit"
-          >
-            修改
-          </Button>
-        </Permission>
+        <HeaderButtons items={[{
+          permissions: ['choerodon.code.site.setting.notify.msg-config.ps.connect'],
+          name: '连接测试',
+          icon: 'low_priority',
+          handler: testConnection,
+          display: true,
+        }, {
+          permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit'],
+          name: '修改',
+          icon: 'mode_edit',
+          handler: openSideBar,
+          display: true,
+        }]}
+        />
       </Header>
       <Breadcrumb />
       <Content

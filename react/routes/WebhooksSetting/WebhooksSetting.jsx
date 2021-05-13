@@ -9,6 +9,7 @@ import { useMeasure } from 'react-use';
 import {
   axios, Breadcrumb, Header, Content, StatusTag, Action, Page, Permission,
 } from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import WebhookRecord from './WebhookRecord';
 import Store from './Store';
@@ -305,19 +306,20 @@ const WebhooksSetting = () => {
       service={Services.pageService}
     >
       <Header>
-        <Permission service={Services.createService}>
-          <Button icon="playlist_add" onClick={handleCreateWebhooks}>创建Webhooks</Button>
-        </Permission>
-        <Permission
-          service={Services.recordService}
-        >
-          <Button
-            icon="assignment"
-            onClick={() => handleAllWebhookRecord(false)}
-          >
-            Webhook执行记录
-          </Button>
-        </Permission>
+        <HeaderButtons items={[{
+          name: '创建Webhooks',
+          icon: 'playlist_add',
+          display: true,
+          permissions: Services.createService,
+          handler: handleCreateWebhooks,
+        }, {
+          name: 'Webhook执行记录',
+          icon: 'assignment',
+          display: true,
+          permissions: Services.recordService,
+          handler: () => handleAllWebhookRecord(false),
+        }]}
+        />
       </Header>
       <Breadcrumb />
       <Content className={`${prefixCls}-content`}>

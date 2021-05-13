@@ -12,6 +12,7 @@ import { withRouter } from 'react-router-dom';
 import {
   Content, Header, Page, Permission, Breadcrumb, Action, Choerodon, StatusTag,
 } from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import './Announcement.scss';
 import Editor from '../../components/editor';
 import MouseOverWrapper from '../../components/mouseOverWrapper';
@@ -246,7 +247,7 @@ export default class Announcement extends Component {
         key: 'textContent',
         className: 'nowarp text-gray',
         render: (text) => (
-          <Tooltip title={text}>
+          <Tooltip title={text} placement="topLeft">
             <span>{text}</span>
           </Tooltip>
         ),
@@ -621,21 +622,18 @@ export default class Announcement extends Component {
         service={['choerodon.code.site.manager.announcement.ps.default']}
       >
         <Header>
-          <Permission service={['choerodon.code.site.manager.announcement.ps.add']}>
-            <Button
-              onClick={() => this.handleOpen('create')}
-              icon="playlist_add"
-            >
-              <FormattedMessage id="announcement.add" />
-            </Button>
-          </Permission>
-
-          <Button
-            onClick={this.handleRefresh}
-            icon="refresh"
-          >
-            <FormattedMessage id="refresh" />
-          </Button>
+          <HeaderButtons items={[{
+            permissions: ['choerodon.code.site.manager.announcement.ps.add'],
+            name: intl.formatMessage({ id: 'announcement.add' }),
+            icon: 'playlist_add',
+            handler: () => this.handleOpen('create'),
+            display: true,
+          }, {
+            icon: 'refresh',
+            handler: this.handleRefresh,
+            display: true,
+          }]}
+          />
         </Header>
         <Breadcrumb />
         <Content
