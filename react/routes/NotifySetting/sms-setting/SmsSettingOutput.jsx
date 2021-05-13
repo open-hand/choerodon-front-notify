@@ -68,7 +68,7 @@ export default observer((props) => {
           icon: 'mode_edit',
           display: true,
           permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit-sms'],
-          handler: openSideBar
+          handler: () => openSideBar(),
         }]}
         />
       </Header>
