@@ -3,6 +3,7 @@ import { Table, Button, Modal } from 'choerodon-ui/pro';
 import {
   Header, Page, Breadcrumb, Content, Permission,
 } from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import { observer } from 'mobx-react-lite';
 import EditSendSettings from './Sider/EditSendSettings';
 import EditTemplate from './Sider/EditTemplate';
@@ -46,16 +47,45 @@ export default observer(() => {
   function getPageHeader() {
     return currentPageType.currentSelectedType === 'form' && (
       <Header>
-        <Permission service={['choerodon.code.site.setting.notify.msg-service.ps.send-config']}>
-          <Button icon="mode_edit" onClick={editSendSettings}>修改发送设置</Button>
-        </Permission>
-        <Permission service={['choerodon.code.site.setting.notify.msg-service.ps.email-template']}>
-          <Button icon="mode_edit" onClick={() => editTemplate('EMAIL', '修改邮件模板')}>修改邮件模板</Button>
-          <Button icon="mode_edit" onClick={() => editTemplate('WEB', '修改站内信模板')}>修改站内信模板</Button>
-          <Button icon="mode_edit" onClick={() => editTemplate('webHookJson', '修改webhook-Json模板')}>修改webhook-Json模板</Button>
-          <Button icon="mode_edit" onClick={() => editTemplate('webHookOther', '修改webhook-钉钉微信模板')}>修改webhook-钉钉微信模板</Button>
-          <Button icon="mode_edit" onClick={() => editTemplate('SMS', '修改短信模板')}>修改短信模板</Button>
-        </Permission>
+        <HeaderButtons
+          items={[{
+            permissions: ['choerodon.code.site.setting.notify.msg-service.ps.send-config'],
+            name: '修改发送设置',
+            icon: 'mode_edit',
+            handler: editSendSettings,
+            display: true,
+          }, {
+            permissions: ['choerodon.code.site.setting.notify.msg-service.ps.email-template'],
+            name: '修改邮件模板',
+            icon: 'mode_edit',
+            handler: () => editTemplate('EMAIL', '修改邮件模板'),
+            display: true,
+          }, {
+            permissions: ['choerodon.code.site.setting.notify.msg-service.ps.email-template'],
+            name: '修改站内信模板',
+            icon: 'mode_edit',
+            handler: () => editTemplate('WEB', '修改站内信模板'),
+            display: true,
+          }, {
+            permissions: ['choerodon.code.site.setting.notify.msg-service.ps.email-template'],
+            name: '修改webhook-Json模板',
+            icon: 'mode_edit',
+            handler: () => editTemplate('webHookJson', '修改webhook-Json模板'),
+            display: true,
+          }, {
+            permissions: ['choerodon.code.site.setting.notify.msg-service.ps.email-template'],
+            name: '修改webhook-钉钉微信模板',
+            icon: 'mode_edit',
+            handler: () => editTemplate('webHookOther', '修改webhook-钉钉微信模板'),
+            display: true,
+          }, {
+            permissions: ['choerodon.code.site.setting.notify.msg-service.ps.email-template'],
+            name: '修改短信模板',
+            icon: 'mode_edit',
+            handler: () => editTemplate('SMS', '修改短信模板'),
+            display: true,
+          }]}
+        />
       </Header>
     );
   }
