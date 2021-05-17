@@ -5,13 +5,6 @@ import { asyncLocaleProvider, asyncRouter, nomatch } from '@choerodon/boot';
 import { ModalContainer } from 'choerodon-ui/pro';
 import { PermissionRoute } from '@choerodon/master';
 
-// const sendSetting = asyncRouter(() => import('./routes/global/send-setting'));
-// const mailTemplate = asyncRouter(() => import('./routes/global/mail-template'));
-// const inmailTemplate = asyncRouter(() => import('./routes/global/inmail-template'));
-// const smsTemplate = asyncRouter(() => import('./routes/global/sms-template'));
-// const userMsg = asyncRouter(() => import('./routes/user/user-msg'));
-// const mailSetting = asyncRouter(() => import('./routes/NotifySetting/mail-setting'));
-// const smsSetting = asyncRouter(() => import('./routes/NotifySetting/sms-setting'));
 const msgRecord = asyncRouter(() => import('./routes/global/msg-record'));
 const announcement = asyncRouter(() => import('./routes/announcement'));
 const receiveSetting = asyncRouter(() => import('./routes/receive-setting'));
@@ -26,12 +19,6 @@ function LowCodeIndex({ match, AppState: { currentLanguage: language } }) {
     <IntlProviderAsync>
       <>
         <Switch>
-          {/* <Route path={`${match.url}/sms-template`} component={smsTemplate} /> */}
-          {/* <Route path={`${match.url}/mail-template`} component={mailTemplate} /> */}
-          {/* <Route path={`${match.url}/inmail-template`} component={inmailTemplate} /> */}
-          {/* <Route path={`${match.url}/user-msg`} component={userMsg} /> */}
-          {/* <Route path={`${match.url}/sms-setting`} component={smsSetting} /> */}
-          {/* <Route path={`${match.url}/mail-setting`} component={mailSetting} /> */}
           <PermissionRoute
             path={`${match.url}/msg-log`}
             component={msgRecord}

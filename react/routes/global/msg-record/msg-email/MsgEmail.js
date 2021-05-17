@@ -111,7 +111,7 @@ function MsgEmail(props) {
           >
             <Table dataSet={msgRecordDataSet} style={{ paddingTop: 0 }}>
               <Column align="left" name="messageName" renderer={renderEmail} width={150} />
-              <Column renderer={actionRenderer} width={48} />
+              <Column renderer={actionRenderer} width={60} />
               <Column
                 align="left"
                 width={100}

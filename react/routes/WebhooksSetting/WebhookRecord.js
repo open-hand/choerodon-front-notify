@@ -101,7 +101,7 @@ const WebhookRecord = ({
       queryFieldsLimit={3}
     >
       <Column name="messageName" renderer={nameRender} />
-      <Column renderer={ActionRenderer} width={48} />
+      <Column renderer={ActionRenderer} width={60} />
       <Column name="webHookAddress" renderer={handleRenderWebhookPath} />
       <Column
         name="statusCode"

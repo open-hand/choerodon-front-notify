@@ -332,7 +332,7 @@ const WebhooksSetting = () => {
               onClick: () => editWebhooks(record),
             })}
           />
-          <Column renderer={ActionRenderer} width={48} />
+          <Column renderer={ActionRenderer} width={60} />
           <Column name="webhookAddress" tooltip="overflow" />
           <Column name="serverType" renderer={typeRenderer} />
           <Column
