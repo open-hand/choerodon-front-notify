@@ -7,8 +7,9 @@ import {
 import { message, Popover, Icon } from 'choerodon-ui';
 import { useMeasure } from 'react-use';
 import {
-  axios, Breadcrumb, Header, Content, StatusTag, Action, Page, Permission,
+  axios, Breadcrumb, Header, Content, Action, Page, Permission,
 } from '@choerodon/boot';
+import { StatusTag } from '@choerodon/components';
 import { HeaderButtons } from '@choerodon/master';
 import CreateAndEditWebhooksForm from './CreateAndEditWebhooksForm';
 import WebhookRecord from './WebhookRecord';
@@ -182,18 +183,12 @@ const WebhooksSetting = () => {
       return (
         <div style={{ width: 360, display: 'flex', flexWrap: 'wrap' }}>
           {record.get('name').split(',').map((r) => (
-            <span
-              className="webhook_nameRenderSpan"
+            <StatusTag
+              name={r}
               style={{
-                background: 'rgba(0, 0, 0, 0.08)',
-                borderRadius: 10,
-                padding: '0 8px 0 8px',
-                marginLeft: '8px',
-                marginTop: '8px',
+                marginLeft: 8,
               }}
-            >
-              {r}
-            </span>
+            />
           ))}
         </div>
       );
@@ -218,23 +213,29 @@ const WebhooksSetting = () => {
       >
         {
             record.get('name').split(',').map((r) => (
-              <span
-                className="webhook_nameRenderSpan"
+              <StatusTag
                 style={{
-                  background: 'rgba(0, 0, 0, 0.08)',
-                  borderRadius: 10,
-                  padding: '0 8px 0 8px',
-                  marginLeft: '8px',
-                  fontSize: '12px',
-                  fontFamily: 'PingFangSC-Regular, PingFang SC',
-                  fontWeight: 400,
-                  color: 'rgba(0, 0, 0, 1)',
-                  lineHeight: '20px',
-                  display: 'inline-block',
+                  marginLeft: 8,
                 }}
-              >
-                {r}
-              </span>
+                name={r}
+              />
+              // <span
+              //   className="webhook_nameRenderSpan"
+              //   style={{
+              //     background: 'rgba(0, 0, 0, 0.08)',
+              //     borderRadius: 10,
+              //     padding: '0 8px 0 8px',
+              //     marginLeft: '8px',
+              //     fontSize: '12px',
+              //     fontFamily: 'PingFangSC-Regular, PingFang SC',
+              //     fontWeight: 400,
+              //     color: 'rgba(0, 0, 0, 1)',
+              //     lineHeight: '20px',
+              //     display: 'inline-block',
+              //   }}
+              // >
+              //   {r}
+              // </span>
             ))
           }
       </div>
