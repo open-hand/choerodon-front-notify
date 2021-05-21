@@ -10,7 +10,7 @@ export default function (organizationId) {
 
     fields: [
       { name: 'type', type: 'string', label: '类型' },
-      { name: 'templateContent', type: 'string' },
+      { name: 'templateContent', type: 'string', required: true },
     ],
     transport: {
       read: {

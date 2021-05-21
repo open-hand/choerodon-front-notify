@@ -1,5 +1,8 @@
+/* eslint-disable */
 import React from 'react';
-import { Form, TextField, TextArea, NumberField, message } from 'choerodon-ui/pro';
+import {
+  Form, TextField, TextArea, NumberField, message,
+} from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import ChoerodonEditor from '../../../components/editor';
 import MdEditor from '../../../components/MdEditor';
@@ -17,7 +20,8 @@ export default observer(({ context, modal, type }) => {
     record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === type);
   }
   if (!record) {
-    dataSet.create({ templateContent: '',
+    dataSet.create({
+      templateContent: '',
       sendingType: type.includes('webHook') ? 'WEB_HOOK' : type,
       isPredefined: false,
       isNew: true,
@@ -25,12 +29,12 @@ export default observer(({ context, modal, type }) => {
       templateCode: (function () {
         if (type === 'webHookJson') {
           return 'JSON';
-        } else if (type === 'webHookOther') {
+        } if (type === 'webHookOther') {
           return 'DINGTALKANDWECHAT';
-        } else {
-          return '';
         }
-      }()) });
+        return '';
+      }()),
+    });
     record = dataSet.current;
   }
   modal.handleOk(async () => {
@@ -58,7 +62,7 @@ export default observer(({ context, modal, type }) => {
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
-            <TextField label={type === 'EMAIL' ? '邮件主题' : '站内信标题'} name="templateTitle" />
+            <TextField required label={type === 'EMAIL' ? '邮件主题' : '站内信标题'} name="templateTitle" />
             <ChoerodonEditor
               nomore
               toolbarContainer="toolbar"
@@ -74,7 +78,7 @@ export default observer(({ context, modal, type }) => {
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
-            <TextField label="模板主题" name="templateTitle" />
+            <TextField required label="模板主题" name="templateTitle" />
             <MdEditor
               value={record.get('templateContent')}
               onChange={(value) => record.set('templateContent', value)}
