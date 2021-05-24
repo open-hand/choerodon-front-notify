@@ -16,15 +16,18 @@ export default (props) => {
   const context = useContext(store);
   const { mailSettingDataSet } = context;
 
-  const testConnection = async () => axios.get('hmsg/choerodon/v1/notices/configs/email/test', mailSettingDataSet.current && mailSettingDataSet.current.toData()).then((data) => {
-    if (data.failed) {
-      Choerodon.prompt(data.message);
-    } else {
-      Choerodon.prompt(context.intl.formatMessage({ id: `${context.intlPrefix}.connect.success` }));
+  const testConnection = async () => {
+    try {
+      const data = await axios.get('hmsg/choerodon/v1/notices/configs/email/test', mailSettingDataSet.current && mailSettingDataSet.current.toData());
+      if (data.failed) {
+        Choerodon.prompt(data.message);
+      } else {
+        Choerodon.prompt(context.intl.formatMessage({ id: `${context.intlPrefix}.connect.success` }));
+      }
+    } catch (e) {
+      console.log(e);
     }
-  }).catch((error) => {
-    throw new Error(error);
-  });
+  };
 
   const submitFunc = () => new Promise((resolve, reject) => {
     mailSettingDataSet.validate().then((validateStatus) => {
