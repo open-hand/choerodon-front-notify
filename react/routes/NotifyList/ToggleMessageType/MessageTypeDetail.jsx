@@ -1,8 +1,12 @@
 import React, { useContext } from 'react';
-import { Table, Form, Output, Spin, Icon, Tooltip } from 'choerodon-ui/pro';
+import {
+  Table, Form, Output, Spin, Icon, Tooltip,
+} from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { Tabs } from 'choerodon-ui';
-import { Action, axios, Content, StatusTag, PageTab, PageWrap } from '@choerodon/boot';
+import {
+  Action, axios, Content, StatusTag, PageTab, PageWrap,
+} from '@choerodon/boot';
 import Store from '../Store';
 import ShadowView from './ShadowView';
 
@@ -36,21 +40,26 @@ const MessageTypeDetail = observer(() => {
 
   const yesOrNoRenderer = ({ value }) => (value ? '是' : '否');
   const TemplateForm = ({ record, showTheme }) => (record ? (
-    <React.Fragment>
+    <>
       {showTheme && (
         <div style={{ fontSize: '0.14rem' }}>
-          <span style={{ marginRight: '1.7rem', color: 'rgba(0,0,0,0.65)' }}>发送主题</span>
+          <span style={{ marginRight: '1.7rem', color: 'var(--text-color3)' }}>发送主题</span>
           <span>{record.getPristineValue('templateTitle')}</span>
         </div>
       )}
-      <p style={{ marginTop: '0.16rem', marginBottom: '0.08rem', fontSize: '0.14rem', color: 'rgba(0,0,0,0.65)' }}>预览</p>
+      <p style={{
+        marginTop: '0.16rem', marginBottom: '0.08rem', fontSize: '0.14rem', color: 'var(--text-color3)',
+      }}
+      >
+        预览
+      </p>
       <div className={`${cssPrefix}-htmlContainer`}>
         <ShadowView>
           {/* eslint-disable-next-line react/no-danger */}
           <div dangerouslySetInnerHTML={{ __html: record.getPristineValue('templateContent') }} style={{ marginBottom: '.2rem' }} />
         </ShadowView>
       </div>
-    </React.Fragment>
+    </>
   ) : <div>无</div>);
   const getIcon = (type) => {
     if (!messageTypeDetailDataSet.current.get(`${type}EnabledFlag`)) {
@@ -63,7 +72,7 @@ const MessageTypeDetail = observer(() => {
     return null;
   };
   return current ? (
-    <React.Fragment>
+    <>
       <header className={`${cssPrefix}-header`}>
         <span
           className={`${cssPrefix}-header-circle`}
@@ -80,23 +89,63 @@ const MessageTypeDetail = observer(() => {
         {/* <Output name="backlogFlag" renderer={yesOrNoRenderer} /> */}
       </Form>
       <Tabs defaultActiveKey="1">
-        <TabPane tab={(<span>邮件模板 {getIcon('email')}</span>)} key="1">
+        <TabPane
+          tab={(
+            <span>
+              邮件模板
+              {getIcon('email')}
+            </span>
+)}
+          key="1"
+        >
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'EMAIL')} showTheme />
         </TabPane>
-        <TabPane tab={(<span>站内信模板 {getIcon('pm')}</span>)} key="2">
+        <TabPane
+          tab={(
+            <span>
+              站内信模板
+              {getIcon('pm')}
+            </span>
+)}
+          key="2"
+        >
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'WEB')} showTheme />
         </TabPane>
-        <TabPane tab={(<span>webhook-JSON模板 {getIcon('webhookJson')}</span>)} key="3">
+        <TabPane
+          tab={(
+            <span>
+              webhook-JSON模板
+              {getIcon('webhookJson')}
+            </span>
+)}
+          key="3"
+        >
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('JSON'))} showTheme />
         </TabPane>
-        <TabPane tab={(<span>webhook-钉钉微信模板 {getIcon('webhook')}</span>)} key="4">
+        <TabPane
+          tab={(
+            <span>
+              webhook-钉钉微信模板
+              {getIcon('webhook')}
+            </span>
+)}
+          key="4"
+        >
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('DINGTALKANDWECHAT'))} showTheme />
         </TabPane>
-        <TabPane tab={(<span>短信模板 {getIcon('sms')}</span>)} key="5">
+        <TabPane
+          tab={(
+            <span>
+              短信模板
+              {getIcon('sms')}
+            </span>
+)}
+          key="5"
+        >
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'SMS')} />
         </TabPane>
       </Tabs>
-    </React.Fragment>
+    </>
   ) : <Spin />;
 });
 
