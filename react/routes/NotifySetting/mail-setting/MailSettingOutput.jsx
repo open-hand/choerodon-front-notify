@@ -76,7 +76,7 @@ export default (props) => {
         }, {
           permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit'],
           name: '修改',
-          icon: 'mode_edit',
+          icon: 'edit-o',
           handler: () => openSideBar(),
           display: true,
         }]}

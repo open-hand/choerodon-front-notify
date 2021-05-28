@@ -19,12 +19,12 @@
     }
   }
   .link {
-    color: #3f51b5;
+    color: var(--table-click-color);
+    cursor: pointer;
 
     &:hover {
-      color: #3f51b5;
+      color: var(--table-click-color);
       text-decoration: underline;
-      cursor: pointer;
     }
   }
   .text-gray {
@@ -36,7 +36,7 @@
   &-detail {
     .send-time {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.65);
+      color: var(--text-color3);
       line-height: 20px;
       width: 230px;
     }
@@ -65,7 +65,6 @@
         display: inline-block;
         width: 112px;
         font-size: 14px;
-        color: #000;
         line-height: 20px;
       }
     }
@@ -120,7 +119,7 @@
 
     .content-text {
       //font-size: 14px;
-      color: rgba(0, 0, 0, 0.65);
+      color: var(--text-color3);
       line-height: 20px;
     }
   }

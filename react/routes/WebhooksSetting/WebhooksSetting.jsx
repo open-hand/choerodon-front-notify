@@ -315,7 +315,7 @@ const WebhooksSetting = () => {
           handler: handleCreateWebhooks,
         }, {
           name: 'Webhook执行记录',
-          icon: 'assignment',
+          icon: 'assignment-o',
           display: true,
           permissions: Services.recordService,
           handler: () => handleAllWebhookRecord(false),

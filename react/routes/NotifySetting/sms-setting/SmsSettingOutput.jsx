@@ -65,7 +65,7 @@ export default observer((props) => {
       >
         <HeaderButtons items={[{
           name: '修改',
-          icon: 'mode_edit',
+          icon: 'edit-o',
           display: true,
           permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit-sms'],
           handler: () => openSideBar(),
