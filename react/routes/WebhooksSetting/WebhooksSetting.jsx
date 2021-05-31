@@ -2,9 +2,11 @@ import React, {
   useContext, useState, useRef, useCallback, useEffect,
 } from 'react';
 import {
-  Table, Button, Modal,
+  Table, Button, Modal, Output,
 } from 'choerodon-ui/pro';
-import { message, Popover, Icon } from 'choerodon-ui';
+import {
+  message, Popover, Icon, Tag,
+} from 'choerodon-ui';
 import { useMeasure } from 'react-use';
 import {
   axios, Breadcrumb, Header, Content, Action, Page, Permission,
@@ -211,33 +213,10 @@ const WebhooksSetting = () => {
           textOverflow: 'ellipsis',
         }}
       >
-        {
-            record.get('name').split(',').map((r) => (
-              <StatusTag
-                style={{
-                  marginLeft: 8,
-                }}
-                name={r}
-              />
-              // <span
-              //   className="webhook_nameRenderSpan"
-              //   style={{
-              //     background: 'rgba(0, 0, 0, 0.08)',
-              //     borderRadius: 10,
-              //     padding: '0 8px 0 8px',
-              //     marginLeft: '8px',
-              //     fontSize: '12px',
-              //     fontFamily: 'PingFangSC-Regular, PingFang SC',
-              //     fontWeight: 400,
-              //     color: 'rgba(0, 0, 0, 1)',
-              //     lineHeight: '20px',
-              //     display: 'inline-block',
-              //   }}
-              // >
-              //   {r}
-              // </span>
-            ))
-          }
+        <Output
+          multiple
+          value={record.get('name').split(',')}
+        />
       </div>
       <Popover placement="bottom" content={popoverCotent(record)}>
         <Icon
