@@ -67,20 +67,26 @@ export default (props) => {
       <Header
         title="通知配置"
       >
-        <HeaderButtons items={[{
-          permissions: ['choerodon.code.site.setting.notify.msg-config.ps.connect'],
-          name: '连接测试',
-          icon: 'low_priority',
-          handler: testConnection,
-          display: true,
-        }, {
-          permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit'],
-          name: '修改',
-          icon: 'edit-o',
-          handler: () => openSideBar(),
-          display: true,
-        }]}
-        />
+        <Permission service={['choerodon.code.site.setting.notify.msg-config.ps.edit']}>
+          <Button
+            onClick={() => openSideBar()}
+            icon="edit-o"
+          >
+            修改
+          </Button>
+        </Permission>
+        <Permission service={['choerodon.code.site.setting.notify.msg-config.ps.connect']}>
+          <Button
+            style={{
+              marginLeft: 16,
+            }}
+            onClick={testConnection}
+            icon="low_priority"
+            color="primary"
+          >
+            连接测试
+          </Button>
+        </Permission>
       </Header>
       <Breadcrumb />
       <Content
