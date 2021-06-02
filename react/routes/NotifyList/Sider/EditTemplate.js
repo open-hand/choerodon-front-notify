@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {
   Form, TextField, TextArea, NumberField, message,
 } from 'choerodon-ui/pro';
@@ -9,23 +9,26 @@ import MdEditor from '../../../components/MdEditor';
 import './index.less';
 
 export default observer(({ context, modal, type }) => {
-  const { messageTypeDetailDataSet } = context;
+  const { messageTypeDetailDataSet, messageStore } = context;
   const dataSet = messageTypeDetailDataSet.children.messageTemplateVOS;
-  let record;
-  if (type === 'webHookJson') {
-    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('JSON'));
-  } else if (type === 'webHookOther') {
-    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('DINGTALKANDWECHAT'));
-  } else {
-    record = messageTypeDetailDataSet.children.messageTemplateVOS.find((item) => item.getPristineValue('sendingType') === type);
-  }
-  if (!record) {
+  const currentRecord = useMemo(() => {
+    if (type === 'webHookJson') {
+      return dataSet.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('JSON'));
+    } else if (type === 'webHookOther') {
+      return dataSet.find((item) => item.getPristineValue('sendingType') === 'WEB_HOOK' && item.getPristineValue('templateCode').includes('DINGTALKANDWECHAT'));
+    }
+    return dataSet.find((item) => item.getPristineValue('sendingType') === type);
+  }, [dataSet]);
+  const record = useMemo(() => {
+    if (currentRecord) {
+      return currentRecord;
+    }
     dataSet.create({
       templateContent: '',
       sendingType: type.includes('webHook') ? 'WEB_HOOK' : type,
       isPredefined: false,
       isNew: true,
-      messageCode: messageTypeDetailDataSet.current.get('messageCode'),
+      messageCode: messageTypeDetailDataSet.current?.get('messageCode'),
       templateCode: (function () {
         if (type === 'webHookJson') {
           return 'JSON';
@@ -35,8 +38,25 @@ export default observer(({ context, modal, type }) => {
         return '';
       }()),
     });
-    record = dataSet.current;
-  }
+    return  dataSet.current;
+    return currentRecord;
+  }, [currentRecord, dataSet, messageTypeDetailDataSet.current]);
+
+  useEffect(() => {
+    if (currentRecord) {
+      loadDetailData()
+    }
+  }, [currentRecord]);
+
+  const loadDetailData = useCallback(async () => {
+    if (record.get('templateId')) {
+      const res = await messageStore.loadTemplateDetail(record.get('templateId'));
+      if (res) {
+        record.init(res);
+      }
+    }
+  }, [record]);
+
   modal.handleOk(async () => {
     try {
       if (dataSet.current.get('isNew')) {
