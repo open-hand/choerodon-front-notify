@@ -19,5 +19,17 @@ export default function useStore() {
     get getExpandedKeys() {
       return this.expandedKeys.slice();
     },
+
+    async loadTemplateDetail(templateId) {
+      try {
+        const res = await axios.get(`/hmsg/v1/message/templates/${templateId}`);
+        if (res && !res.failed) {
+          return res;
+        }
+        return false;
+      } catch (e) {
+        return false;
+      }
+    },
   }));
 }
