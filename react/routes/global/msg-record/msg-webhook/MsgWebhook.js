@@ -1,9 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Table } from 'choerodon-ui/pro';
+import { Table, Tooltip } from 'choerodon-ui/pro';
 import {
-  Permission, Content, TabPage, Breadcrumb, StatusTag,
+  Permission, Content, TabPage, Breadcrumb,
 } from '@choerodon/boot';
+import { StatusTag } from '@choerodon/components';
 import { useWebhookRecordStore } from './stores';
 import { useStore } from '../stores';
 
@@ -25,8 +26,20 @@ function MsgWebhook() {
   const StatusCard = ({ value }) => (
     <StatusTag
       name={value || formatMessage({ id: 'success' })}
-      color={value !== '失败' ? ENABLED_GREEN : DISABLED_GRAY}
+      colorCode={value !== '失败' ? 'success' : 'error'}
     />
+  );
+
+  const renderFailedReason = ({ value }) => (
+    <Tooltip
+      title={(
+        <p className="c7ncd-notify-page-content-tooltip">
+          {value}
+        </p>
+      )}
+    >
+      {value}
+    </Tooltip>
   );
 
   return (
@@ -45,7 +58,10 @@ function MsgWebhook() {
               name="statusMeaning"
               renderer={StatusCard}
             />
-            <Column name="failedReason" tooltip="overflow" />
+            <Column
+              name="failedReason"
+              renderer={renderFailedReason}
+            />
             <Column name="messageName" />
             <Column name="webhookAddress" tooltip="overflow" />
           </Table>

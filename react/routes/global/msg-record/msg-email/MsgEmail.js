@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Permission,
-  StatusTag,
   axios,
   Content,
   TabPage,
@@ -9,6 +8,7 @@ import {
   Action,
   Choerodon,
 } from '@choerodon/boot';
+import { StatusTag } from '@choerodon/components';
 import { observer } from 'mobx-react-lite';
 import { Table, Tooltip, Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
@@ -52,7 +52,7 @@ function MsgEmail(props) {
   const StatusCard = ({ value }) => (
     <StatusTag
       name={value || intl.formatMessage({ id: 'success' })}
-      color={value !== '失败' ? ENABLED_GREEN : DISABLED_GRAY}
+      colorCode={value !== '失败' ? 'success' : 'error'}
     />
   );
 
@@ -100,6 +100,17 @@ function MsgEmail(props) {
     </Tooltip>
   );
 
+  const renderFailedReason = ({ value }) => (
+    <Tooltip
+      placement="bottom"
+      title={(
+        <p className="c7ncd-notify-page-content-tooltip">{value}</p>
+    )}
+    >
+      {value}
+    </Tooltip>
+  );
+
   function render() {
     return (
       <TabPage>
@@ -118,7 +129,10 @@ function MsgEmail(props) {
                 name="statusMeaning"
                 renderer={StatusCard}
               />
-              <Column name="failedReason" tooltip="overflow" />
+              <Column
+                name="failedReason"
+                renderer={renderFailedReason}
+              />
               <Column name="creationDate" />
             </Table>
           </Content>
