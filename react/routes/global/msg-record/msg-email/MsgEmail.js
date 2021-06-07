@@ -102,7 +102,7 @@ function MsgEmail(props) {
 
   const renderFailedReason = ({ value }) => (
     <Tooltip
-      placement="bottom"
+      placement="topLeft"
       title={(
         <p className="c7ncd-notify-page-content-tooltip">{value}</p>
     )}

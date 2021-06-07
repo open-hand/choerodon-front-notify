@@ -32,6 +32,7 @@ function MsgWebhook() {
 
   const renderFailedReason = ({ value }) => (
     <Tooltip
+      placement="topLeft"
       title={(
         <p className="c7ncd-notify-page-content-tooltip">
           {value}
