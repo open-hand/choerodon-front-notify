@@ -197,7 +197,7 @@ export default observer(() => {
       <TextField
         name="id"
         className={`${cssPrefix}-tree-query`}
-        prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.65)' }} />}
+        prefix={<Icon type="search" />}
         placeholder="请输入搜索条件"
         onInput={handleInput}
         onChange={handleSearch}
