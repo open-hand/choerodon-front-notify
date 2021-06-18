@@ -118,7 +118,7 @@ const CreateAndEditWebhooksForm = observer(({
       <div className="c7n-org-webhook-divider" />
       <p
         style={{
-          color: 'rgba(0, 0, 0, 0.85)',
+          color: 'var(--text-color2)',
           fontWeight: 500,
           fontSize: '0.18rem',
           lineheight: '0.24rem',
