@@ -143,29 +143,31 @@ const WebhooksSetting = () => {
     }
   };
 
+  const handleToggleWebhooks = async (record) => {
+    try {
+      const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/update_status?enable_flag=${record.get('enabledFlag') ? 0 : 1}`, JSON.stringify());
+      if (res && res.failed) {
+        return false;
+      }
+      webhooksDataSet.query();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   // eslint-disable-next-line consistent-return
   const toggleWebhooks = async (record) => {
-    Modal.confirm({
-      title: '提示',
-      children: `是否${record.get('enabledFlag') ? '停用' : '启用'}`,
-      // eslint-disable-next-line consistent-return
-    }).then(async (button) => {
-      if (button === 'ok') {
-        try {
-          const res = await axios.put(`hmsg/choerodon/v1/${type === 'project' ? `project/${id}` : `organization/${orgId}`}/web_hooks/${record.get('serverId')}/update_status?enable_flag=${record.get('enabledFlag') ? 0 : 1}`, JSON.stringify());
-          if (res.failed) {
-            message(res.message);
-            throw Error();
-          }
-          // if (!res) {
-          //   throw Error(res);
-          // }
-          webhooksDataSet.query();
-        } catch (e) {
-          return false;
-        }
-      }
-    });
+    if (record.get('enabledFlag')) {
+      Modal.confirm({
+        title: '停用WebHook',
+        children: `确定${record.get('enabledFlag') ? '停用' : '启用'}该WebHook吗？`,
+        onOk: () => handleToggleWebhooks(record),
+        // eslint-disable-next-line consistent-return
+      });
+    } else {
+      handleToggleWebhooks(record);
+    }
   };
 
   useEffect(() => {
@@ -279,7 +281,7 @@ const WebhooksSetting = () => {
 
   const StatusRenderer = ({ value }) => <StatusTag name={value ? '启用' : '停用'} color={value ? ENABLED_GREEN : DISABLED_GRAY} />;
 
-  const typeRenderer = ({ value }) => <span className="webhookRecord_cantLinkText">{webhooksTypeMap[value]}</span>;
+  const typeRenderer = ({ value }) => <span>{webhooksTypeMap[value]}</span>;
 
   return (
     <Page
