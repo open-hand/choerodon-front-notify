@@ -1,10 +1,10 @@
-// eslint-disable-next-line max-classes-per-file
+/* eslint-disable */
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import { observable, action, configure } from 'mobx';
 import moment from 'moment';
 import {
-  Button, Table, Modal, Tooltip, Form, DatePicker, Input, Radio,
+  Button, Table, Modal, Tooltip, Form, DatePicker, Input, Radio, message as UiMessage,
 } from 'choerodon-ui';
 import { Modal as ProModal } from 'choerodon-ui/pro';
 import { injectIntl, FormattedMessage } from 'react-intl';
@@ -132,7 +132,10 @@ export default class Announcement extends Component {
                 } else {
                   Choerodon.prompt(data.message);
                 }
-              }).catch(() => {
+              }).catch((e) => {
+                if (e.failed) {
+                  UiMessage.error(e.message);
+                }
                 AnnouncementStore.setSubmitting(false);
               });
             } else {
