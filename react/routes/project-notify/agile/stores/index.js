@@ -24,7 +24,9 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
 
   const intlPrefix = 'project.notify';
 
-  const tableDs = useMemo(() => new DataSet(TableDataSet({ formatMessage, intlPrefix, projectId, userDs })), [projectId]);
+  const tableDs = useMemo(() => new DataSet(TableDataSet({
+    formatMessage, intlPrefix, projectId, userDs,
+  })), [projectId]);
   const value = {
     ...props,
     intlPrefix,
@@ -33,7 +35,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
       'notify-service.message-setting.listByType',
       'notify-service.message-setting.batchUpdateByType',
     ],
-    allSendRoleList: ['reporter', 'assignee', 'projectOwner', 'specifier'],
+    allSendRoleList: ['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier'],
     tableDs,
   };
 

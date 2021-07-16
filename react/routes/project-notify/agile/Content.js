@@ -89,14 +89,17 @@ export default observer((props) => {
         data.push(...names);
       }
     });
-
+    let excludesRole = record.get('code') === 'SPRINT_DELAY' ? ['assignee', 'reporter', 'starUser'] : [];
+    if (record.get('code') === 'ISSUECREATE') {
+      excludesRole = ['starUser'];
+    }
     return record.get('code') !== 'ISSUECHANGESTATUS' ? (
       <Select
         popupContent={(
           <NotifyObject
             record={record}
             allSendRoleList={allSendRoleList}
-            excludesRole={record.get('code') === 'SPRINT_DELAY' ? ['assignee', 'reporter'] : []}
+            excludesRole={excludesRole}
           />
         )}
         renderer={() => (
