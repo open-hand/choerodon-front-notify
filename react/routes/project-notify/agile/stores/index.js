@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, {
+  createContext, useContext, useEffect, useMemo, useState,
+} from 'react';
+import {
+  axios,
+} from '@choerodon/boot';
 import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
@@ -11,19 +16,36 @@ const Store = createContext();
 export function useAgileContentStore() {
   return useContext(Store);
 }
-
+const HAS_BACKLOG = C7NHasModule('@choerodon/backlog');
 export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const {
     children,
     intl: { formatMessage },
-    AppState: { currentMenuType: { projectId } },
+    AppState: { currentMenuType: { projectId, organizationId } },
   } = props;
   const {
     userDs,
   } = useProjectNotifyStore();
 
   const intlPrefix = 'project.notify';
-
+  const [allSendRoleList, setAllSendRoleList] = useState(['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier']);
+  useEffect(() => {
+    async function loadAgileRoleList(issueTypeList = 'agileIssueType') {
+      return axios({
+        method: 'get',
+        url: `/agile/v1/projects/${projectId}/field_value/list/custom_field`,
+        params: {
+          issueTypeList,
+          organizationId,
+        },
+      });
+    }
+    axios.all([loadAgileRoleList(), loadAgileRoleList('backlogIssueType')]).then((res) => {
+      const [agileMemberList, backlogMemberList] = res.map((item) => item.filter((field) => ['member', 'multiMember'].includes(field.fieldType)));
+      setAllSendRoleList(['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier', ...agileMemberList.map((item) => ({ ...item, agile: true })),
+        ...backlogMemberList.map((item) => ({ ...item, backlog: true }))]);
+    });
+  }, [organizationId, projectId]);
   const tableDs = useMemo(() => new DataSet(TableDataSet({
     formatMessage, intlPrefix, projectId, userDs,
   })), [projectId]);
@@ -35,7 +57,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
       'notify-service.message-setting.listByType',
       'notify-service.message-setting.batchUpdateByType',
     ],
-    allSendRoleList: ['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier'],
+    allSendRoleList,
     tableDs,
   };
 
