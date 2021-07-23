@@ -13,18 +13,23 @@ export default ({ record, allSendRoleList, excludesRole = [] }) => {
     prefixCls,
     intl: { formatMessage },
   } = useProjectNotifyStore();
-
+  const isBacklogFeedback = record.get('code') === 'BACKLOG_FEEDBACK';
+  const isSprintDelay = record.get('code') === 'SPRINT_DELAY';
   return (
     <div className={`${prefixCls}-object-content`}>
       <Form record={record}>
-        <SelectBox name="sendRoleList" vertical>
-          {allSendRoleList.filter((item) => !includes(excludesRole, item)).map((item) => (
-            <Option value={item} key={item}>
-              <span className={`${prefixCls}-object-content-checkbox`}>
-                {formatMessage({ id: `${intlPrefix}.object.${record.get('code') === 'BACKLOG_FEEDBACK' ? `backlog_${item}` : item}` })}
-              </span>
-            </Option>
-          ))}
+        <SelectBox name="sendRoleList" vertical style={{ paddingTop: 0 }}>
+          {allSendRoleList.filter((item) => !(isSprintDelay && typeof (item) === 'object') && !includes(excludesRole, item)).filter((item) => (typeof (item) === 'object' ? !!item.backlog === isBacklogFeedback : true)).map((item) => {
+            const value = typeof (item) === 'string' ? item : item.code;
+            const text = typeof (item) === 'string' ? formatMessage({ id: `${intlPrefix}.object.${isBacklogFeedback ? `backlog_${item}` : item}` }) : item.name;
+            return (
+              <Option value={value} key={value}>
+                <span className={`${prefixCls}-object-content-checkbox`}>
+                  {text}
+                </span>
+              </Option>
+            );
+          })}
         </SelectBox>
         {record.get('sendRoleList').includes('specifier') && (
           <Select name="userList" maxTagCount={2} searchable />

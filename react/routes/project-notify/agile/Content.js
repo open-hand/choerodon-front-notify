@@ -81,9 +81,13 @@ export default observer((props) => {
     const data = [];
     const userList = record.get('userList');
     const sendRoleList = record.get('sendRoleList');
+    const isBacklogFeedback = record.get('code') === 'BACKLOG_FEEDBACK';
+
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
-        data.push(formatMessage({ id: `${intlPrefix}.object.${record.get('code') === 'BACKLOG_FEEDBACK' ? `backlog_${key}` : key}` }));
+        const text = ['reporter', 'assignee', 'starUser', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlPrefix}.object.${isBacklogFeedback ? `backlog_${key}` : key}` })
+          : allSendRoleList.find((item) => item.code === key)?.name;
+        data.push(text);
       } else if (userList && userList.length) {
         const names = userList.map(({ realName }) => realName);
         data.push(...names);
