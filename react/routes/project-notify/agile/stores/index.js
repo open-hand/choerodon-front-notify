@@ -21,16 +21,22 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const {
     children,
     intl: { formatMessage },
-    AppState: { currentMenuType: { projectId, organizationId } },
+    AppState: { currentMenuType: { projectId, organizationId, categories } },
   } = props;
   const {
     userDs,
   } = useProjectNotifyStore();
-
   const intlPrefix = 'project.notify';
+  const projectCategoryCodes = useMemo(() => categories?.map((i) => i.code) || [], [categories]);
   const [allSendRoleList, setAllSendRoleList] = useState(['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier']);
   useEffect(() => {
     async function loadAgileRoleList(issueTypeList = 'agileIssueType') {
+      if (issueTypeList === 'agileIssueType' && !projectCategoryCodes.includes('N_AGILE')) {
+        return [];
+      }
+      if (issueTypeList === 'backlogIssueType' && !projectCategoryCodes.includes('N_REQUIREMENT')) {
+        return [];
+      }
       return axios({
         method: 'get',
         url: `/agile/v1/projects/${projectId}/field_value/list/custom_field`,
@@ -42,10 +48,10 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     }
     axios.all([loadAgileRoleList(), loadAgileRoleList('backlogIssueType')]).then((res) => {
       const [agileMemberList, backlogMemberList] = res.map((item) => item.filter((field) => ['member', 'multiMember'].includes(field.fieldType)));
-      setAllSendRoleList(['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier', ...agileMemberList.map((item) => ({ ...item, agile: true })),
-        ...backlogMemberList.map((item) => ({ ...item, backlog: true }))]);
+      setAllSendRoleList(['reporter', 'assignee', 'starUser', 'projectOwner', ...agileMemberList.map((item) => ({ ...item, agile: true })),
+        ...backlogMemberList.map((item) => ({ ...item, backlog: true })), 'specifier']);
     });
-  }, [organizationId, projectId]);
+  }, [organizationId, projectCategoryCodes, projectId]);
   const tableDs = useMemo(() => new DataSet(TableDataSet({
     formatMessage, intlPrefix, projectId, userDs,
   })), [projectId]);
