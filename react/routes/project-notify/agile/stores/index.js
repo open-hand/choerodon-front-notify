@@ -48,7 +48,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     }
     axios.all([loadAgileRoleList(), loadAgileRoleList('backlogIssueType')]).then((res) => {
       const [agileMemberList, backlogMemberList] = res.map((item) => item.filter((field) => ['member', 'multiMember'].includes(field.fieldType)));
-      setAllSendRoleList(['reporter', 'assignee', 'starUser', 'projectOwner', ...agileMemberList.map((item) => ({ ...item, agile: true })),
+      setAllSendRoleList(['reporter', 'assignee', 'mainResponsible', 'starUser', 'projectOwner', ...agileMemberList.map((item) => ({ ...item, agile: true })),
         ...backlogMemberList.map((item) => ({ ...item, backlog: true })), 'specifier']);
     });
   }, [organizationId, projectCategoryCodes, projectId]);
