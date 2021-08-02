@@ -81,8 +81,8 @@ export default observer((props) => {
     const data = [];
     const userList = record.get('userList');
     const sendRoleList = record.get('sendRoleList');
-    const isBacklogFeedback = record.get('code') === 'BACKLOG_FEEDBACK';
-
+    const code = record.get('code');
+    const isBacklogFeedback = code === 'BACKLOG_FEEDBACK';
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
         const text = ['reporter', 'assignee', 'starUser', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlPrefix}.object.${isBacklogFeedback ? `backlog_${key}` : key}` })
@@ -93,11 +93,13 @@ export default observer((props) => {
         data.push(...names);
       }
     });
-    let excludesRole = record.get('code') === 'SPRINT_DELAY' ? ['assignee', 'reporter', 'starUser'] : [];
-    if (record.get('code') === 'ISSUECREATE') {
+    let excludesRole = code === 'SPRINT_DELAY' ? ['assignee', 'reporter', 'starUser', 'mainResponsible'] : [];
+    if (code === 'ISSUECREATE') {
       excludesRole = ['starUser'];
+    } else if (isBacklogFeedback) {
+      excludesRole = ['mainResponsible'];
     }
-    return record.get('code') !== 'ISSUECHANGESTATUS' ? (
+    return code !== 'ISSUECHANGESTATUS' ? (
       <Select
         popupContent={(
           <NotifyObject

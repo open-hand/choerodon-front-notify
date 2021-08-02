@@ -686,6 +686,7 @@ const projectNotify = {
   'project.notify.object.backlog_assignee': '处理人',
   'project.notify.object.projectOwner': '项目所有者',
   'project.notify.object.starUser': '关注人',
+  'project.notify.object.mainResponsible': '主要负责人',
   'project.notify.object.backlog_starUser': '关注人',
   'project.notify.object.backlog_projectOwner': '项目所有者',
   'project.notify.object.pipelineTriggers': '流水线触发者',
