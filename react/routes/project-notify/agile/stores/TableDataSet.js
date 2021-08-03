@@ -47,7 +47,7 @@ export default ({
     { name: 'pmEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.pmEnable` }) },
     { name: 'emailEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.emailEnable` }) },
     {
-      name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: formatMessage({ id: `${intlPrefix}.choose` }),
+      name: 'userList', type: 'object', textField: 'realName', valueField: 'id', multiple: true, label: formatMessage({ id: `${intlPrefix}.choose` }),
     },
     { name: 'sendRoleList', multiple: true },
   ],
