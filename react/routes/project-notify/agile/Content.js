@@ -82,10 +82,33 @@ export default observer((props) => {
     const userList = record.get('userList');
     const sendRoleList = record.get('sendRoleList');
     const code = record.get('code');
-    const isBacklogFeedback = code === 'BACKLOG_FEEDBACK';
+    let excludesRole = [];
+    let intlObjectPrefix = `${intlPrefix}.object.`;
+    switch (code) {
+      case 'ISSUE_DAILY_WORK':
+        return <span>-</span>;
+      case 'ISSUECHANGESTATUS':
+        return <span role="none" className={`${prefixCls}-page-content-link`} onClick={handleLinkStateMachine}>请前往状态机-自定义流转设置</span>;
+      case 'ISSUECREATE': {
+        excludesRole = ['starUser'];
+        break;
+      }
+      case 'BACKLOG_FEEDBACK': {
+        excludesRole = ['mainResponsible'];
+        intlObjectPrefix = `${intlPrefix}.object.backlog_`;
+        break;
+      }
+      case 'SPRINT_DELAY': {
+        excludesRole = ['assignee', 'reporter', 'starUser', 'mainResponsible'];
+        break;
+      }
+      default: {
+        break;
+      }
+    }
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
-        const text = ['reporter', 'assignee', 'starUser', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlPrefix}.object.${isBacklogFeedback ? `backlog_${key}` : key}` })
+        const text = ['reporter', 'assignee', 'starUser', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
           : allSendRoleList.find((item) => item.code === key)?.name;
         data.push(text);
       } else if (userList && userList.length) {
@@ -93,13 +116,7 @@ export default observer((props) => {
         data.push(...names);
       }
     });
-    let excludesRole = code === 'SPRINT_DELAY' ? ['assignee', 'reporter', 'starUser', 'mainResponsible'] : [];
-    if (code === 'ISSUECREATE') {
-      excludesRole = ['starUser'];
-    } else if (isBacklogFeedback) {
-      excludesRole = ['mainResponsible'];
-    }
-    return code !== 'ISSUECHANGESTATUS' ? (
+    return (
       <Select
         popupContent={(
           <NotifyObject
@@ -119,7 +136,7 @@ export default observer((props) => {
         placement="bottomLeft"
         className={`${prefixCls}-object-select`}
       />
-    ) : <span role="none" className={`${prefixCls}-page-content-link`} onClick={handleLinkStateMachine}>请前往状态机-自定义流转设置</span>;
+    );
   }
 
   return (
