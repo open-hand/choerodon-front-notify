@@ -108,7 +108,7 @@ export default observer((props) => {
     }
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
-        const text = ['reporter', 'assignee', 'starUser', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
+        const text = ['reporter', 'assignee', 'starUser', 'mainResponsible', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
           : allSendRoleList.find((item) => item.code === key)?.name;
         data.push(text);
       } else if (userList && userList.length) {
@@ -125,6 +125,8 @@ export default observer((props) => {
             excludesRole={excludesRole}
           />
         )}
+        popupStyle={{ minWidth: '3.2rem' }}
+        dropdownMatchSelectWidth={false}
         renderer={() => (
           <Tooltip title={data.join()}>
             <div className={`${prefixCls}-object-select-render`}>
@@ -153,6 +155,7 @@ export default observer((props) => {
           />
           <Column
             header={() => renderCheckBoxHeader('emailEnable', 'emailEnabledFlag')}
+            width={200}
             renderer={({ record }) => renderCheckBox({ record, name: 'emailEnable', nameFlag: 'emailEnabledFlag' })}
             align="left"
           />
