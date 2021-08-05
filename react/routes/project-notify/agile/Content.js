@@ -117,27 +117,31 @@ export default observer((props) => {
       }
     });
     return (
-      <Select
-        popupContent={(
-          <NotifyObject
-            record={record}
-            allSendRoleList={allSendRoleList}
-            excludesRole={excludesRole}
+      <Tooltip title={data.join()}>
+        <span>
+          <Select
+            popupContent={(
+              <NotifyObject
+                record={record}
+                allSendRoleList={allSendRoleList}
+                excludesRole={excludesRole}
+              />
+            )}
+            popupCls={`${prefixCls}-object-select-popup`}
+            popupStyle={{ maxWidth: '3.2rem' }}
+            dropdownMatchSelectWidth={false}
+            renderer={() => (
+              <div className={`${prefixCls}-object-select-render`}>
+                {data.join() || '-'}
+              </div>
+            )}
+            trigger={['click']}
+            placement="bottomLeft"
+            className={`${prefixCls}-object-select`}
           />
-        )}
-        popupStyle={{ minWidth: '3.2rem' }}
-        dropdownMatchSelectWidth={false}
-        renderer={() => (
-          <Tooltip title={data.join()}>
-            <div className={`${prefixCls}-object-select-render`}>
-              {data.join() || '-'}
-            </div>
-          </Tooltip>
-        )}
-        trigger={['click']}
-        placement="bottomLeft"
-        className={`${prefixCls}-object-select`}
-      />
+        </span>
+      </Tooltip>
+
     );
   }
 
@@ -147,15 +151,19 @@ export default observer((props) => {
       <Prompt message={promptMsg} wrapper="c7n-iam-confirm-modal" when={tableDs.dirty} />
       <Content className={`${prefixCls}-page-content`}>
         <Table dataSet={tableDs}>
-          <Column name="name" />
+          <Column
+            name="name"
+            width={210}
+          />
           <Column
             header={() => renderCheckBoxHeader('pmEnable', 'pmEnabledFlag')}
+            width={160}
             renderer={({ record }) => renderCheckBox({ record, name: 'pmEnable', nameFlag: 'pmEnabledFlag' })}
             align="left"
           />
           <Column
             header={() => renderCheckBoxHeader('emailEnable', 'emailEnabledFlag')}
-            width={200}
+            width={160}
             renderer={({ record }) => renderCheckBox({ record, name: 'emailEnable', nameFlag: 'emailEnabledFlag' })}
             align="left"
           />
