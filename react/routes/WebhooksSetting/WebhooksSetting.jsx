@@ -134,8 +134,6 @@ const WebhooksSetting = () => {
       title: '删除Webhook',
       children: '确定删除该条Webhook吗？',
       okText: '删除',
-      okProps: { color: 'red' },
-      cancelProps: { color: 'dark' },
     };
     const res = await webhooksDataSet.delete(record, modalProps);
     if (res && res.success) {
