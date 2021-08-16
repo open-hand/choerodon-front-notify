@@ -15,16 +15,16 @@ const footerButtons = (props) => {
     <div className="project-notify-buttons">
       <Button
         funcType="raised"
+        onClick={onCancel}
+        className="project-notify-buttons-right"
+      ><FormattedMessage id="cancel" />
+      </Button>
+      <Button
+        funcType="raised"
         color="primary"
         onClick={onOk}
       >
         <FormattedMessage id="save" />
-      </Button>
-      <Button
-        funcType="raised"
-        onClick={onCancel}
-        className="project-notify-buttons-right"
-      ><FormattedMessage id="cancel" />
       </Button>
     </div>
   );
