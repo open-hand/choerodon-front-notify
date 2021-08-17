@@ -184,8 +184,8 @@ export default class Announcement extends Component {
 
   handleDelete = (record) => {
     const { intl, AnnouncementStore } = this.props;
-    Modal.confirm({
-      className: 'c7n-iam-confirm-modal',
+    Modal.open({
+      key: Modal.key(),
       title: intl.formatMessage({ id: 'announcement.delete.title' }, { name: record.title }),
       content: intl.formatMessage({ id: `announcement.delete.content${record.status === 'COMPLETED' ? '.send' : ''}` }),
       onOk: () => AnnouncementStore.deleteAnnouncementById(record.id).then(({ failed, message }) => {

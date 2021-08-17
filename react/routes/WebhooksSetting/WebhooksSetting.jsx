@@ -157,11 +157,11 @@ const WebhooksSetting = () => {
   // eslint-disable-next-line consistent-return
   const toggleWebhooks = async (record) => {
     if (record.get('enabledFlag')) {
-      Modal.confirm({
+      Modal.open({
+        key: Modal.key(),
         title: '停用WebHook',
         children: `确定${record.get('enabledFlag') ? '停用' : '启用'}该WebHook吗？`,
         onOk: () => handleToggleWebhooks(record),
-        // eslint-disable-next-line consistent-return
       });
     } else {
       handleToggleWebhooks(record);
