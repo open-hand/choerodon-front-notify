@@ -48,8 +48,8 @@ function ReceiveSetting(props) {
 
   const handleCheckAllChange = (type) => {
     if (ReceiveSettingStore.isAllSelected(type)) {
-      Modal.confirm({
-        className: 'c7n-iam-confirm-modal',
+      Modal.open({
+        key: Modal.key(),
         title: intl.formatMessage({ id: `${intlPrefix}.uncheck-all.title` }, { name: intl.formatMessage({ id: type }) }),
         content: intl.formatMessage({ id: `${intlPrefix}.uncheck-all.content` }),
         onOk: () => {

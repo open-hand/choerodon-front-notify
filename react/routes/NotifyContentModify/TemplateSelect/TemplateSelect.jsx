@@ -1,9 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { DataSet, Form, Output, message, Table, Modal } from 'choerodon-ui/pro';
-import { Modal as OldModal } from 'choerodon-ui/';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { message, Table, Modal } from 'choerodon-ui/pro';
+import { FormattedMessage } from 'react-intl';
 import { Action, axios, Choerodon } from '@choerodon/boot';
-import { observer } from 'mobx-react-lite';
 import store from '../Store';
 import DetailTemplate from '../DetailTemplate';
 import FormHeader from '../common/FormHeader';
@@ -71,9 +69,9 @@ export default (props) => {
     });
   }
   const deleteLink = (record) => {
-    OldModal.confirm({
-      className: 'c7n-iam-confirm-modal',
+    Modal.open({
       title: '确认删除模板',
+      key: Modal.key(),
       content: `确认删除模板"${record.get('name')}"吗？`,
       onOk: async () => {
         try {

@@ -55,7 +55,7 @@ export default class Editor extends Component {
 
   // 点击code按钮
   changeToHtml = () => {
-    Modal.confirm({
+    Modal.open({
       title: 'html代码编辑器',
       content: '切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？',
       onOk: () => {
