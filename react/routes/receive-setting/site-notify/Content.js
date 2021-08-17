@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
-import { Content, Breadcrumb, Choerodon, TabPage } from '@choerodon/boot';
+import {
+  Content, Breadcrumb, Choerodon, TabPage,
+} from '@choerodon/boot';
 import { Table, CheckBox, Button } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import { Prompt } from 'react-router-dom';
@@ -11,7 +13,7 @@ import './index.less';
 
 const { Column } = Table;
 
-export default observer(props => {
+export default observer((props) => {
   const {
     intlPrefix,
     prefixCls,
@@ -45,7 +47,7 @@ export default observer(props => {
       }
     });
   }
-  
+
   function renderCheckBoxHeader(dataSet, name) {
     const disabled = !tableDs.find((record) => !record.get(`${name}Disabled`));
     const isChecked = !disabled && tableDs.totalCount && !tableDs.find((record) => !record.get(name) && !record.get(`${name}Disabled`));
@@ -135,16 +137,17 @@ export default observer(props => {
         <div className={`${prefixCls}-buttons`}>
           <Button
             funcType="raised"
+            onClick={refresh}
+            style={{ marginLeft: 16, color: '#3F51B5' }}
+          >
+            <FormattedMessage id="cancel" />
+          </Button>
+          <Button
+            funcType="raised"
             color="primary"
             onClick={saveSettings}
           >
             <FormattedMessage id="save" />
-          </Button>
-          <Button
-            funcType="raised"
-            onClick={refresh}
-            style={{ marginLeft: 16, color: '#3F51B5' }}
-          ><FormattedMessage id="cancel" />
           </Button>
         </div>
       </Content>
