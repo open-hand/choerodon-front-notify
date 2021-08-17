@@ -193,17 +193,17 @@ export default observer((props) => {
         <div className={`${prefixCls}-buttons`}>
           <Button
             funcType="raised"
-            color="primary"
-            onClick={saveSettings}
-          >
-            <FormattedMessage id="save" />
-          </Button>
-          <Button
-            funcType="raised"
             onClick={refresh}
             style={{ marginLeft: 16, color: '#3F51B5' }}
           >
             <FormattedMessage id="cancel" />
+          </Button>
+          <Button
+            funcType="raised"
+            color="primary"
+            onClick={saveSettings}
+          >
+            <FormattedMessage id="save" />
           </Button>
         </div>
       </Content>
