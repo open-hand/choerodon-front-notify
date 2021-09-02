@@ -32,7 +32,7 @@ export default ({ record, allSendRoleList, excludesRole = [] }) => {
             const value = typeof (item) === 'string' ? item : item.code;
             const text = typeof (item) === 'string' ? formatMessage({ id: `${intlPrefix}.object.${isBacklogFeedback ? `backlog_${item}` : item}` }) : item.name;
             return (
-              <Option value={value} key={value}>
+              <Option value={value} key={value} className={`${prefixCls}-object-content-option`}>
                 <span className={`${prefixCls}-object-content-checkbox`}>
                   {text}
                 </span>
