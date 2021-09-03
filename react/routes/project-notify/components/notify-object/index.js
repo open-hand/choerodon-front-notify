@@ -6,7 +6,7 @@ import { useProjectNotifyStore } from '../../stores';
 import './index.less';
 
 const { Option } = Select;
-export default ({ record, allSendRoleList, excludesRole = [] }) => {
+const NotifyObject = ({ record, allSendRoleList, excludesRole = [] }) => {
   const {
     intlPrefix,
     prefixCls,
@@ -52,9 +52,10 @@ export default ({ record, allSendRoleList, excludesRole = [] }) => {
           </div>
         )} */}
         {record.get('sendRoleList').includes('specifier') && mount('agile:SelectUser', {
-          name: 'userList', maxTagCount: 2, getPopupContainer: (e) => e.parentNode, clearButton: true, selectedUser: defaultSelectUser,
+          name: 'userList', maxTagCount: 2, style: { marginTop: -15, width: '100%' }, getPopupContainer: (e) => e.parentNode, clearButton: true, selectedUser: defaultSelectUser,
         })}
       </Form>
     </div>
   );
 };
+export default NotifyObject;
