@@ -1,5 +1,8 @@
 @import "../../common/style/mixin/template";
 
+.c7n-calendar-picker-container {
+  top: 1.25rem !important;
+}
 .c7n-iam-announcement {
   .c7n-table-thead {
     th {
@@ -9,13 +12,13 @@
   .c7n-table-filter-select-icon {
     top: -0.05rem;
     bottom: 0;
-    left: .17rem;
+    left: 0.17rem;
   }
   .c7n-select-selection__rendered {
     min-height: 0;
     .c7n-select-selection__placeholder {
-      left: .09rem;
-      top: .1rem;
+      left: 0.09rem;
+      top: 0.1rem;
     }
   }
   .link {
@@ -79,8 +82,8 @@
   &-sidebar {
     .c7n-modal {
       &-header {
-        height: .55rem;
-        min-height: .55rem;
+        height: 0.55rem;
+        min-height: 0.55rem;
         .c7n-modal-title {
           font-weight: 500;
         }
@@ -103,7 +106,7 @@
   }
 
   &-siderbar-content {
-    padding-bottom: .3rem;
+    padding-bottom: 0.3rem;
     .radioGroup {
       > label:first-child {
         margin-right: 60px;
