@@ -1,7 +1,7 @@
 @import "../../common/style/mixin/template";
 
 .c7n-calendar-picker-container {
-  top: 1.25rem !important;
+  margin-top: 34px !important;
 }
 .c7n-iam-announcement {
   .c7n-table-thead {
@@ -121,7 +121,6 @@
     }
 
     .content-text {
-      //font-size: 14px;
       color: var(--text-color3);
       line-height: 20px;
     }

@@ -505,7 +505,6 @@ export default class Announcement extends Component {
                     disabledDate={this.disabledEndDate}
                     disabledTime={this.disabledDateEndTime}
                     showTime={{ defaultValue: moment() }}
-                    getCalendarContainer={(that) => that}
                     onChange={this.onEndChange}
                     onOpenChange={this.clearEndTimes}
                   />,
