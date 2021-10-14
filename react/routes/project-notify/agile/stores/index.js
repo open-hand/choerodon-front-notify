@@ -28,7 +28,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   } = useProjectNotifyStore();
   const intlPrefix = 'project.notify';
   const projectCategoryCodes = useMemo(() => categories?.map((i) => i.code) || [], [categories]);
-  const [allSendRoleList, setAllSendRoleList] = useState(['reporter', 'assignee', 'starUser', 'projectOwner', 'specifier']);
+  const [allSendRoleList, setAllSendRoleList] = useState(['reporter', 'assignee', 'participant', 'starUser', 'projectOwner', 'specifier']);
   useEffect(() => {
     async function loadAgileRoleList(issueTypeList = 'agileIssueType') {
       if (issueTypeList === 'agileIssueType' && !projectCategoryCodes.includes('N_AGILE')) {
@@ -48,7 +48,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     }
     axios.all([loadAgileRoleList(), loadAgileRoleList('backlogIssueType')]).then((res) => {
       const [agileMemberList, backlogMemberList] = res.map((item) => item.filter((field) => ['member', 'multiMember'].includes(field.fieldType)));
-      setAllSendRoleList(['reporter', 'assignee', 'mainResponsible', 'starUser', 'projectOwner', ...agileMemberList.map((item) => ({ ...item, agile: true })),
+      setAllSendRoleList(['reporter', 'assignee', 'participant', 'mainResponsible', 'starUser', 'projectOwner', ...agileMemberList.map((item) => ({ ...item, agile: true })),
         ...backlogMemberList.map((item) => ({ ...item, backlog: true })), 'specifier']);
     });
   }, [organizationId, projectCategoryCodes, projectId]);

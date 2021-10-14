@@ -94,12 +94,12 @@ export default observer((props) => {
         break;
       }
       case 'BACKLOG_FEEDBACK': {
-        excludesRole = ['mainResponsible'];
+        excludesRole = ['mainResponsible', 'participant'];
         intlObjectPrefix = `${intlPrefix}.object.backlog_`;
         break;
       }
       case 'SPRINT_DELAY': {
-        excludesRole = ['assignee', 'reporter', 'starUser', 'mainResponsible'];
+        excludesRole = ['assignee', 'reporter', 'starUser', 'mainResponsible', 'participant'];
         break;
       }
       default: {
@@ -108,7 +108,7 @@ export default observer((props) => {
     }
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
-        const text = ['reporter', 'assignee', 'starUser', 'mainResponsible', 'projectOwner'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
+        const text = ['reporter', 'assignee', 'starUser', 'mainResponsible', 'projectOwner', 'participant'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
           : allSendRoleList.find((item) => item.code === key)?.name;
         data.push(text);
       } else if (userList && userList.length) {
