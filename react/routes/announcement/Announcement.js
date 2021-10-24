@@ -13,7 +13,7 @@ import {
   Content, Header, Page, Permission, Breadcrumb, Action, Choerodon, StatusTag,
 } from '@choerodon/boot';
 import { HeaderButtons } from '@choerodon/master';
-import './Announcement.scss';
+import './Announcement.less';
 import Editor from '../../components/editor';
 import MouseOverWrapper from '../../components/mouseOverWrapper';
 

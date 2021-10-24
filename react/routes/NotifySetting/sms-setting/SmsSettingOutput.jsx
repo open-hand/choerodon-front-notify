@@ -8,7 +8,7 @@ import {
 } from '@choerodon/boot';
 import { HeaderButtons } from '@choerodon/master';
 import store from '../Store';
-import './SmsSetting.scss';
+import './SmsSetting.less';
 import SmsSettingForm from './SmsSettingForm';
 
 const OutputEmptyValue = ({ value }) => (value ? <span>{value}</span> : <span>无</span>);
