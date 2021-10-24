@@ -8,7 +8,7 @@ import {
 import { HeaderButtons } from '@choerodon/master';
 import store from '../Store';
 import MailSettingForm from './MailSettingForm';
-import './MailSetting.scss';
+import './MailSetting.less';
 
 const OutputEmptyValue = ({ value }) => (value ? <span>{value}</span> : <span>无</span>);
 
