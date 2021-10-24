@@ -2,45 +2,47 @@
 
 .c7n-iam-react-quill-editor {
   position: relative;
-  background: #fff;
 
-  @include template;
+  .template();
 
   /* default header */
   .ql-snow .ql-picker.ql-header .ql-picker-label::before,
   .ql-snow .ql-picker.ql-header .ql-picker-item::before {
-    content: '标准';
+    content: "标准";
   }
 
   /* default font */
   .ql-snow .ql-picker.ql-font .ql-picker-label::before,
   .ql-snow .ql-picker.ql-font .ql-picker-item::before {
-    content: '默认';
+    content: "默认";
+    content: "默认";
   }
 
-  .ql-header,.ql-font,.ql-size {
+  .ql-header,
+  .ql-font,
+  .ql-size {
     &.ql-picker {
-      width: .68rem;
+      width: 0.68rem;
     }
   }
 
   .ql-open {
-    width: .68rem !important;
+    width: 0.68rem !important;
     &::before {
-      content: '展开更多';
+      content: "展开更多";
     }
   }
   .ql-close {
-    width: .68rem !important;
+    width: 0.68rem !important;
     &::before {
-      content: '收起';
+      content: "收起";
     }
   }
 
   .ql-fullscreen {
-    width: .62rem !important;
+    width: 0.62rem !important;
     &::before {
-      content: '全屏编辑';
+      content: "全屏编辑";
     }
   }
 
@@ -49,25 +51,26 @@
   }
 
   /* font-size start */
-  @mixin ql-picker-size($size) {
-    &[data-value='#{$size}']::before {
-      content: quote($size);
-      font-size: $size;
+  .ql-picker-size(@size) {
+    &[data-value="#{@size}"]::before {
+      content: @size;
+      font-size: @size;
     }
   }
 
-  @for $i from 10 to 21 {
+  .loop-picker(@i) when (@i <21) {
     .ql-snow .ql-picker.ql-size .ql-picker-label,
     .ql-snow .ql-picker.ql-size .ql-picker-item {
-      @include ql-picker-size(#{$i}px);
+      .ql-picker-size(@i);
     }
-    $i: $i + 1;
+    .loop-picker(@i+1);
   }
+  .loop-picker(10);
   /* font-size end */
 
   /* link start */
   .ql-snow .ql-tooltip {
-    &[data-mode=link]::before {
+    &[data-mode="link"]::before {
       content: "输入链接:";
     }
 
@@ -76,16 +79,16 @@
     }
 
     &.ql-editing a.ql-action::after {
-      content: '保存';
+      content: "保存";
     }
 
     & a {
       &.ql-action::after {
-        content: '编辑';
+        content: "编辑";
       }
 
       &.ql-remove::before {
-        content: '移除链接';
+        content: "移除链接";
       }
     }
   }
@@ -93,85 +96,85 @@
 
   .ql-snow .ql-picker.ql-font .ql-picker-label,
   .ql-snow .ql-picker.ql-font .ql-picker-item {
-    &[data-value=STSong]::before {
+    &[data-value="STSong"]::before {
       content: "华文宋体";
-      font-family: "STSong", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STSong", sans-serif;
     }
 
-    &[data-value=STKaiti]::before {
+    &[data-value="STKaiti"]::before {
       content: "华文楷体";
-      font-family: "STKaiti", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STKaiti", sans-serif;
     }
 
-    &[data-value=STHeiti]::before {
+    &[data-value="STHeiti"]::before {
       content: "华文黑体";
-      font-family: "STHeiti", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STHeiti", sans-serif;
     }
 
-    &[data-value=STFangsong]::before {
+    &[data-value="STFangsong"]::before {
       content: "华文仿宋";
-      font-family: "STFangsong", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STFangsong", sans-serif;
     }
 
-    &[data-value=SimSun]::before {
+    &[data-value="SimSun"]::before {
       content: "宋体";
-      font-family: "SimSun", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "SimSun", sans-serif;
     }
 
-    &[data-value=SimHei]::before {
+    &[data-value="SimHei"]::before {
       content: "黑体";
-      font-family: "SimHei", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "SimHei", sans-serif;
     }
 
-    &[data-value=KaiTi]::before {
+    &[data-value="KaiTi"]::before {
       content: "楷体";
-      font-family: "KaiTi", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "KaiTi", sans-serif;
     }
 
-    &[data-value=FangSong]::before {
+    &[data-value="FangSong"]::before {
       content: "仿宋";
-      font-family: "FangSong", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "FangSong", sans-serif;
     }
 
-    &[data-value=Microsoft-YaHei]::before {
+    &[data-value="Microsoft-YaHei"]::before {
       content: "微软雅黑";
-      font-family: "Microsoft-YaHei", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "Microsoft-YaHei", sans-serif;
     }
 
     .ql-font-STSong {
-      font-family: "STSong", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STSong", sans-serif;
     }
 
     .ql-font-STKaiti {
-      font-family: "STKaiti", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STKaiti", sans-serif;
     }
 
     .ql-font-STHeiti {
-      font-family: "STHeiti", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STHeiti", sans-serif;
     }
 
     .ql-font-STFangsong {
-      font-family: "STFangsong", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "STFangsong", sans-serif;
     }
 
     .ql-font-SimSun {
-      font-family: "SimSun", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "SimSun", sans-serif;
     }
 
     .ql-font-KaiTi {
-      font-family: "KaiTi", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "KaiTi", sans-serif;
     }
 
     .ql-font-SimHei {
-      font-family: "SimHei", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "SimHei", sans-serif;
     }
 
     .ql-font-FangSong {
-      font-family: "FangSong", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "FangSong", sans-serif;
     }
 
     .ql-font-Microsoft-YaHei {
-      font-family: "Microsoft YaHei", 'Monospaced Number', 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: "Microsoft YaHei", sans-serif;
     }
   }
 
@@ -184,9 +187,8 @@
   position: absolute;
   top: 0;
   width: 100%;
-  height: 100%;
+  height: 320px;
   border: 1px solid #ccc;
-  border-bottom: 0;
   line-height: 1.42;
   outline: none;
   background: #fff;
@@ -195,7 +197,7 @@
     border-bottom: 2px solid #ccc;
     height: 42px;
     box-sizing: border-box;
-    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     line-height: 42px;
     padding-left: 16px;
     background: #fff;
@@ -294,7 +296,7 @@
 
   &-hint {
     font-size: 13px;
-    color: rgba(0, 0, 0, .65);
+    color: rgba(0, 0, 0, 0.65);
     line-height: 20px;
     margin-top: 16px;
   }
