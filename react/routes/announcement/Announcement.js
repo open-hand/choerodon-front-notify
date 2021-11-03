@@ -23,18 +23,12 @@ configure({ enforceActions: false });
 const patternHTMLEmpty = /^(((<[^i>]+>)*\s*)|&nbsp;|\s)*$/g;
 const modalKey = ProModal.key();
 const iconType = {
-  // COMPLETED: 'COMPLETED',
-  // SENDING: 'RUNNING',
-  // WAITING: 'WAITING',
-  // FAILED: 'FAILED',
   PUBLISHED: 'COMPLETED',
   WAITING: 'UN_START',
-  // DELETED: 'DELETED',
 };
 
 const colorCode = {
   PUBLISHED: '#00BFA5',
-  // DELETED: '#d3d3d3',
   WAITING: '#ffb100',
 };
 
@@ -637,9 +631,7 @@ export default class Announcement extends Component {
           />
         </Header>
         <Breadcrumb />
-        <Content
-          className="c7n-iam-announcement-pt0"
-        >
+        <Content>
           <Table
             loading={loading}
             className="c7n-iam-announcement"
