@@ -3,7 +3,12 @@ import ReactQuill, { Quill } from 'react-quill';
 import { axios, Choerodon } from '@choerodon/boot';
 import 'react-quill/dist/quill.snow.css';
 import './Editor.less';
-import { Modal, Input, Button, Form, Tabs, Upload, Icon } from 'choerodon-ui';
+import {
+  Modal, Input, Button, Form, Tabs, Upload, Icon,
+} from 'choerodon-ui';
+import {
+  Modal as ProModal,
+} from 'choerodon-ui/pro';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import ChoerodonEditor from '../choerodonEditor';
 import CustomToolbar from './CustomToolbar';
@@ -23,7 +28,6 @@ Quill.register(Size, true);
 const Font = Quill.import('attributors/style/font');
 Font.whitelist = ['STSong', 'STKaiti', 'STHeiti', 'STFangsong', 'SimSun', 'KaiTi', 'SimHei', 'FangSong', 'Microsoft-YaHei'];
 Quill.register(Font, true);
-
 
 @Form.create()
 @injectIntl
@@ -55,9 +59,9 @@ export default class Editor extends Component {
 
   // 点击code按钮
   changeToHtml = () => {
-    Modal.open({
+    ProModal.open({
       title: 'html代码编辑器',
-      content: '切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？',
+      children: '切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？',
       onOk: () => {
         this.props.onChange(this.originValue);
         this.setState({ isCode: true });
@@ -124,6 +128,7 @@ export default class Editor extends Component {
         Authorization: `bearer ${Choerodon.getCookie('access_token')}`,
       },
       showUploadList: false,
+      // eslint-disable-next-line consistent-return
       beforeUpload: (file) => {
         const { size } = file;
         if (size > limitSize * 1024) {
@@ -202,7 +207,6 @@ export default class Editor extends Component {
     });
   }
 
-
   /**
    *
    * @param content HTML格式的内容
@@ -218,15 +222,15 @@ export default class Editor extends Component {
     const props = this.getUploadProps();
     const { localSrc } = this.state;
     return (
-      <React.Fragment>
+      <>
         <Dragger className="c7n-iam-editor-dragger" {...props}>
           {
             localSrc ? (
-              <React.Fragment>
+              <>
                 <div style={{ backgroundImage: `url(${localSrc})` }} className="c7n-iam-editor-dragger-preview-pic" />
-              </React.Fragment>
+              </>
             ) : (
-              <React.Fragment>
+              <>
                 <Icon type="inbox" />
                 <h3 className="c7n-iam-editor-dragger-text">
                   <FormattedMessage id="editor.dragger.text" />
@@ -237,11 +241,11 @@ export default class Editor extends Component {
                     values={{ size: `${limitSize / 1024}M`, access: 'PNG、JPG、JPEG、GIF' }}
                   />
                 </h4>
-              </React.Fragment>
+              </>
             )
           }
         </Dragger>
-      </React.Fragment>
+      </>
     );
   }
 
@@ -250,7 +254,7 @@ export default class Editor extends Component {
     const { getFieldDecorator } = this.props.form;
     const { intl } = this.props;
     return (
-      <React.Fragment>
+      <>
         <div className="c7n-iam-editor-modal-preview-top">
           <Form
             style={{ display: 'inline-block' }}
@@ -291,7 +295,7 @@ export default class Editor extends Component {
           </div>
           <div style={{ backgroundImage: `url(${previewUrl})` }} className="c7n-iam-editor-modal-preview-pic" />
         </div>
-      </React.Fragment>
+      </>
     );
   }
 
@@ -329,7 +333,9 @@ export default class Editor extends Component {
 
   render() {
     const { value } = this.props;
-    const { isCode, isShowModal, htmlString, submitting, localSrc, type } = this.state;
+    const {
+      isCode, isShowModal, htmlString, submitting, localSrc, type,
+    } = this.state;
     const style = { ...this.defaultStyle, ...this.props.style };
     const editHeight = style.height - 42;
     const modalFooter = [
