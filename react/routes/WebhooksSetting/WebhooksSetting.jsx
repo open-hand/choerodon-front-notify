@@ -171,11 +171,19 @@ const WebhooksSetting = () => {
   useEffect(() => {
     const items = document.getElementsByClassName('webhook_nameRenderContent');
     if (items.length && items.length > 0) {
-      items.forEach((i, iIndex) => {
+      // eslint-disable-next-line no-plusplus
+      for (let k = 0; k < items.length; k++) {
+        const i = items[k];
+        const iIndex = k;
         if (i.scrollWidth > i.clientWidth) {
           webhooksDataSet.records[iIndex].set('isScrolling', true);
         }
-      });
+      }
+      // items.forEach((i, iIndex) => {
+      //   if (i.scrollWidth > i.clientWidth) {
+      //     webhooksDataSet.records[iIndex].set('isScrolling', true);
+      //   }
+      // });
     }
   }, [width]);
 
