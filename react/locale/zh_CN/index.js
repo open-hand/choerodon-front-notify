@@ -1880,4 +1880,4 @@ const zh_CN = {
 
 };
 /* eslint-disable-next-line */
-export default zh_CN;
+export  {zh_CN};

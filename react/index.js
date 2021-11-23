@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { inject, observer } from 'mobx-react';
-import { asyncLocaleProvider, asyncRouter, nomatch } from '@choerodon/boot';
+import { useRouteMatch } from 'react-router';
+import {
+  asyncLocaleProvider, asyncRouter, nomatch, PermissionRoute, useCurrentLanguage,
+} from '@choerodon/master';
 import { ModalContainer } from 'choerodon-ui/pro';
-import { PermissionRoute } from '@choerodon/master';
 
 const msgRecord = asyncRouter(() => import('./routes/global/msg-record'));
 const announcement = asyncRouter(() => import('./routes/announcement'));
@@ -13,7 +14,9 @@ const notifyList = asyncRouter(() => import('./routes/NotifyList/route'));
 const webhooksSetting = asyncRouter(() => import('./routes/WebhooksSetting'));
 const projectNotify = asyncRouter(() => import('./routes/project-notify'));
 
-function LowCodeIndex({ match, AppState: { currentLanguage: language } }) {
+function LowCodeIndex() {
+  const language = useCurrentLanguage();
+  const match = useRouteMatch();
   const IntlProviderAsync = asyncLocaleProvider(language, () => import(`./locale/${language}`));
   return (
     <IntlProviderAsync>
@@ -57,4 +60,4 @@ function LowCodeIndex({ match, AppState: { currentLanguage: language } }) {
   );
 }
 
-export default inject('AppState')(LowCodeIndex);
+export default LowCodeIndex;
