@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
-import { Choerodon } from '@choerodon/boot';
+import { Choerodon, useFormatMessage } from '@choerodon/master';
 import { DataSet } from 'choerodon-ui/pro';
 import UserOptionsDataSet from './UserOptionsDataSet';
 
@@ -21,12 +21,16 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
 
   const userDs = useMemo(() => new DataSet(UserOptionsDataSet(projectId)), [projectId]);
 
+  const intlPrefix = 'c7ncd.project.notify';
+
+  const formatProjectNotify = useFormatMessage(intlPrefix);
+
   const value = {
     ...props,
-    intlPrefix: 'project.notify',
     prefixCls: 'project-notify',
     permissions: [],
-    promptMsg: formatMessage({ id: 'global.menusetting.prompt.inform.title' }) + Choerodon.STRING_DEVIDER + formatMessage({ id: 'global.menusetting.prompt.inform.message' }), 
+    formatProjectNotify,
+    promptMsg: formatMessage({ id: 'global.menusetting.prompt.inform.title' }) + Choerodon.STRING_DEVIDER + formatMessage({ id: 'global.menusetting.prompt.inform.message' }),
     userDs,
   };
 

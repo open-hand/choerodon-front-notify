@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export default () => {
+export default (formatProjectNotify, formatCommon) => {
   function handleLoadTime(startTime, endTime) {
     if (startTime && endTime) {
       const releaseDate = moment(endTime);
@@ -40,7 +40,7 @@ export default () => {
     fields: [{
       name: 'messageName',
       type: 'string',
-      label: '触发事件',
+      label: formatProjectNotify({ id: 'triggerEvents' }),
     }, {
       name: 'creationDate',
       type: 'string',
@@ -48,11 +48,11 @@ export default () => {
     }, {
       name: 'statusMeaning',
       type: 'string',
-      label: '执行状态',
+      label: formatCommon({ id: 'states' }),
     }, {
       name: 'webHookAddress',
       type: 'string',
-      label: 'Webhook地址',
+      label: formatProjectNotify({ id: 'webhook.address' }),
     }],
   });
 };

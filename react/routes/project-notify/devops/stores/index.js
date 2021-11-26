@@ -22,7 +22,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     userDs,
   } = useProjectNotifyStore();
 
-  const intlPrefix = 'project.notify';
+  const intlPrefix = 'c7ncd.project.notify';
 
   const tableDs = useMemo(() => new DataSet(TableDataSet({
     formatMessage, intlPrefix, projectId, userDs,

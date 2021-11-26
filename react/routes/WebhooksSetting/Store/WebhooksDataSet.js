@@ -19,19 +19,19 @@ const typeOptionDataSet = new DataSet({
   ],
 });
 
-export default (id, type, orgId) => ({
+export default (id, type, orgId, formatProjectNotify,formatCommon) => ({
   autoQuery: true,
   selection: false,
   fields: [
     {
-      name: 'name', type: 'string', label: '触发事件', required: true,
+      name: 'name', type: 'string', label: formatProjectNotify({id:'triggerEvents'}), required: true,
     },
     {
-      name: 'webhookAddress', type: 'string', label: 'Webhook地址', required: true,
+      name: 'webhookAddress', type: 'string', label: formatProjectNotify({id:'webhook.address'}), required: true,
     },
-    { name: 'serverType', type: 'string', label: 'Webhook类型' },
+    { name: 'serverType', type: 'string', label:  formatProjectNotify({id:'webhook.type'}) },
     {
-      name: 'enabledFlag', type: 'number', label: '状态', required: true,
+      name: 'enabledFlag', type: 'number', label: formatCommon({id:'states'}), required: true,
     },
   ],
   queryFields: [
