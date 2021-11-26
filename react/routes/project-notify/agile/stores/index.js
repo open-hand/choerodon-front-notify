@@ -26,7 +26,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const {
     userDs,
   } = useProjectNotifyStore();
-  const intlPrefix = 'project.notify';
+  const intlPrefix = 'c7ncd.project.notify';
   const projectCategoryCodes = useMemo(() => categories?.map((i) => i.code) || [], [categories]);
   const [allSendRoleList, setAllSendRoleList] = useState(['reporter', 'assignee', 'participant', 'starUser', 'projectOwner', 'specifier']);
   useEffect(() => {

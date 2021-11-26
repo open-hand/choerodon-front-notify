@@ -1,0 +1,38 @@
+const PROJECT_NOTIFIFY_ZH_CN = {
+  'c7ncd.project.notify.tabs.agile': '敏捷消息',
+  'c7ncd.project.notify.tabs.devops': 'DevOps消息',
+  'c7ncd.project.notify.tabs.resource': '资源删除验证',
+  'c7ncd.project.notify.tabs.webhook': 'Webhook配置',
+  'c7ncd.project.notify.triggerEvents': '触发事件',
+  'c7ncd.project.notify.webhook.address': 'Webhook地址',
+  'c7ncd.project.notify.webhook.type': 'Webhook 类型',
+
+  'c7ncd.project.notify.type': '信息类型',
+  'c7ncd.project.notify.pmEnable': '站内信',
+  'c7ncd.project.notify.emailEnable': '邮件',
+  'c7ncd.project.notify.smsEnable': '短信',
+  'c7ncd.project.notify.noticeObject': '通知对象',
+  'c7ncd.project.notify.noticeObject.resource.tips': '此处的通知对象为验证码的接收者',
+  'c7ncd.project.notify.noticeObject.devops.tips': 'DevOps消息中，除流水线通知外，均不支持修改通知对象',
+  'c7ncd.project.notify.object.handler': '操作者',
+  'c7ncd.project.notify.object.specifier': '指定用户',
+  'c7ncd.project.notify.object.backlog_specifier': '指定用户',
+  'c7ncd.project.notify.object.reporter': '报告人',
+  'c7ncd.project.notify.object.backlog_reporter': '提出方',
+  'c7ncd.project.notify.object.assignee': '经办人',
+  'c7ncd.project.notify.object.backlog_assignee': '处理人',
+  'c7ncd.project.notify.object.projectOwner': '项目所有者',
+  'c7ncd.project.notify.object.starUser': '关注人',
+  'c7ncd.project.notify.object.mainResponsible': '主要负责人',
+  'c7ncd.project.notify.object.backlog_starUser': '关注人',
+  'c7ncd.project.notify.object.participant': '参与人',
+  'c7ncd.project.notify.object.backlog_projectOwner': '项目所有者',
+  'c7ncd.project.notify.object.pipelineTriggers': '流水线触发者',
+  'c7ncd.project.notify.choose': '请选择',
+  'c7ncd.project.notify.empty.title': '验证通知已停用',
+  'c7ncd.project.notify.empty.des': '该类型的消息通知已在平台管理中被停用，若想启用，请联系平台管理员操作',
+};
+
+export {
+  PROJECT_NOTIFIFY_ZH_CN,
+};

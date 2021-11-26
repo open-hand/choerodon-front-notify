@@ -1,7 +1,7 @@
 import React, { createContext, useMemo } from 'react';
 import { DataSet } from 'choerodon-ui/pro';
 import { inject } from 'mobx-react';
-import { injectIntl } from 'react-intl';
+import { useFormatMessage, useFormatCommon } from '@choerodon/master';
 import TriggerEventsSettingDataSet from './TriggerEventsSettingDataSet';
 import WebhooksDataSet from './WebhooksDataSet';
 import WebhookRecordTableDataSet from './WebhookRecordTableDataSet';
@@ -12,17 +12,23 @@ const Store = createContext();
 
 export default Store;
 
-export const StoreProvider = injectIntl(inject('AppState')(
+export const StoreProvider = inject('AppState')(
   (props) => {
-    const { AppState: { currentMenuType: { type, id, orgId } }, intl, children } = props;
+    const { AppState: { currentMenuType: { type, id, orgId } }, children } = props;
+
+    const intlPrefix = 'c7ncd.project.notify';
+
+    const formatProjectNotify = useFormatMessage(intlPrefix);
+    const formatCommon = useFormatCommon();
+
     const webhooksSettingUseStore = useStore();
-    const webhooksDataSet = useMemo(() => new DataSet(WebhooksDataSet(id, type, orgId)), []);
+    const webhooksDataSet = useMemo(() => new DataSet(WebhooksDataSet(id, type, orgId, formatProjectNotify, formatCommon)), []);
     const createTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('create', id, type, orgId, webhooksSettingUseStore)), []);
     const editTriggerEventsSettingDataSet = useMemo(() => new DataSet(TriggerEventsSettingDataSet('edit', id, type, orgId, webhooksSettingUseStore)), []);
     const editWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('edit', id, editTriggerEventsSettingDataSet, orgId, type)), [editTriggerEventsSettingDataSet]);
     const createWebhooksFormDataSet = useMemo(() => new DataSet(WebhooksFormDataSet('create', id, undefined, orgId, type)), []);
     const webhookRecordTableDataSet = useMemo(() => new DataSet(
-      WebhookRecordTableDataSet(id, type, orgId, webhooksSettingUseStore),
+      WebhookRecordTableDataSet(webhooksSettingUseStore, formatProjectNotify, formatCommon),
     ), [webhooksSettingUseStore]);
     const value = {
       projectId: id,
@@ -67,4 +73,4 @@ export const StoreProvider = injectIntl(inject('AppState')(
       </Store.Provider>
     );
   },
-));
+);

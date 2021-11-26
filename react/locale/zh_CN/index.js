@@ -665,37 +665,6 @@ const pageDetail = {
   'time.thirty.days': '近30天',
 };
 
-const projectNotify = {
-  'project.notify.tabs.agile': '敏捷消息',
-  'project.notify.tabs.devops': 'DevOps消息',
-  'project.notify.tabs.resource': '资源删除验证',
-  'project.notify.tabs.webhook': 'Webhook配置',
-  'project.notify.type': '信息类型',
-  'project.notify.pmEnable': '站内信',
-  'project.notify.emailEnable': '邮件',
-  'project.notify.smsEnable': '短信',
-  'project.notify.noticeObject': '通知对象',
-  'project.notify.noticeObject.resource.tips': '此处的通知对象为验证码的接收者',
-  'project.notify.noticeObject.devops.tips': 'DevOps消息中，除流水线通知外，均不支持修改通知对象',
-  'project.notify.object.handler': '操作者',
-  'project.notify.object.specifier': '指定用户',
-  'project.notify.object.backlog_specifier': '指定用户',
-  'project.notify.object.reporter': '报告人',
-  'project.notify.object.backlog_reporter': '提出方',
-  'project.notify.object.assignee': '经办人',
-  'project.notify.object.backlog_assignee': '处理人',
-  'project.notify.object.projectOwner': '项目所有者',
-  'project.notify.object.starUser': '关注人',
-  'project.notify.object.mainResponsible': '主要负责人',
-  'project.notify.object.backlog_starUser': '关注人',
-  'project.notify.object.participant': '参与人',
-  'project.notify.object.backlog_projectOwner': '项目所有者',
-  'project.notify.object.pipelineTriggers': '流水线触发者',
-  'project.notify.choose': '请选择',
-  'project.notify.empty.title': '验证通知已停用',
-  'project.notify.empty.des': '该类型的消息通知已在平台管理中被停用，若想启用，请联系平台管理员操作',
-};
-
 const receiveSetting = {
   'receive.type': '信息类型',
   'receive.type.pm': '站内信',
@@ -1875,9 +1844,10 @@ const zh_CN = {
 
   // page
   ...pageDetail,
-  ...projectNotify,
   ...receiveSetting,
 
 };
 /* eslint-disable-next-line */
 export  {zh_CN};
+
+export * from './project-notify';

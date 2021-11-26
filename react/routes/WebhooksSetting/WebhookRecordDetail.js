@@ -2,20 +2,23 @@ import React, {
   useEffect, useContext, useMemo, useState,
 } from 'react';
 import {
-  Form, DataSet, TextField, Output, Button,
+  Form, DataSet, Output, Button,
 } from 'choerodon-ui/pro';
 import { Popover } from 'choerodon-ui';
+import { useFormatMessage, useFormatCommon } from '@choerodon/master';
 import WebhookRecordDetailDataSet from './Store/WebhookRecordDetailDataSet';
 
 const WebhookRecordDetail = ({
   ds, recordId, itemType, type, id, orgId, useStore,
 }) => {
-  const webhookRecordDetailDataSet = useMemo(() => new DataSet(WebhookRecordDetailDataSet()), []);
+  const intlPrefix = 'c7ncd.project.notify';
+
+  const formatProjectNotify = useFormatMessage(intlPrefix);
+  const formatCommon = useFormatCommon();
+  const webhookRecordDetailDataSet = useMemo(() => new DataSet(WebhookRecordDetailDataSet(formatProjectNotify, formatCommon)), []);
 
   const [requestHeaders, setRequestHeaders] = useState(undefined);
   const [requestBody, setRequestBody] = useState(undefined);
-  const [responseHeaders, setResponseHeaders] = useState(undefined);
-  const [responseBody, setResponseBody] = useState(undefined);
 
   useEffect(() => {
     async function init() {

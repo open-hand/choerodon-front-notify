@@ -57,7 +57,7 @@ const en_US = {
   'global.system-setting.registerEnabled': 'registerEnabled',
   'global.system-setting.registerUrl': 'registerUrl',
   'global.system-setting.registerUrl.error': 'when registerEnabled is yes, the registerUrl is required.',
-  
+
   // passwordPolicy
   'policy.title': 'Password Policy',
   'policy.name': 'Name',
@@ -77,7 +77,6 @@ const en_US = {
   'policy.lowercaseCount': 'lowerCase numbers',
   'policy.regular': 'password regular',
 
-
   // user
   'user.password.update': 'Modify Password',
   'user.password.origin': 'Original password',
@@ -86,7 +85,6 @@ const en_US = {
   'user.password.new.required': 'New Password is required',
   'user.password.confirm': 'Confirm password',
   'user.password.required': 'Password is required',
-
 
   // ldap
   'ldap.name': 'Name',
@@ -248,3 +246,5 @@ const en_US = {
 };
 /* eslint-disable-next-line */
 export  {en_US};
+
+export * from './project-notify';

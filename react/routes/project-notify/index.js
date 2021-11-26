@@ -16,7 +16,7 @@ import './index.less';
 const Content = () => {
   const {
     AppState: { currentMenuType: { categories } },
-    AppState: { currentMenuType },
+    formatProjectNotify,
   } = useProjectNotifyStore();
 
   const categoryCodes = useMemo(() => map(categories || [], 'code'), [categories]);
@@ -24,20 +24,20 @@ const Content = () => {
   const renderPageTab = () => {
     const origin = [{
       route: '/notify/project-notify/webhook',
-      title: 'Webhook配置',
+      title: formatProjectNotify({ id: 'tabs.webhook' }),
       tabKey: 'choerodon.code.project.setting-notify-webhook',
       component: WebhookContent,
     }];
     if (!isEmpty(intersection(categoryCodes, ['N_DEVOPS', 'N_OPERATIONS']))) {
       origin.unshift({
         route: '/notify/project-notify/devops',
-        title: 'DevOps消息',
+        title: formatProjectNotify({ id: 'tabs.devops' }),
         tabKey: 'choerodon.code.project.setting-notify-devops',
         component: DevopsContent,
       }, {
         route: '/notify/project-notify/resource',
         title: <Tips
-          title="资源删除验证"
+          title={formatProjectNotify({ id: 'tabs.resource' })}
           helpText="资源删除验证用于为项目下所有环境中的资源删除操作配置二次确认的通知信息，配置成功后，当用户在执行相应的删除操作时，就需要输入验证码进行二次确认"
           placement="topLeft"
         />,
@@ -48,7 +48,7 @@ const Content = () => {
     if (categoryCodes.includes('N_AGILE')) {
       origin.unshift({
         route: '/notify/project-notify/agile',
-        title: '敏捷消息',
+        title: formatProjectNotify({ id: 'tabs.agile' }),
         tabKey: 'choerodon.code.project.setting-notify-agile',
         component: AgileContent,
       });
