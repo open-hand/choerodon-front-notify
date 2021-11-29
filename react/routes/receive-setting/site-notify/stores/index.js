@@ -5,11 +5,9 @@ import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
 import { DataSet } from 'choerodon-ui/pro';
-import {
-  useFormatMessage,
-} from '@choerodon/master';
 import TableDataSet from './TableDataSet';
 import useStore from './useStore';
+import { useReceiveSettingStore } from '../../stores/index';
 
 const Store = createContext();
 
@@ -22,8 +20,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     children,
     AppState: { getUserInfo: { id } },
   } = props;
-  const intlPrefix = 'c7ncd.receive-setting';
-  const formatClient = useFormatMessage(intlPrefix);
+  const { formatClient, intlPrefix } = useReceiveSettingStore();
 
   const receiveStore = useStore();
   const tableDs = useMemo(() => new DataSet(TableDataSet({

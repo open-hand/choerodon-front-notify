@@ -7,9 +7,6 @@ import {
 } from 'choerodon-ui/pro';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import {
-  useFormatMessage, useFormatCommon,
-} from '@choerodon/master';
 import { useProjectNotifyStore } from './stores';
 import { useReceiveSettingStore } from '../stores';
 
@@ -17,7 +14,7 @@ import './index.less';
 
 const { Column } = Table;
 
-export default observer((props) => {
+export default observer(() => {
   const {
     intlPrefix,
     prefixCls,
@@ -26,11 +23,8 @@ export default observer((props) => {
     AppState: { getUserInfo: { id } },
   } = useProjectNotifyStore();
 
-  const formatClient = useFormatMessage(intlPrefix);
-  const formatCommon = useFormatCommon();
-
   const {
-    promptMsg,
+    promptMsg, formatClient, formatCommon,
   } = useReceiveSettingStore();
 
   const refresh = async () => {

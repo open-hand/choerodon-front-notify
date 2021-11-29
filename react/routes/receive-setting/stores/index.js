@@ -3,6 +3,9 @@ import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
 import { Choerodon } from '@choerodon/boot';
+import {
+  useFormatMessage, useFormatCommon,
+} from '@choerodon/master';
 
 const Store = createContext();
 
@@ -17,13 +20,16 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   } = props;
 
   const intlPrefix = 'c7ncd.receive-setting';
+  const formatClient = useFormatMessage(intlPrefix);
+  const formatCommon = useFormatCommon();
 
   const value = {
     ...props,
-    // intlPrefix: 'user.receive.setting',
     intlPrefix,
     prefixCls: 'user-receive-setting',
     promptMsg: formatMessage({ id: 'global.menusetting.prompt.inform.title' }) + Choerodon.STRING_DEVIDER + formatMessage({ id: 'global.menusetting.prompt.inform.message' }),
+    formatClient,
+    formatCommon,
   };
 
   return (

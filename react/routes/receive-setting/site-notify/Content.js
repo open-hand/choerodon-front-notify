@@ -4,9 +4,6 @@ import {
 } from '@choerodon/boot';
 import { Table, CheckBox, Button } from 'choerodon-ui/pro';
 import { Prompt } from 'react-router-dom';
-import {
-  useFormatMessage, useFormatCommon,
-} from '@choerodon/master';
 import { observer } from 'mobx-react-lite';
 import { useSiteNotifyStore } from './stores';
 import { useReceiveSettingStore } from '../stores';
@@ -17,17 +14,13 @@ const { Column } = Table;
 
 export default observer(() => {
   const {
-    intlPrefix,
     prefixCls,
     tableDs,
     receiveStore,
   } = useSiteNotifyStore();
   const {
-    promptMsg,
+    promptMsg, formatClient, formatCommon,
   } = useReceiveSettingStore();
-
-  const formatClient = useFormatMessage(intlPrefix);
-  const formatCommon = useFormatCommon();
 
   const refresh = async () => {
     await receiveStore.loadReceiveData();

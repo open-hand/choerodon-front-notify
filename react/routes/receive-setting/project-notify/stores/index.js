@@ -10,6 +10,7 @@ import {
 } from '@choerodon/master';
 import TableDataSet from './TableDataSet';
 import useStore from './useStore';
+import { useReceiveSettingStore } from '../../stores/index';
 
 const Store = createContext();
 
@@ -22,8 +23,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     children,
     AppState: { getUserInfo: { id } },
   } = props;
-  const intlPrefix = 'c7ncd.receive-setting';
-  const formatClient = useFormatMessage(intlPrefix);
+  const { formatClient, intlPrefix } = useReceiveSettingStore();
 
   const receiveStore = useStore();
   const tableDs = useMemo(() => new DataSet(TableDataSet({
