@@ -1851,3 +1851,5 @@ const zh_CN = {
 export  {zh_CN};
 
 export * from './project-notify';
+
+export * from './receiveSetting';

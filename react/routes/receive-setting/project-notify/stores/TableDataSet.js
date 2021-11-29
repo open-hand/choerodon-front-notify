@@ -1,9 +1,9 @@
-import { uniqBy } from 'lodash/uniqBy';
-import { map } from 'lodash/map';
-import { includes } from 'lodash/includes';
 import JSONBig from 'json-bigint';
 
-export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default ({
+  formatClient, receiveStore, userId,
+}) => {
   function parentItemIsChecked({ dataSet, record, name }) {
     const parentIsChecked = !dataSet.find((tableRecord) => record.get('key') === tableRecord.get('sourceId') && !tableRecord.get(name) && !tableRecord.get(`${name}Disabled`));
     const disabled = !dataSet.find((tableRecord) => tableRecord.get('sourceId') === record.get('key') && !tableRecord.get(`${name}Disabled`));
@@ -45,10 +45,9 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
             const data = JSONBig.parse(response);
             if (data && data.failed) {
               return data;
-            } else {
-              receiveStore.setAllowConfigData(data);
-              return receiveStore.formatData();
             }
+            receiveStore.setAllowConfigData(data);
+            return receiveStore.formatData();
           } catch (e) {
             return response;
           }
@@ -58,7 +57,9 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
         const res = [];
         const keys = [];
         const data = dataSet.toData();
-        data.forEach(({ pm, email, id, treeType, sourceId, pmDisabled, emailDisabled }) => {
+        data.forEach(({
+          pm, email, id, treeType, sourceId, pmDisabled, emailDisabled,
+        }) => {
           if (treeType === 'item') {
             const projectId = sourceId.split('-')[0];
             keys.push(`${projectId}**${id}`);
@@ -103,10 +104,10 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
     fields: [
       { name: 'parentId', type: 'string' },
       { name: 'sequenceId', type: 'string' },
-      { name: 'name', type: 'string', label: formatMessage({ id: 'receive.type' }) },
-      { name: 'pm', type: 'boolean', label: formatMessage({ id: 'receive.type.pm' }) },
-      { name: 'email', type: 'boolean', label: formatMessage({ id: 'receive.type.email' }) },
-      { name: 'organizationName', type: 'string', label: formatMessage({ id: 'receive.type.organizationName' }) },
+      { name: 'name', type: 'string', label: formatClient({ id: 'projectNotice' }) },
+      { name: 'pm', type: 'boolean', label: formatClient({ id: 'platformNotice' }) },
+      { name: 'email', type: 'boolean', label: formatClient({ id: 'email' }) },
+      { name: 'organizationName', type: 'string', label: formatClient({ id: 'orgName' }) },
     ],
     queryFields: [],
     events: {

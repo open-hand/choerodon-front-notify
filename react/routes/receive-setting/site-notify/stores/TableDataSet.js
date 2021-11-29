@@ -1,4 +1,7 @@
-export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default ({
+  formatClient, receiveStore, userId,
+}) => {
   function parentItemIsChecked({ dataSet, record, name }) {
     const parentIsChecked = !dataSet.find((tableRecord) => record.get('sequenceId') === tableRecord.get('parentId') && !tableRecord.get(name) && !tableRecord.get(`${name}Disabled`));
     const disabled = !dataSet.find((tableRecord) => tableRecord.get('parentId') === record.get('sequenceId') && !tableRecord.get(`${name}Disabled`));
@@ -47,7 +50,9 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
       submit: ({ dataSet }) => {
         const res = [];
         const data = dataSet.toData();
-        data.forEach(({ pm, email, id, parentId, pmDisabled, emailDisabled }) => {
+        data.forEach(({
+          pm, email, id, parentId, pmDisabled, emailDisabled,
+        }) => {
           if (!parentId) return;
           if (!pm && !pmDisabled) {
             res.push({
@@ -78,9 +83,9 @@ export default ({ formatMessage, intlPrefix, receiveStore, userId }) => {
     },
     fields: [
       { name: 'id', type: 'string' },
-      { name: 'name', type: 'string', label: formatMessage({ id: 'receive.type' }) },
-      { name: 'pm', type: 'boolean', label: formatMessage({ id: 'receive.type.pm' }) },
-      { name: 'email', type: 'boolean', label: formatMessage({ id: 'receive.type.email' }) },
+      { name: 'name', type: 'string', label: formatClient({ id: 'projectNotice' }) },
+      { name: 'pm', type: 'boolean', label: formatClient({ id: 'pm' }) },
+      { name: 'email', type: 'boolean', label: formatClient({ id: 'email' }) },
     ],
     queryFields: [],
     events: {

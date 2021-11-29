@@ -1,10 +1,16 @@
-import React, { createContext, useContext, useEffect, useMemo } from 'react';
+import React, {
+  createContext, useContext, useEffect, useMemo,
+} from 'react';
 import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
 import { DataSet } from 'choerodon-ui/pro';
+import {
+  useFormatMessage,
+} from '@choerodon/master';
 import TableDataSet from './TableDataSet';
 import useStore from './useStore';
+import { useReceiveSettingStore } from '../../stores/index';
 
 const Store = createContext();
 
@@ -15,13 +21,14 @@ export function useProjectNotifyStore() {
 export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const {
     children,
-    intl: { formatMessage },
     AppState: { getUserInfo: { id } },
   } = props;
-  const intlPrefix = 'receive.setting.project';
+  const { formatClient, intlPrefix } = useReceiveSettingStore();
 
   const receiveStore = useStore();
-  const tableDs = useMemo(() => new DataSet(TableDataSet({ formatMessage, intlPrefix, receiveStore, userId: id })), []);
+  const tableDs = useMemo(() => new DataSet(TableDataSet({
+    formatClient, receiveStore, userId: id,
+  })), []);
 
   const value = {
     ...props,

@@ -1,9 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import {
   Content, Breadcrumb, Choerodon, TabPage,
 } from '@choerodon/boot';
 import { Table, CheckBox, Button } from 'choerodon-ui/pro';
-import { FormattedMessage } from 'react-intl';
 import { Prompt } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useSiteNotifyStore } from './stores';
@@ -13,24 +12,22 @@ import './index.less';
 
 const { Column } = Table;
 
-export default observer((props) => {
+export default observer(() => {
   const {
-    intlPrefix,
     prefixCls,
-    intl: { formatMessage },
     tableDs,
     receiveStore,
   } = useSiteNotifyStore();
   const {
-    promptMsg,
+    promptMsg, formatClient, formatCommon,
   } = useReceiveSettingStore();
 
-  async function refresh() {
+  const refresh = async () => {
     await receiveStore.loadReceiveData();
     tableDs.query();
-  }
+  };
 
-  async function saveSettings() {
+  const saveSettings = async () => {
     try {
       if (await tableDs.submit() !== false) {
         refresh();
@@ -38,7 +35,7 @@ export default observer((props) => {
     } catch (e) {
       Choerodon.handleResponseError(e);
     }
-  }
+  };
 
   function handleCheckBoxHeaderChange(value, name) {
     tableDs.forEach((record) => {
@@ -59,7 +56,7 @@ export default observer((props) => {
         disabled={disabled}
         onChange={(value) => handleCheckBoxHeaderChange(value, name)}
       >
-        {formatMessage({ id: `receive.type.${name}` })}
+        {formatClient({ id: `${name}` })}
       </CheckBox>
     );
   }
@@ -140,14 +137,14 @@ export default observer((props) => {
             onClick={refresh}
             style={{ marginLeft: 16, color: '#3F51B5' }}
           >
-            <FormattedMessage id="cancel" />
+            {formatCommon({ id: 'cancel' })}
           </Button>
           <Button
             funcType="raised"
             color="primary"
             onClick={saveSettings}
           >
-            <FormattedMessage id="save" />
+            {formatCommon({ id: 'save' })}
           </Button>
         </div>
       </Content>

@@ -248,3 +248,5 @@ const en_US = {
 export  {en_US};
 
 export * from './project-notify';
+
+export * from './receiveSetting';
