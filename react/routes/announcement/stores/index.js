@@ -11,7 +11,7 @@ export default Store;
 export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
     const { AppState: { currentMenuType: { type, id } }, intl, children } = props;
-    const intlPrefix = 'global.announcement';
+    const intlPrefix = 'c7n.announcement';
     const announcementDataSet = useMemo(() => new DataSet(AnnouncementDataSet(intl, intlPrefix)));
     const value = {
       ...props,

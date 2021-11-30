@@ -250,3 +250,4 @@ export  {en_US};
 export * from './project-notify';
 
 export * from './receiveSetting';
+export * from './announcement';

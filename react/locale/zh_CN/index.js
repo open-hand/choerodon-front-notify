@@ -1853,3 +1853,4 @@ export  {zh_CN};
 export * from './project-notify';
 
 export * from './receiveSetting';
+export * from './announcement';
