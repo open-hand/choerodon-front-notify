@@ -1,6 +1,8 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
 
-export default function (optionDs) {
+export default function ({
+  optionDs, intlPrefix, format, formatCommon,
+}) {
   const queryEnabled = new DataSet({
     autoQuery: true,
     paging: false,
@@ -9,8 +11,8 @@ export default function (optionDs) {
       { name: 'value', type: 'string' },
     ],
     data: [
-      { key: true, value: '启用' },
-      { key: false, value: '停用' },
+      { key: true, value: formatCommon({ id: 'enable' }) },
+      { key: false, value: formatCommon({ id: 'stop' }) },
     ],
   });
   const queryAllowConfig = new DataSet({
@@ -21,8 +23,8 @@ export default function (optionDs) {
       { name: 'value', type: 'string' },
     ],
     data: [
-      { key: true, value: '允许' },
-      { key: false, value: '禁止' },
+      { key: true, value: formatCommon({ id: 'allow' }) },
+      { key: false, value: formatCommon({ id: 'ban' }) },
     ],
   });
   return {
@@ -32,39 +34,39 @@ export default function (optionDs) {
     fields: [{
       name: 'messageName',
       type: 'string',
-      label: '消息类型',
+      label: format({ id: 'messageType' }),
     }, {
       name: 'description',
       type: 'string',
-      label: '说明',
+      label: format({ id: 'instructions' }),
     }, {
       name: 'enabled',
       type: 'boolean',
-      label: '状态',
+      label: formatCommon({ id: 'states' }),
     }, {
       name: 'receiveConfigFlag',
       type: 'number',
-      label: '允许配置接收',
+      label: format({ id: 'receiveConfigFlag' }),
     }],
     queryFields: [{
       name: 'messageName',
       type: 'string',
-      label: '消息类型',
+      label: format({ id: 'messageType' }),
     }, {
       name: 'introduce',
       type: 'string',
-      label: '说明',
+      label: format({ id: 'instructions' }),
     }, {
       name: 'enabled',
       type: 'string',
-      label: '状态',
+      label: formatCommon({ id: 'states' }),
       textField: 'value',
       valueField: 'key',
       options: queryEnabled,
     }, {
       name: 'receiveConfigFlag',
       type: 'string',
-      label: '允许配置接收',
+      label: format({ id: 'receiveConfigFlag' }),
       textField: 'value',
       valueField: 'key',
       options: queryAllowConfig,

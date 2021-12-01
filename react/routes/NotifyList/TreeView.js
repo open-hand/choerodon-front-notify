@@ -21,6 +21,7 @@ export default observer(() => {
     setCurrentPageType,
     intl: { formatMessage },
     messageStore,
+    formatCommon,
   } = context;
 
   const [inputValue, setInputValue] = useState('');
@@ -150,7 +151,7 @@ export default observer(() => {
     };
 
     return (
-      <div onClick={toggleContentRenderer} className={`${cssPrefix}-text`}>
+      <div onClick={toggleContentRenderer} className={`${cssPrefix}-text`} role="none">
         <span className={`${cssPrefix}-icon`}>{treeIcon()}</span>
         {getTitle(record)}
         {getAction(record)}
@@ -158,14 +159,14 @@ export default observer(() => {
     );
   };
 
-  function handleSearch(value) {
+  const handleSearch = (value) => {
     setInputValue(value);
-  }
-  function handleInput(e) {
+  };
+  const handleInput = (e) => {
     setInputValue(e.target.value);
-  }
+  };
 
-  function handleExpand(e) {
+  const handleExpand = (e) => {
     if (inputValue) {
       runInAction(() => {
         queryTreeDataSet.forEach((record) => {
@@ -173,23 +174,24 @@ export default observer(() => {
           messageStore.setExpandedKeys([]);
         });
         const expandedKeys = [];
-        queryTreeDataSet.forEach((record) => {
+        queryTreeDataSet.map((record) => {
           if (record.get('name').toLowerCase().includes(inputValue?.toLowerCase())) {
             while (record.parent) {
               record.parent.set('expand', true);
-              record = record.parent;
               expandedKeys.push(String(record.get('id')));
+              return record.parent;
             }
           }
+          return record;
         });
         messageStore.setExpandedKeys(expandedKeys);
       });
     }
-  }
+  };
 
-  function handleExpanded(keys) {
+  const handleExpanded = (keys) => {
     messageStore.setExpandedKeys(keys);
-  }
+  };
   const bounds = useMemo(() => messageStore.getNavBounds, [messageStore.getNavBounds]);
 
   return (
@@ -198,7 +200,7 @@ export default observer(() => {
         name="id"
         className={`${cssPrefix}-tree-query`}
         prefix={<Icon type="search" />}
-        placeholder="请输入搜索条件"
+        placeholder={formatCommon({ id: 'pleaseSearch' })}
         onInput={handleInput}
         onChange={handleSearch}
         value={inputValue}

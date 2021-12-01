@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
 import { Table, Form, Output } from 'choerodon-ui/pro';
 import { Tabs } from 'choerodon-ui';
-import { Action, axios, Content, StatusTag, PageTab, PageWrap } from '@choerodon/boot';
+import {
+  Action, axios, Content, StatusTag, PageTab, PageWrap,
+} from '@choerodon/boot';
 import Store from '../Store';
 
 import './MessageTypeDetail.less';
@@ -15,6 +17,5 @@ const ToggleMessageType = () => {
   const { currentPageType: { currentSelectedType } } = useContext(Store);
   return currentSelectedType === 'table' ? <MessageTypeTable /> : <MessageTypeDetail />;
 };
-
 
 export default ToggleMessageType;
