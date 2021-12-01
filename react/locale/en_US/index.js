@@ -253,3 +253,4 @@ export * from './receiveSetting';
 export * from './announcement';
 export * from './msgrecord';
 export * from './msg-service';
+export * from './notify-setting';

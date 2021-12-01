@@ -15,7 +15,9 @@ const OutputEmptyValue = ({ value }) => (value ? <span>{value}</span> : <span>�
 
 export default observer((props) => {
   const context = useContext(store);
-  const { smsSettingDataSet, singleSendApiMap, serverTypeDs } = context;
+  const {
+    smsSettingDataSet, singleSendApiMap, serverTypeDs, formatCommon,
+  } = context;
   const sendType = smsSettingDataSet.current && smsSettingDataSet.current.getPristineValue('sendType');
 
   const submitFunc = () => new Promise((resolve, reject) => {
@@ -50,11 +52,11 @@ export default observer((props) => {
     });
   };
 
-  function renderType({ value }) {
+  const renderType = ({ value }) => {
     const selectedRecord = serverTypeDs.filter((typeRecord) => typeRecord.get('value') === value)[0];
     const meaning = selectedRecord ? selectedRecord.get('meaning') || '-' : '-';
     return meaning;
-  }
+  };
 
   return (
     <Page
@@ -64,7 +66,7 @@ export default observer((props) => {
         title="通知配置"
       >
         <HeaderButtons items={[{
-          name: '修改',
+          name: formatCommon({ id: 'modify' }),
           icon: 'edit-o',
           display: true,
           permissions: ['choerodon.code.site.setting.notify.msg-config.ps.edit-sms'],
