@@ -31,6 +31,9 @@ const PROJECT_NOTIFIFY_ZH_CN = {
   'c7ncd.project.notify.choose': '请选择',
   'c7ncd.project.notify.empty.title': '验证通知已停用',
   'c7ncd.project.notify.empty.des': '该类型的消息通知已在平台管理中被停用，若想启用，请联系平台管理员操作',
+
+  'c7ncd.project.notify.createWebhooks': '创建Webhooks',
+  'c7ncd.project.notify.webhooksRecords': 'Webhooks执行记录',
 };
 
 export {

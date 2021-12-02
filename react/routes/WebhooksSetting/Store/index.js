@@ -66,6 +66,7 @@ export const StoreProvider = inject('AppState')(
         retryService: ['choerodon.code.project.setting.setting-notify.ps.webhook.retry'],
       },
       ...props,
+      formatProjectNotify,
     };
     return (
       <Store.Provider value={value}>
