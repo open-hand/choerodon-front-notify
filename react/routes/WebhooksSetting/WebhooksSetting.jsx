@@ -37,6 +37,7 @@ const WebhooksSetting = () => {
     prefixCls,
     AppState: { currentMenuType: { type, id, orgId } },
     Services,
+    formatProjectNotify,
   } = useContext(Store);
 
   const [ref, { width }] = useMeasure();
@@ -295,13 +296,13 @@ const WebhooksSetting = () => {
     >
       <Header>
         <HeaderButtons items={[{
-          name: '创建Webhooks',
+          name: formatProjectNotify({ id: 'createWebhooks' }),
           icon: 'playlist_add',
           display: true,
           permissions: Services.createService,
           handler: handleCreateWebhooks,
         }, {
-          name: 'Webhook执行记录',
+          name: formatProjectNotify({ id: 'webhooksRecords' }),
           icon: 'assignment-o',
           display: true,
           permissions: Services.recordService,
