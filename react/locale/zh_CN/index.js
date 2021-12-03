@@ -212,35 +212,22 @@ const pageDetail = {
 
   'notify-lists.disable.message': '停用该消息服务后，事件触发将无法收到对应的通知，确定要停用吗？',
 
-  'global.notifySetting.connect.success': '连接成功',
+  'c7n.notify-setting.connect.success': '连接成功',
   // 邮箱配置
-  'global.notifySetting.mailsetting.title': '平台"{name}"的邮箱配置',
-  'global.notifySetting.mailsetting.description': '邮箱配置用于管理发件邮箱的账号信息与邮件服务器信息。',
-  'global.notifySetting.mailsetting.link': `${docServer}/user-guide/system-configuration/message/email-config/`,
-  'global.notifySetting.mailsetting.account': '邮箱账号',
-  'global.notifySetting.mailsetting.password': '密码',
-  'global.notifySetting.mailsetting.sendName': '发送人',
-  'global.notifySetting.mailsetting.protocal': '服务器类型',
-  'global.notifySetting.mailsetting.host': '服务器地址',
-  'global.notifySetting.mailsetting.ssl': '是否使用ssl',
-  'global.notifySetting.mailsetting.port': '端口号',
+  'c7n.notify-setting.mailsetting.title': '平台"{name}"的邮箱配置',
+  'c7n.notify-setting.mailsetting.description': '邮箱配置用于管理发件邮箱的账号信息与邮件服务器信息。',
+  'c7n.notify-setting.mailsetting.link': `${docServer}/user-guide/system-configuration/message/email-config/`,
 
   // 短信配置
-  'global.notifySetting.smssetting.title': '平台"{name}"的短信配置',
-  'global.notifySetting.smssetting.description': '短信配置用于管理短信发送短信域名、短信服务器的获取的配置。目前只支持国内短信。',
-  'global.notifySetting.smssetting.link': `${docServer}/user-guide/system-configuration/message/sms-config/`,
-  'global.notifySetting.smssetting.signature': '短信签名',
-  'global.notifySetting.smssetting.hostAddress': '短信服务器地址',
-  'global.notifySetting.smssetting.hostPort': '短信服务器端口',
-  'global.notifySetting.smssetting.sendType': '调用方式',
-  'global.notifySetting.smssetting.batchSendApi': '批量调用地址',
-  'global.notifySetting.smssetting.singleSendApi': '单体调用地址',
-  'global.notifySetting.smssetting.asyncSendApi': '异步调用地址',
-  'global.notifySetting.smssetting.accessKey': 'AccessKey',
-  'global.notifySetting.smssetting.accessKeySecret': 'AccessKeySecret',
-  'global.notifySetting.smssetting.endPoint': 'EndPoint',
-  'global.notifySetting.smssetting.code': '账号代码',
-  'global.notifySetting.smssetting.serviceType': '服务类型',
+  'c7n.notify-setting.smssetting.title': '平台"{name}"的短信配置',
+  'c7n.notify-setting.smssetting.description': '短信配置用于管理短信发送短信域名、短信服务器的获取的配置。目前只支持国内短信。',
+  'c7n.notify-setting.smssetting.link': `${docServer}/user-guide/system-configuration/message/sms-config/`,
+  'c7n.notify-setting.smssetting.hostAddress': '短信服务器地址',
+  'c7n.notify-setting.smssetting.hostPort': '短信服务器端口',
+  'c7n.notify-setting.smssetting.sendType': '调用方式',
+  'c7n.notify-setting.smssetting.batchSendApi': '批量调用地址',
+  'c7n.notify-setting.smssetting.singleSendApi': '单体调用地址',
+  'c7n.notify-setting.smssetting.asyncSendApi': '异步调用地址',
 
   // 事务定义
   'global.saga.title': '平台"{name}"的事务定义',
@@ -1853,3 +1840,7 @@ export  {zh_CN};
 export * from './project-notify';
 
 export * from './receiveSetting';
+export * from './announcement';
+export * from './msgrecord';
+export * from './msg-service';
+export * from './notify-setting';

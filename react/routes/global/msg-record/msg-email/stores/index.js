@@ -13,7 +13,7 @@ export default Store;
 export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
     const { AppState: { currentMenuType: { type, id, organizationId } }, intl, children } = props;
-    const intlPrefix = 'msgrecord';
+    const intlPrefix = 'c7n.msgrecord';
     const msgRecordDataSet = useMemo(() => new DataSet(MsgRecordDataSet(organizationId, type, intl, intlPrefix)), []);
 
     const value = {

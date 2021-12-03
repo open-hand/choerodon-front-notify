@@ -14,7 +14,7 @@ const OutputEmptyValue = ({ value }) => (value ? <span>{value}</span> : <span>�
 
 export default (props) => {
   const context = useContext(store);
-  const { mailSettingDataSet } = context;
+  const { mailSettingDataSet, format, formatCommon } = context;
 
   const testConnection = async () => {
     try {
@@ -72,7 +72,7 @@ export default (props) => {
             onClick={() => openSideBar()}
             icon="edit-o"
           >
-            修改
+            {formatCommon({ id: 'modify' })}
           </Button>
         </Permission>
         <Permission service={['choerodon.code.site.setting.notify.msg-config.ps.connect']}>
@@ -84,7 +84,7 @@ export default (props) => {
             icon="low_priority"
             color="primary"
           >
-            连接测试
+            {format({ id: 'modifyLink' })}
           </Button>
         </Permission>
       </Header>

@@ -1,6 +1,10 @@
 import React, { useContext } from 'react';
-import { Table, Icon, Output, Modal } from 'choerodon-ui/pro';
-import { Action, axios, Content, StatusTag, PageTab, PageWrap } from '@choerodon/boot';
+import {
+  Table, Icon, Output, Modal,
+} from 'choerodon-ui/pro';
+import {
+  Action, axios, Content, StatusTag, PageTab, PageWrap,
+} from '@choerodon/boot';
 import Store from '../Store';
 import './MessageTypeTable.less';
 
@@ -9,7 +13,9 @@ const modalKey = Modal.key();
 
 const MessageTypeTable = () => {
   const cssPrefix = 'c7n-notify-MessageTypeTable';
-  const { messageTypeTableDataSet, messageTypeDetailDataSet, setCurrentPageType, currentPageType, intl: { formatMessage } } = useContext(Store);
+  const {
+    messageTypeTableDataSet, messageTypeDetailDataSet, setCurrentPageType, currentPageType, intl: { formatMessage },
+  } = useContext(Store);
   let disableModal;
 
   // 启用状态改变切换
@@ -74,7 +80,8 @@ const MessageTypeTable = () => {
   return (
     <div>
       <div className="c7n-notify-messageTypeDetail-title">
-        <Icon type={currentPageType.icon} />{currentPageType.title}
+        <Icon type={currentPageType.icon} />
+        {currentPageType.title}
       </div>
       <Table className="message-service" dataSet={messageTypeTableDataSet}>
         <Column

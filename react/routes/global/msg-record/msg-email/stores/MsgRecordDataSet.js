@@ -21,9 +21,9 @@ export default (orgId, type, intl, intlPrefix) => {
       { name: 'value', type: 'string' },
     ],
     data: [
-      { key: 'S', value: '成功' },
-      { key: 'F', value: '失败' },
-      { key: 'P', value: '就绪' },
+      { key: 'S', value: intl.formatMessage({ id: 'boot.success' }) },
+      { key: 'F', value: intl.formatMessage({ id: 'boot.failed' }) },
+      { key: 'P', value: intl.formatMessage({ id: `${intlPrefix}.ready` }) },
     ],
   });
 

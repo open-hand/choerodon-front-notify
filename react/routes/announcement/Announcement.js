@@ -52,7 +52,7 @@ class AnnouncementType {
     const { AppState } = this.context.props;
     this.data = AppState.currentMenuType;
     const { type, id, name } = this.data;
-    const codePrefix = type === 'organization' ? 'organization' : 'global';
+    const codePrefix = type === 'organization' ? 'organization' : 'c7n';
 
     this.code = `${codePrefix}.msgrecord`;
     this.values = { name: name || 'Choerodon' };
@@ -289,7 +289,7 @@ export default class Announcement extends Component {
     //   });
     // }
     actionDatas.push({
-      text: '详情',
+      text: <FormattedMessage id="boot.detail" />,
       action: () => this.handleOpen('detail', record),
     });
     actionDatas.push({
@@ -592,7 +592,7 @@ export default class Announcement extends Component {
             <span className="send-time">{endDate}</span>
           </div>
         ) : null}
-        <div><span>{intl.formatMessage({ id: 'global.announcement.content' })}</span></div>
+        <div><span>{intl.formatMessage({ id: 'c7n.announcement.content' })}</span></div>
         <div className="c7n-iam-announcement-detail-wrapper">
           <div
             className="c7n-iam-announcement-detail-content"
@@ -619,7 +619,7 @@ export default class Announcement extends Component {
         <Header>
           <HeaderButtons items={[{
             permissions: ['choerodon.code.site.manager.announcement.ps.add'],
-            name: intl.formatMessage({ id: 'announcement.add' }),
+            name: intl.formatMessage({ id: 'c7n.announcement.add' }),
             icon: 'playlist_add',
             handler: () => this.handleOpen('create'),
             display: true,
@@ -641,7 +641,7 @@ export default class Announcement extends Component {
             filters={params}
             onChange={this.handleTableChange}
             rowKey="id"
-            filterBarPlaceholder={intl.formatMessage({ id: 'filtertable' })}
+            filterBarPlaceholder={intl.formatMessage({ id: 'boot.filter' })}
           />
           <Sidebar
             className="c7n-iam-announcement-sidebar"

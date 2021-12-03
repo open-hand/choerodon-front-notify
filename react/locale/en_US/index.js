@@ -250,3 +250,7 @@ export  {en_US};
 export * from './project-notify';
 
 export * from './receiveSetting';
+export * from './announcement';
+export * from './msgrecord';
+export * from './msg-service';
+export * from './notify-setting';
