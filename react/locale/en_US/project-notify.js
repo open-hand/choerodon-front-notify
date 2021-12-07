@@ -7,7 +7,7 @@ const PROJECT_NOTIFIFY_EN_US = {
   'c7ncd.project.notify.webhook.address': 'Webhook Address',
   'c7ncd.project.notify.webhook.type': 'Webhook Type',
 
-  'c7ncd.project.notify.type': 'Events',
+  'c7ncd.project.notify.type': 'Information Type',
   'c7ncd.project.notify.pmEnable': 'Private Messages',
   'c7ncd.project.notify.emailEnable': 'Email',
   'c7ncd.project.notify.smsEnable': 'Message',
