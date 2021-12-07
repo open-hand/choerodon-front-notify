@@ -10,7 +10,7 @@ const PROJECT_NOTIFIFY_EN_US = {
   'c7ncd.project.notify.type': 'Events',
   'c7ncd.project.notify.pmEnable': 'Private Messages',
   'c7ncd.project.notify.emailEnable': 'Email',
-  'c7ncd.project.notify.smsEnable': '短信',
+  'c7ncd.project.notify.smsEnable': 'Message',
   'c7ncd.project.notify.noticeObject': 'Notifier',
   'c7ncd.project.notify.noticeObject.resource.tips': '此处的通知对象为验证码的接收者',
   'c7ncd.project.notify.noticeObject.devops.tips': 'DevOps消息中，除流水线通知外，均不支持修改通知对象',
