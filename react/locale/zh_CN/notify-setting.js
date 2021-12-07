@@ -14,6 +14,6 @@ const notifySetting = {
   'c7n.notify-setting.smssetting.code': '账号代码',
   'c7n.notify-setting.smssetting.serviceType': '服务类型',
   'c7n.notify-setting.smssetting.signature': '短信签名',
-  'c7n.notify-setting.modifyLink': '修改链接',
+  'c7n.notify-setting.modifyLink': '连接测试',
 };
 export { notifySetting };

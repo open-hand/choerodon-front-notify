@@ -42,7 +42,7 @@ export default function ({
     }, {
       name: 'enabled',
       type: 'boolean',
-      label: formatCommon({ id: 'states' }),
+      label: format({ id: 'status' }),
     }, {
       name: 'receiveConfigFlag',
       type: 'number',
