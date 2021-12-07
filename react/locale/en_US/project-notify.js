@@ -33,7 +33,7 @@ const PROJECT_NOTIFIFY_EN_US = {
   'c7ncd.project.notify.empty.des': '该类型的消息通知已在平台管理中被停用，若想启用，请联系平台管理员操作',
 
   'c7ncd.project.notify.createWebhooks': 'Create Webhooks',
-  'c7ncd.project.notify.webhooksRecords': 'webhooks Records',
+  'c7ncd.project.notify.webhooksRecords': 'Webhooks Records',
 };
 
 export {
