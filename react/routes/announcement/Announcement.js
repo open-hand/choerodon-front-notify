@@ -249,7 +249,7 @@ export default class Announcement extends Component {
           </Tooltip>
         ),
       }, {
-        title: <FormattedMessage id="status" />,
+        title: <FormattedMessage id={`${intlPrefix}.status`} />,
         dataIndex: 'status',
         key: 'status',
         width: '12%',

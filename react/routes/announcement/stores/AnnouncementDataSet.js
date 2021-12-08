@@ -1,7 +1,7 @@
 export default (intl, intlPrefix) => {
   const title = intl.formatMessage({ id: `${intlPrefix}.title` });
   const content = intl.formatMessage({ id: `${intlPrefix}.content` });
-  const status = intl.formatMessage({ id: 'boot.states' });
+  const status = intl.formatMessage({ id: `${intlPrefix}.status` });
   const sendDate = intl.formatMessage({ id: `${intlPrefix}.send-date` });
   const sendNotices = intl.formatMessage({ id: `${intlPrefix}.send-notice` });
   const sticky = intl.formatMessage({ id: `${intlPrefix}.sticky` });
