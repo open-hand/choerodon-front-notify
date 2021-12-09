@@ -289,7 +289,7 @@ export default class Announcement extends Component {
     //   });
     // }
     actionDatas.push({
-      text: <FormattedMessage id="boot.detail" />,
+      text: <FormattedMessage id="detail" />,
       action: () => this.handleOpen('detail', record),
     });
     actionDatas.push({
