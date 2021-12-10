@@ -7,10 +7,10 @@ const PROJECT_NOTIFIFY_EN_US = {
   'c7ncd.project.notify.webhook.address': 'Webhook Address',
   'c7ncd.project.notify.webhook.type': 'Webhook Type',
 
-  'c7ncd.project.notify.type': 'Events',
+  'c7ncd.project.notify.type': 'Information Type',
   'c7ncd.project.notify.pmEnable': 'Private Messages',
   'c7ncd.project.notify.emailEnable': 'Email',
-  'c7ncd.project.notify.smsEnable': '短信',
+  'c7ncd.project.notify.smsEnable': 'Message',
   'c7ncd.project.notify.noticeObject': 'Notifier',
   'c7ncd.project.notify.noticeObject.resource.tips': '此处的通知对象为验证码的接收者',
   'c7ncd.project.notify.noticeObject.devops.tips': 'DevOps消息中，除流水线通知外，均不支持修改通知对象',
@@ -33,7 +33,7 @@ const PROJECT_NOTIFIFY_EN_US = {
   'c7ncd.project.notify.empty.des': '该类型的消息通知已在平台管理中被停用，若想启用，请联系平台管理员操作',
 
   'c7ncd.project.notify.createWebhooks': 'Create Webhooks',
-  'c7ncd.project.notify.webhooksRecords': 'webhooks Records',
+  'c7ncd.project.notify.webhooksRecords': 'Webhooks Records',
 };
 
 export {

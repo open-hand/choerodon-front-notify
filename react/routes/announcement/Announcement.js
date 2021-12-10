@@ -249,7 +249,7 @@ export default class Announcement extends Component {
           </Tooltip>
         ),
       }, {
-        title: <FormattedMessage id="status" />,
+        title: <FormattedMessage id={`${intlPrefix}.status`} />,
         dataIndex: 'status',
         key: 'status',
         width: '12%',
@@ -289,7 +289,7 @@ export default class Announcement extends Component {
     //   });
     // }
     actionDatas.push({
-      text: <FormattedMessage id="boot.detail" />,
+      text: <FormattedMessage id="detail" />,
       action: () => this.handleOpen('detail', record),
     });
     actionDatas.push({

@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useEffect, useMemo } from 'react';
+import React, {
+  createContext, useContext, useEffect, useMemo,
+} from 'react';
 import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { injectIntl } from 'react-intl';
@@ -19,6 +21,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
     intl: { formatMessage },
     AppState: { currentMenuType: { projectId } },
   } = props;
+
   const {
     userDs,
   } = useProjectNotifyStore();
@@ -26,7 +29,9 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const intlPrefix = 'c7ncd.project.notify';
 
   const resourceStore = useStore();
-  const tableDs = useMemo(() => new DataSet(TableDataSet({ formatMessage, intlPrefix, projectId, userDs })), [projectId]);
+  const tableDs = useMemo(() => new DataSet(TableDataSet({
+    formatMessage, intlPrefix, projectId, userDs,
+  })), [projectId]);
   const value = {
     ...props,
     intlPrefix,

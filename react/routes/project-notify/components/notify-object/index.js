@@ -8,9 +8,8 @@ import './index.less';
 const { Option } = Select;
 const NotifyObject = ({ record, allSendRoleList, excludesRole = [] }) => {
   const {
-    intlPrefix,
     prefixCls,
-    intl: { formatMessage },
+    formatProjectNotify,
   } = useProjectNotifyStore();
   const isBacklogFeedback = record.get('code') === 'BACKLOG_FEEDBACK';
   const isSprintDelay = record.get('code') === 'SPRINT_DELAY';
@@ -30,7 +29,7 @@ const NotifyObject = ({ record, allSendRoleList, excludesRole = [] }) => {
         <SelectBox name="sendRoleList" vertical style={{ paddingTop: 0 }}>
           {allSendRoleList.filter((item) => !(isSprintDelay && typeof (item) === 'object') && !includes(excludesRole, item)).filter((item) => (typeof (item) === 'object' ? !!item.backlog === isBacklogFeedback : true)).map((item) => {
             const value = typeof (item) === 'string' ? item : item.code;
-            const text = typeof (item) === 'string' ? formatMessage({ id: `${intlPrefix}.object.${isBacklogFeedback ? `backlog_${item}` : item}` }) : item.name;
+            const text = typeof (item) === 'string' ? formatProjectNotify({ id: `object.${isBacklogFeedback ? `backlog_${item}` : item}` }) : item.name;
             return (
               <Option value={value} key={value} className={`${prefixCls}-object-content-option`}>
                 <span className={`${prefixCls}-object-content-checkbox`}>
@@ -40,17 +39,6 @@ const NotifyObject = ({ record, allSendRoleList, excludesRole = [] }) => {
             );
           })}
         </SelectBox>
-        {/* {record.get('sendRoleList').includes('specifier') && (
-          <div style={{ width: '100%' }} role="none">
-            <SelectUser
-              name="userList"
-              maxTagCount={2}
-              getPopupContainer={(e) => e.parentNode}
-              clearButton
-              selectedUser={defaultSelectUser}
-            />
-          </div>
-        )} */}
         {record.get('sendRoleList').includes('specifier') && mount('agile:SelectUser', {
           name: 'userList', maxTagCount: 2, style: { marginTop: -15, width: '100%' }, getPopupContainer: (e) => e.parentNode, clearButton: true, selectedUser: defaultSelectUser,
         })}

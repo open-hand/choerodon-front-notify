@@ -243,6 +243,8 @@ const en_US = {
 
   // 菜单配置
   'menu.createDir': 'Create Dir',
+  'global.menusetting.prompt.inform.title': 'Leave page',
+  'global.menusetting.prompt.inform.message': 'The modified content on this page has not been saved，Are you sure leave this page?',
 };
 /* eslint-disable-next-line */
 export  {en_US};

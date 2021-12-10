@@ -27,6 +27,7 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const tableDs = useMemo(() => new DataSet(TableDataSet({
     formatMessage, intlPrefix, projectId, userDs,
   })), [projectId]);
+
   const value = {
     ...props,
     intlPrefix,
