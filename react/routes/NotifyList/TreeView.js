@@ -22,6 +22,7 @@ export default observer(() => {
     intl: { formatMessage },
     messageStore,
     formatCommon,
+    format,
   } = context;
 
   const [inputValue, setInputValue] = useState('');
@@ -200,7 +201,7 @@ export default observer(() => {
         name="id"
         className={`${cssPrefix}-tree-query`}
         prefix={<Icon type="search" />}
-        placeholder={formatCommon({ id: 'pleaseSearch' })}
+        placeholder={format({ id: 'pleaseSearch' })}
         onInput={handleInput}
         onChange={handleSearch}
         value={inputValue}
