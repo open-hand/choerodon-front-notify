@@ -25,7 +25,7 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
     const [currentPageType, setCurrentPageType] = useState({
       currentSelectedType: 'table',
       icon: 'folder_open2',
-      title: formatCommon({ id: 'all' }),
+      title: format({ id: 'all' }),
       id: null,
     });
 
