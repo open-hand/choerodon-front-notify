@@ -16,7 +16,7 @@ export const StoreProvider = injectIntl(inject('AppState')(
     const { AppState: { currentMenuType: { type, id } }, intl, children } = props;
     const intlPrefix = 'c7n.notify-setting';
     const format = useFormatMessage(intlPrefix);
-    const formatCommon = useFormatCommon(intlPrefix);
+    const formatCommon = useFormatCommon();
     const serverTypeDs = useMemo(() => new DataSet(ServerTypeDataSet()), []);
     const mailSettingDataSet = useMemo(() => new DataSet(MailSettingDataSet(intl, `${intlPrefix}.mailsetting`)));
     const smsSettingDataSet = useMemo(() => new DataSet(SmsSettingDataSet(intl, `${intlPrefix}.smssetting`, serverTypeDs)));
