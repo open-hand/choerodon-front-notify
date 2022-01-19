@@ -1,21 +1,23 @@
-include: https://api.choerodon.com.cn/devops/v1/projects/1529/ci_contents/pipelines/4c2f6ff8-37b1-4686-af56-e7bc32557e97/content.yaml
+include: https://api.choerodon.com.cn/devops/v1/projects/261899051275677696/ci_contents/pipelines/56d2dcd5-31ee-4b25-b9d4-a8cbe07af6d4/content.yaml
 
-#image: registry.cn-shanghai.aliyuncs.com/c7n/cibase:0.9.1
+#include: https://api.choerodon.com.cn/devops/v1/projects/1529/ci_contents/pipelines/4c2f6ff8-37b1-4686-af56-e7bc32557e97/content.yaml
 #
-#stages:
-#  - build
-#
-#build front:
-#  stage: build
-#  script:
-#    - npm install --registry ${NPM_REPO} --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
-#    - chmod -R 755 node_modules
-#    - npm run compile
-#    - echo "//${NPM_REGISTRY}:_authToken=${NPM_TOKEN}">.npmrc
-#    - npm publish --registry https://nexus.choerodon.com.cn/repository/private-npm/
-#    - curl -sX POST -F token=${FRONT_REPOSITORY_TOKEN} -F ref=${REF_NAME} http://gitlab-choerodon-dev.sany.com.cn/api/v4/projects/52/trigger/pipeline
-#  only:
-#    - tags
-#    - master
-#    - /^.*hotfix.*$/
-#    - /^.*release.*$/
+##image: registry.cn-shanghai.aliyuncs.com/c7n/cibase:0.9.1
+##
+##stages:
+##  - build
+##
+##build front:
+##  stage: build
+##  script:
+##    - npm install --registry ${NPM_REPO} --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+##    - chmod -R 755 node_modules
+##    - npm run compile
+##    - echo "//${NPM_REGISTRY}:_authToken=${NPM_TOKEN}">.npmrc
+##    - npm publish --registry https://nexus.choerodon.com.cn/repository/private-npm/
+##    - curl -sX POST -F token=${FRONT_REPOSITORY_TOKEN} -F ref=${REF_NAME} http://gitlab-choerodon-dev.sany.com.cn/api/v4/projects/52/trigger/pipeline
+##  only:
+##    - tags
+##    - master
+##    - /^.*hotfix.*$/
+##    - /^.*release.*$/
