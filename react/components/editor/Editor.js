@@ -123,7 +123,7 @@ export default class Editor extends Component {
       multiple: false,
       name: 'file',
       accept: 'image/jpeg, image/png, image/jpg, image/gif',
-      action: `${Choerodon.API_HOST}/hfle/v1/0/files/multipart?/bucketName=hzero-notify&file_name=file`,
+      action: `${Choerodon.API_HOST}/hfle/v1/0/files/multipart?/bucketName=iam-service&file_name=file`,
       headers: {
         Authorization: `bearer ${Choerodon.getCookie('access_token')}`,
       },
@@ -180,7 +180,7 @@ export default class Editor extends Component {
       const data = new FormData();
       data.append('file', file);
       this.setState({ submitting: true });
-      axios.post(`${Choerodon.API_HOST}/hfle/v1/0/files/multipart?bucketName=hzero-notify&file_name=file`, data)
+      axios.post(`${Choerodon.API_HOST}/hfle/v1/0/files/multipart?bucketName=iam-service&file_name=file`, data)
         .then((res) => {
           if (res.failed) {
             Choerodon.prompt(res.message);
