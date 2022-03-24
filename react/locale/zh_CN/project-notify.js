@@ -1,5 +1,5 @@
 const PROJECT_NOTIFIFY_ZH_CN = {
-  'c7ncd.project.notify.tabs.agile': '敏捷消息',
+  'c7ncd.project.notify.tabs.agile': '协作消息',
   'c7ncd.project.notify.tabs.devops': 'DevOps消息',
   'c7ncd.project.notify.tabs.resource': '资源删除验证',
   'c7ncd.project.notify.tabs.webhook': 'Webhook配置',
