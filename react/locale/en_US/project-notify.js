@@ -1,5 +1,5 @@
 const PROJECT_NOTIFIFY_EN_US = {
-  'c7ncd.project.notify.tabs.agile': 'Agile News',
+  'c7ncd.project.notify.tabs.agile': 'Cooperate News',
   'c7ncd.project.notify.tabs.devops': 'DevOps News',
   'c7ncd.project.notify.tabs.resource': 'Resource Deletion Verification',
   'c7ncd.project.notify.tabs.webhook': 'WebHook',
