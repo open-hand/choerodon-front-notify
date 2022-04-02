@@ -45,7 +45,7 @@ const Content = () => {
         component: ResourceContent,
       });
     }
-    if (categoryCodes.includes('N_AGILE') || categoryCodes.includes('N_WATERFALL_AGILE')) {
+    if (categoryCodes.includes('N_AGILE') || categoryCodes.includes('N_WATERFALL')) {
       origin.unshift({
         route: '/notify/project-notify/agile',
         title: formatProjectNotify({ id: 'tabs.agile' }),
