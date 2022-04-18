@@ -6,9 +6,24 @@
     max-height: 5rem;
     overflow-y: auto;
 
-    &-option {
-      margin-bottom: .16rem !important;
+    &-form {
+      td {
+        padding-top: 0;
+      }
     }
+    &-option {
+      height: fit-content !important;
+    }
+    &-select-box {
+      margin-top: .05rem;
+      .project-notify-object-content-option {
+        margin-bottom: 0 !important;
+      }
+      .c7n-pro-select-box-vertical >.project-notify-object-content-option:not(:last-child){
+        margin-bottom: .14rem !important;
+      }
+    }
+
 
     &-checkbox {
       // margin: .08rem 0;

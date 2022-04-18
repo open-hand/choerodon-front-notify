@@ -25,8 +25,8 @@ const NotifyObject = ({ record, allSendRoleList, excludesRole = [] }) => {
   }, [record.get('sendRoleList')]);
   return (
     <div role="none" className={`${prefixCls}-object-content`} onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
-      <Form record={record}>
-        <SelectBox name="sendRoleList" vertical style={{ paddingTop: 0 }}>
+      <Form record={record} className={`${prefixCls}-object-content-form`}>
+        <SelectBox name="sendRoleList" vertical style={{ paddingTop: 0 }} className={`${prefixCls}-object-content-select-box`}>
           {allSendRoleList.filter((item) => !(isSprintDelay && typeof (item) === 'object') && !includes(excludesRole, item)).filter((item) => (typeof (item) === 'object' ? !!item.backlog === isBacklogFeedback : true)).map((item) => {
             const value = typeof (item) === 'string' ? item : item.code;
             const text = typeof (item) === 'string' ? formatProjectNotify({ id: `object.${isBacklogFeedback ? `backlog_${item}` : item}` }) : item.name;
