@@ -1,6 +1,6 @@
 const notifySetting = {
   'c7n.notify-setting.emailConfig': '邮箱配置',
-  'c7n.notify-setting.SMSConfig': '短息配置',
+  'c7n.notify-setting.SMSConfig': '短信配置',
   'c7n.notify-setting.mailsetting.account': '邮箱账号',
   'c7n.notify-setting.mailsetting.password': '密码',
   'c7n.notify-setting.mailsetting.sendName': '发送人',
