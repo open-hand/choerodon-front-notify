@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react/jsx-no-bind */
+import React, { useCallback, useRef } from 'react';
 import {
   TabPage, Content, Breadcrumb, Choerodon, Permission,
 } from '@choerodon/boot';
@@ -24,6 +25,7 @@ export default observer((props) => {
     allSendRoleList,
     permissions,
   } = useAgileContentStore();
+  const isTriggerHiddenRef = useRef(true);
   const history = useHistory();
   const {
     promptMsg,
@@ -77,6 +79,13 @@ export default observer((props) => {
   function handleLinkStateMachine() {
     history.push(`/agile/state-machine${history.location.search}&activeKey=custom`);
   }
+  const handleTooltipMouseLeave = useCallback(() => Tooltip.hide(), []);
+  const handleTooltipMouseEnter = useCallback((e, title) => {
+    isTriggerHiddenRef.current && Tooltip.show(e.target, {
+      title,
+      placement: 'topLeft',
+    });
+  }, []);
   function renderNotifyObject({ record }) {
     const data = [];
     const userList = record.get('userList');
@@ -117,31 +126,34 @@ export default observer((props) => {
       }
     });
     return (
-      <Tooltip title={data.join()}>
-        <span>
-          <Select
-            popupContent={(
-              <NotifyObject
-                record={record}
-                allSendRoleList={allSendRoleList}
-                excludesRole={excludesRole}
-              />
-            )}
-            popupCls={`${prefixCls}-object-select-popup`}
-            popupStyle={{ maxWidth: '3.2rem' }}
-            dropdownMatchSelectWidth={false}
-            renderer={() => (
-              <div className={`${prefixCls}-object-select-render`}>
-                {data.join() || '-'}
-              </div>
-            )}
-            trigger={['click']}
-            placement="bottomLeft"
-            className={`${prefixCls}-object-select`}
-          />
-        </span>
-      </Tooltip>
-
+      <span onMouseEnter={(e) => handleTooltipMouseEnter(e, data.join())} onMouseLeave={handleTooltipMouseLeave}>
+        <Select
+          popupContent={(
+            <NotifyObject
+              record={record}
+              allSendRoleList={allSendRoleList}
+              excludesRole={excludesRole}
+            />
+          )}
+          onPopupHiddenChange={(hidden) => {
+            isTriggerHiddenRef.current = hidden;
+            if (!hidden) {
+              handleTooltipMouseLeave();
+            }
+          }}
+          popupCls={`${prefixCls}-object-select-popup`}
+          popupStyle={{ maxWidth: '3.2rem' }}
+          dropdownMatchSelectWidth={false}
+          renderer={() => (
+            <div className={`${prefixCls}-object-select-render`}>
+              {data.join() || '-'}
+            </div>
+          )}
+          trigger={['click']}
+          placement="bottomLeft"
+          className={`${prefixCls}-object-select`}
+        />
+      </span>
     );
   }
 
