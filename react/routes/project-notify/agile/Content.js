@@ -111,13 +111,21 @@ export default observer((props) => {
         excludesRole = ['assignee', 'reporter', 'starUser', 'mainResponsible', 'participant'];
         break;
       }
+      case 'RISK_DELAY': {
+        excludesRole = ['mainResponsible', 'participant'];
+        break;
+      }
       default: {
         break;
       }
     }
+    /** 相关方特别判断 */
+    if (!['ISSUECREATE', 'ISSUE_COMMENT', 'ISSUEASSIGNEE', 'ISSUESOLVE', 'RISK_DELAY'].includes(code)) {
+      excludesRole.push('relatedParties');
+    }
     sendRoleList.forEach((key) => {
       if (key !== 'specifier') {
-        const text = ['reporter', 'assignee', 'starUser', 'mainResponsible', 'projectOwner', 'participant'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
+        const text = ['reporter', 'assignee', 'starUser', 'mainResponsible', 'projectOwner', 'participant', 'relatedParties'].includes(key) ? formatMessage({ id: `${intlObjectPrefix}${key}` })
           : allSendRoleList.find((item) => item.code === key)?.name;
         data.push(text);
       } else if (userList && userList.length) {

@@ -17,6 +17,8 @@ export function useAgileContentStore() {
   return useContext(Store);
 }
 const HAS_BACKLOG = C7NHasModule('@choerodon/backlog');
+const HAS_AGILE_PRO = C7NHasModule('@choerodon/agile-pro');
+
 export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const {
     children,
@@ -30,6 +32,12 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
   const projectCategoryCodes = useMemo(() => categories?.map((i) => i.code) || [], [categories]);
   const [allSendRoleList, setAllSendRoleList] = useState(['reporter', 'assignee', 'participant', 'starUser', 'projectOwner', 'specifier']);
   useEffect(() => {
+    function loadRoleListByModule(module = 'agilePro') {
+      if (module === 'agilePro') {
+        return HAS_AGILE_PRO && projectCategoryCodes.some((code) => ['N_WATERFALL_AGILE', 'N_AGILE'].includes(code)) ? ['relatedParties'] : [];
+      }
+      return [];
+    }
     async function loadAgileRoleList(issueTypeList = 'agileIssueType') {
       if (issueTypeList === 'agileIssueType' && !projectCategoryCodes.includes('N_AGILE')) {
         return [];
@@ -47,8 +55,9 @@ export const StoreProvider = injectIntl(inject('AppState')(observer((props) => {
       });
     }
     axios.all([loadAgileRoleList(), loadAgileRoleList('backlogIssueType')]).then((res) => {
+      const agileProModuleMemberList = loadRoleListByModule();
       const [agileMemberList, backlogMemberList] = res.map((item) => item.filter((field) => ['member', 'multiMember'].includes(field.fieldType)));
-      setAllSendRoleList(['reporter', 'assignee', 'participant', 'mainResponsible', 'starUser', 'projectOwner', ...agileMemberList.map((item) => ({ ...item, agile: true })),
+      setAllSendRoleList(['reporter', 'assignee', 'participant', 'mainResponsible', 'starUser', 'projectOwner', ...agileProModuleMemberList, ...agileMemberList.map((item) => ({ ...item, agile: true })),
         ...backlogMemberList.map((item) => ({ ...item, backlog: true })), 'specifier']);
     });
   }, [organizationId, projectCategoryCodes, projectId]);

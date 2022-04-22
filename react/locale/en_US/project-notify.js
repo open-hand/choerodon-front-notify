@@ -20,6 +20,7 @@ const PROJECT_NOTIFIFY_EN_US = {
   'c7ncd.project.notify.object.reporter': '报告人',
   'c7ncd.project.notify.object.backlog_reporter': '提出方',
   'c7ncd.project.notify.object.assignee': '经办人',
+  'c7ncd.project.notify.object.relatedParties': '相关方',
   'c7ncd.project.notify.object.backlog_assignee': '处理人',
   'c7ncd.project.notify.object.projectOwner': '项目所有者',
   'c7ncd.project.notify.object.starUser': '关注人',

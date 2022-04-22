@@ -26,6 +26,7 @@ const PROJECT_NOTIFIFY_ZH_CN = {
   'c7ncd.project.notify.object.mainResponsible': '主要负责人',
   'c7ncd.project.notify.object.backlog_starUser': '关注人',
   'c7ncd.project.notify.object.participant': '参与人',
+  'c7ncd.project.notify.object.relatedParties': '相关方',
   'c7ncd.project.notify.object.backlog_projectOwner': '项目所有者',
   'c7ncd.project.notify.object.pipelineTriggers': '流水线触发者',
   'c7ncd.project.notify.choose': '请选择',
