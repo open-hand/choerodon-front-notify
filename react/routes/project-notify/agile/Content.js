@@ -187,6 +187,12 @@ export default observer((props) => {
             renderer={({ record }) => renderCheckBox({ record, name: 'emailEnable', nameFlag: 'emailEnabledFlag' })}
             align="left"
           />
+          <Column
+            header={() => renderCheckBoxHeader('dtEnable', 'dtEnabledFlag')}
+            width={160}
+            renderer={({ record }) => renderCheckBox({ record, name: 'dtEnable', nameFlag: 'dtEnabledFlag' })}
+            align="left"
+          />
           <Column renderer={renderNotifyObject} header={formatMessage({ id: `${intlPrefix}.noticeObject` })} />
         </Table>
         <Permission

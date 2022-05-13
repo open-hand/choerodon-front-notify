@@ -130,6 +130,13 @@ export default observer(() => {
             align="left"
             editor={(record) => renderEditor(record, 'email')}
           />
+          <Column
+            header={(dataSet) => renderCheckBoxHeader(dataSet, 'dt')}
+            renderer={({ record }) => renderCheckBox({ record, name: 'dt' })}
+            align="left"
+            editor={(record) => renderEditor(record, 'dt')}
+          />
+
         </Table>
         <div className={`${prefixCls}-buttons`}>
           <Button

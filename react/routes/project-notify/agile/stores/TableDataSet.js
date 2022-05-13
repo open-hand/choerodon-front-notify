@@ -46,6 +46,7 @@ export default ({
     { name: 'name', type: 'string', label: formatMessage({ id: `${intlPrefix}.type` }) },
     { name: 'pmEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.pmEnable` }) },
     { name: 'emailEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.emailEnable` }) },
+    { name: 'dtEnable', type: 'boolean', label: '钉钉' },
     {
       name: 'userList', type: 'object', textField: 'realName', valueField: 'id', multiple: true, label: formatMessage({ id: `${intlPrefix}.choose` }),
     },

@@ -21,6 +21,7 @@ export default function (templateDataSet) {
       { name: 'webhookEnabledFlag', type: 'boolean', label: 'webhook-钉钉微信' },
       { name: 'webhookJsonEnabledFlag', type: 'boolean', label: 'webhook-Json' },
       { name: 'smsEnabledFlag', type: 'boolean', label: '短信' },
+      { name: 'dtEnabledFlag', type: 'boolean', label: '钉钉企微模板' },
     ],
     transport: {
       read: ({ data: { tempServerCode } }) => ({

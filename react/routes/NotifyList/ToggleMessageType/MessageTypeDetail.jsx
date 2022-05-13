@@ -4,6 +4,7 @@ import {
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { Tabs } from 'choerodon-ui';
+import { NewTips } from '@choerodon/components';
 import {
   Action, axios, Content, StatusTag, PageTab, PageWrap,
 } from '@choerodon/boot';
@@ -35,6 +36,10 @@ const MessageTypeDetail = observer(() => {
     if (record.getPristineValue('webhookEnabledFlag')) {
       ret.push('webhook');
     }
+    if (record.getPristineValue('dtEnabledFlag')) {
+      ret.push('钉钉');
+    }
+
     return ret.length > 0 ? ret.join('、') : '无';
   };
 
@@ -71,6 +76,7 @@ const MessageTypeDetail = observer(() => {
     }
     return null;
   };
+  const TipList = { webhook: '模板内容将决定后续通过webhook在钉钉端或企业微信端接收的消息内容', dt: '模板内容将决定后续在钉钉端或企业微信端接收的消息内容' };
   return current ? (
     <>
       <header className={`${cssPrefix}-header`}>
@@ -127,6 +133,7 @@ const MessageTypeDetail = observer(() => {
             <span>
               webhook-钉钉微信模板
               {getIcon('webhook')}
+              <NewTips helpText={TipList.webhook} />
             </span>
 )}
           key="4"
@@ -144,6 +151,19 @@ const MessageTypeDetail = observer(() => {
         >
           <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'SMS')} />
         </TabPane>
+        <TabPane
+          tab={(
+            <span>
+              钉钉企微模板
+              {getIcon('dt')}
+              <NewTips helpText={TipList.dt} />
+            </span>
+)}
+          key="6"
+        >
+          <TemplateForm record={templateDataSet.find((item) => item.getPristineValue('sendingType') === 'DT')} showTheme />
+        </TabPane>
+
       </Tabs>
     </>
   ) : <Spin />;

@@ -82,7 +82,13 @@ export default observer(() => {
               name: '修改短信模板',
               handler: () => editTemplate('SMS', '修改短信模板'),
               display: true,
-            }],
+            }, {
+              permissions: ['choerodon.code.site.setting.notify.msg-service.ps.email-template'],
+              name: '修改钉钉企微模板',
+              handler: () => editTemplate('DT', '修改钉钉企微模板'),
+              display: true,
+            },
+            ],
           }]}
         />
       </Header>

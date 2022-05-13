@@ -76,13 +76,15 @@ export default observer(({ context, modal, type }) => {
   modal.handleCancel(() => {
     dataSet.reset();
   });
+  const typeList={'EMAIL':'邮件主题','WEB':'站内信标题','DT':'钉钉标题'};
   switch (type) {
     case 'EMAIL':
     case 'WEB':
+      case 'DT':
       return (
         <div className="c7n-notify-contentList-sider">
           <Form record={record}>
-            <TextField required label={type === 'EMAIL' ? '邮件主题' : '站内信标题'} name="templateTitle" />
+            <TextField required label={typeList[type]} name="templateTitle" />
             <ChoerodonEditor
               nomore
               toolbarContainer="toolbar"

@@ -10,6 +10,7 @@ const PROJECT_NOTIFIFY_ZH_CN = {
   'c7ncd.project.notify.type': '信息类型',
   'c7ncd.project.notify.pmEnable': '站内信',
   'c7ncd.project.notify.emailEnable': '邮件',
+  'c7ncd.project.notify.dtEnable': '钉钉',
   'c7ncd.project.notify.smsEnable': '短信',
   'c7ncd.project.notify.noticeObject': '通知对象',
   'c7ncd.project.notify.noticeObject.resource.tips': '此处的通知对象为验证码的接收者',
