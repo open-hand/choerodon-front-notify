@@ -40,6 +40,10 @@ function handleLoad({ dataSet }) {
       parentItemIsChecked({
         dataSet, record, name: 'smsEnable', flagName: 'smsEnabledFlag',
       });
+      parentItemIsChecked({
+        dataSet, record, name: 'dtEnable', flagName: 'dtEnabledFlag',
+      });
+
     }
   });
 }
@@ -99,6 +103,7 @@ export default ({
     { name: 'emailEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.pmEnable` }) },
     { name: 'pmEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.emailEnable` }) },
     { name: 'smsEnable', type: 'boolean', label: formatMessage({ id: `${intlPrefix}.smsEnable` }) },
+    { name: 'dtEnable', type: 'boolean', label: '钉钉' },
     {
       name: 'userList', type: 'object', textField: 'realName', valueField: 'id', options: userDs, multiple: true, label: '请选择',
     },

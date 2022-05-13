@@ -25,12 +25,14 @@ export default ({
       if (record.get('parentId')) {
         isChecked(record, 'pm', 'pmTemplateId', 'pmEnabledFlag');
         isChecked(record, 'email', 'emailTemplateId', 'emailEnabledFlag');
+        isChecked(record, 'dt', 'dtTemplateId', 'dtEnabledFlag');
       }
     });
     dataSet.forEach((record) => {
       if (!record.get('parentId')) {
         parentItemIsChecked({ dataSet, record, name: 'pm' });
         parentItemIsChecked({ dataSet, record, name: 'email' });
+        parentItemIsChecked({ dataSet, record, name: 'dt' });
       }
     });
   }
@@ -51,7 +53,7 @@ export default ({
         const res = [];
         const data = dataSet.toData();
         data.forEach(({
-          pm, email, id, parentId, pmDisabled, emailDisabled,
+          pm, email, id, parentId, pmDisabled, emailDisabled,dt, dtDisabled,
         }) => {
           if (!parentId) return;
           if (!pm && !pmDisabled) {
@@ -72,6 +74,16 @@ export default ({
               userId,
             });
           }
+          if (!dt && !dtDisabled) {
+            res.push({
+              sendingType: 'DT',
+              disable: true,
+              sourceType: 'site',
+              sendSettingId: id,
+              userId,
+            });
+          }
+
         });
 
         return ({
@@ -86,6 +98,7 @@ export default ({
       { name: 'name', type: 'string', label: formatClient({ id: 'projectNotice' }) },
       { name: 'pm', type: 'boolean', label: formatClient({ id: 'pm' }) },
       { name: 'email', type: 'boolean', label: formatClient({ id: 'email' }) },
+      { name: 'dt', type: 'boolean', label: '钉钉' },
     ],
     queryFields: [],
     events: {

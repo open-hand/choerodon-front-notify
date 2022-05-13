@@ -169,6 +169,14 @@ export default observer((props) => {
               width={150}
               align="left"
             />
+              <Column
+              header={() => renderCheckBoxHeader('dtEnable', 'dtEnabledFlag')}
+              renderer={({ record }) => renderCheckBox({ record, name: 'dtEnable', flagName: 'dtEnabledFlag' })}
+              editor
+              width={150}
+              align="left"
+            />
+
             <Column
               header={<Tips title={formatMessage({ id: `${intlPrefix}.noticeObject` })} helpText={formatMessage({ id: `${intlPrefix}.noticeObject.resource.tips` })} />}
               renderer={renderNotifyObject}

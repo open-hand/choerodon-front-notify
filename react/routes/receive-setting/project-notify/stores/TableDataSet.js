@@ -17,12 +17,14 @@ export default ({
       if (record.get('treeType') === 'group') {
         parentItemIsChecked({ dataSet, record, name: 'pm' });
         parentItemIsChecked({ dataSet, record, name: 'email' });
+        parentItemIsChecked({ dataSet, record, name: 'dt' });
       }
     });
     dataSet.forEach((record) => {
       if (record.get('treeType') === 'project') {
         parentItemIsChecked({ dataSet, record, name: 'pm' });
         parentItemIsChecked({ dataSet, record, name: 'email' });
+        parentItemIsChecked({ dataSet, record, name: 'dt' });
       }
     });
     receiveStore.setSpinning(false);
@@ -58,7 +60,7 @@ export default ({
         const keys = [];
         const data = dataSet.toData();
         data.forEach(({
-          pm, email, id, treeType, sourceId, pmDisabled, emailDisabled,
+          pm, email, id, treeType, sourceId, pmDisabled, emailDisabled,dt, dtDisabled,
         }) => {
           if (treeType === 'item') {
             const projectId = sourceId.split('-')[0];
@@ -83,6 +85,17 @@ export default ({
                 userId,
               });
             }
+            if (!dt && !dtDisabled) {
+              res.push({
+                sendingType: 'DT',
+                disable: true,
+                sourceType: 'project',
+                sendSettingId: id,
+                sourceId: projectId,
+                userId,
+              });
+            }
+
           }
         });
         const receiveData = [...receiveStore.getReceiveData];
@@ -107,6 +120,7 @@ export default ({
       { name: 'name', type: 'string', label: formatClient({ id: 'projectNotice' }) },
       { name: 'pm', type: 'boolean', label: formatClient({ id: 'platformNotice' }) },
       { name: 'email', type: 'boolean', label: formatClient({ id: 'email' }) },
+      { name: 'dt', type: 'boolean', label: '钉钉' },
       { name: 'organizationName', type: 'string', label: formatClient({ id: 'orgName' }) },
     ],
     queryFields: [],

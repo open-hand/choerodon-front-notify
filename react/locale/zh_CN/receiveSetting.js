@@ -6,6 +6,7 @@ const receiveSetting = {
   'c7ncd.receive-setting.orgName': '组织名称',
   'c7ncd.receive-setting.pm': '站内信',
   'c7ncd.receive-setting.email': '邮件',
+  'c7ncd.receive-setting.dt': '钉钉',
 };
 
 export { receiveSetting };

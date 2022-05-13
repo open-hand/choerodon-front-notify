@@ -10,7 +10,7 @@ export default function ({ context, modal }) {
   useEffect(() => {
     const obj = {};
     const messageTemplateVOS = messageTypeDetailDataSet.current.get('messageTemplateVOS');
-    const keys = ['EMAIL', 'WEB', 'webHookJson', 'webHookOther', 'SMS'];
+    const keys = ['EMAIL', 'WEB', 'webHookJson', 'webHookOther', 'SMS','DT'];
     keys.forEach(k => {
       let flag = false;
       if (k === 'webHookJson') {
@@ -50,6 +50,7 @@ export default function ({ context, modal }) {
         <CheckBox disabled={!enabledList.webHookOther && !messageTypeDetailDataSet.current.get('webhookEnabledFlag')} name="webhookEnabledFlag" />
         <CheckBox disabled={!enabledList.webHookJson && !messageTypeDetailDataSet.current.get('webhookJsonEnabledFlag')} name="webhookJsonEnabledFlag" />
         <CheckBox disabled={!enabledList.SMS && !messageTypeDetailDataSet.current.get('smsEnabledFlag')} name="smsEnabledFlag" />
+        <CheckBox disabled={!enabledList.DT && !messageTypeDetailDataSet.current.get('dtEnabledFlag')} name="dtEnabledFlag" />
       </Form>
       <div className="c7n-notify-contentList-sider-label">是否允许配置接收</div>
       <Form columns={4} dataSet={messageTypeDetailDataSet}>
