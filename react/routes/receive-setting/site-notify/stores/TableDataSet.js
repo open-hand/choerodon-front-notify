@@ -11,7 +11,8 @@ export default ({
   }
 
   function isChecked(record, type, templateIdName, enabledName) {
-    const newSendingType = type === 'pm' ? 'WEB' : 'EMAIL';
+    const typeList = { pm: 'WEB', email: 'EMAIL', dt: 'DT' };
+    const newSendingType = typeList[type];
     const hasTemplateId = record.get(templateIdName) && record.get(enabledName);
     const isCheck = hasTemplateId && !receiveStore.getReceiveData.some(({ sendSettingId, sendingType }) => (
       sendSettingId === record.get('id') && sendingType === newSendingType
@@ -53,7 +54,7 @@ export default ({
         const res = [];
         const data = dataSet.toData();
         data.forEach(({
-          pm, email, id, parentId, pmDisabled, emailDisabled,dt, dtDisabled,
+          pm, email, id, parentId, pmDisabled, emailDisabled, dt, dtDisabled,
         }) => {
           if (!parentId) return;
           if (!pm && !pmDisabled) {
@@ -83,7 +84,6 @@ export default ({
               userId,
             });
           }
-
         });
 
         return ({
