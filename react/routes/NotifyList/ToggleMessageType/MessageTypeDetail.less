@@ -1,5 +1,9 @@
 @import (reference) '../../../common/style/mixin/template.less';
+
 .c7n-notify-messageTypeDetail {
+  .c7n-tabs-nav .c7n-tabs-tab .icon, .c7n-tabs-second-nav .c7n-tabs-tab .icon{
+    margin-right: 0px !important;
+  }
   &-title {
     font-weight: 500;
     line-height: 0.28rem;
@@ -7,9 +11,20 @@
     margin-top: 0.15rem;
     margin-bottom: 0.2rem;
     i {
-      margin-right: 0.06rem
+      margin-right: 0.06rem;
     }
   }
+  &-tab-container{
+    display: flex;
+    align-items: center;
+    .c7n-tabs-nav .c7n-tabs-tab .icon{
+      margin-right: 0rem !important;
+    }
+    .icon-error:before,&-tip{
+      margin-left:0.06rem !important;
+    }
+  }
+  
   &-htmlContainer {
     background: rgba(248, 248, 248, 1);
     border-radius: 4px;

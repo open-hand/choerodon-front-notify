@@ -78,7 +78,7 @@ const MessageTypeDetail = observer(() => {
   };
   const TipList = { webhook: '模板内容将决定后续通过webhook在钉钉端或企业微信端接收的消息内容', dt: '模板内容将决定后续在钉钉端或企业微信端接收的消息内容' };
   return current ? (
-    <>
+    <div className={cssPrefix}>
       <header className={`${cssPrefix}-header`}>
         <span
           className={`${cssPrefix}-header-circle`}
@@ -97,10 +97,10 @@ const MessageTypeDetail = observer(() => {
       <Tabs defaultActiveKey="1">
         <TabPane
           tab={(
-            <span>
+            <div className={`${cssPrefix}-tab-container`}>
               邮件模板
               {getIcon('email')}
-            </span>
+            </div>
 )}
           key="1"
         >
@@ -108,10 +108,10 @@ const MessageTypeDetail = observer(() => {
         </TabPane>
         <TabPane
           tab={(
-            <span>
+            <div className={`${cssPrefix}-tab-container`}>
               站内信模板
               {getIcon('pm')}
-            </span>
+            </div>
 )}
           key="2"
         >
@@ -119,10 +119,10 @@ const MessageTypeDetail = observer(() => {
         </TabPane>
         <TabPane
           tab={(
-            <span>
+            <div className={`${cssPrefix}-tab-container`}>
               webhook-JSON模板
               {getIcon('webhookJson')}
-            </span>
+            </div>
 )}
           key="3"
         >
@@ -130,11 +130,11 @@ const MessageTypeDetail = observer(() => {
         </TabPane>
         <TabPane
           tab={(
-            <span>
+            <div className={`${cssPrefix}-tab-container`}>
               webhook-钉钉微信模板
               {getIcon('webhook')}
-              <NewTips helpText={TipList.webhook} />
-            </span>
+              <NewTips helpText={TipList.webhook} className={`${cssPrefix}-tab-container-tip`} />
+            </div>
 )}
           key="4"
         >
@@ -142,10 +142,10 @@ const MessageTypeDetail = observer(() => {
         </TabPane>
         <TabPane
           tab={(
-            <span>
+            <div className={`${cssPrefix}-tab-container`}>
               短信模板
               {getIcon('sms')}
-            </span>
+            </div>
 )}
           key="5"
         >
@@ -153,11 +153,11 @@ const MessageTypeDetail = observer(() => {
         </TabPane>
         <TabPane
           tab={(
-            <span>
+            <div className={`${cssPrefix}-tab-container`}>
               钉钉企微模板
               {getIcon('dt')}
-              <NewTips helpText={TipList.dt} />
-            </span>
+              <NewTips helpText={TipList.dt} className={`${cssPrefix}-tab-container-tip`} />
+            </div>
 )}
           key="6"
         >
@@ -165,7 +165,7 @@ const MessageTypeDetail = observer(() => {
         </TabPane>
 
       </Tabs>
-    </>
+    </div>
   ) : <Spin />;
 });
 
