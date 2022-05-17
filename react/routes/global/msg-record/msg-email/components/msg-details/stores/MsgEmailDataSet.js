@@ -1,13 +1,15 @@
 import JSONbig from 'json-bigint';
 
 /* eslint-disable import/no-anonymous-default-export */
-export default (({ organizationId, msgId, mainStore }) => ({
+export default (({
+  organizationId, msgId, mainStore, isOrgLev,
+}) => ({
   autoQuery: true,
   paging: true,
   pageSize: 10,
   transport: {
     read: ({ dataSet }) => (msgId ? {
-      url: `/hmsg/v1/messages/${msgId}/receivers?tenantId=${organizationId}`,
+      url: isOrgLev ? `/hmsg/v1/${organizationId}/messages/${msgId}/receivers?tenantId=${organizationId}` : `/hmsg/v1/messages/${msgId}/receivers?tenantId=${organizationId}`,
       method: 'get',
       transformResponse: (response) => {
         try {

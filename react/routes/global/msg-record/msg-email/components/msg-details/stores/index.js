@@ -14,12 +14,16 @@ export default Store;
 
 export const StoreProvider = injectIntl(inject('AppState')(
   (props) => {
-    const { AppState: { currentMenuType: { organizationId } }, children, msgId } = props;
+    const {
+      AppState: { currentMenuType: { organizationId } }, children, msgId, isOrgLev,
+    } = props;
 
     const mainStore = useStore();
-    const msgDetailDs = useMemo(() => new DataSet(MsgDetailsDataSet({ msgId })), [msgId]);
+    const msgDetailDs = useMemo(() => new DataSet(MsgDetailsDataSet({ msgId, isOrgLev, organizationId })), [msgId]);
 
-    const msgEmailDs = useMemo(() => new DataSet(MsgEmailDataSet({ organizationId, msgId, mainStore })), [organizationId, msgId]);
+    const msgEmailDs = useMemo(() => new DataSet(MsgEmailDataSet({
+      organizationId, msgId, mainStore, isOrgLev,
+    })), [organizationId, msgId]);
     const value = {
       ...props,
       msgDetailDs,
