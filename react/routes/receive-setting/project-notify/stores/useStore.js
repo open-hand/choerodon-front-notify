@@ -56,7 +56,8 @@ export default function useStore() {
       const that = this;
       const data = this.getAllowConfigData;
       function initChecked(item, type, templateIdName, enabledName) {
-        const newSendingType = type === 'pm' ? 'WEB' : 'EMAIL';
+        const typeList = { pm: 'WEB', email: 'EMAIL', dt: 'DT' };
+        const newSendingType = typeList[type];
         const hasTemplateId = item[templateIdName] && item[enabledName];
         const isCheck = hasTemplateId && !that.getReceiveData.some(({ sendSettingId, sourceId, sendingType }) => (
           sendSettingId === item.id && item.sourceId.split('-')[0] === String(sourceId) && sendingType === newSendingType
@@ -85,6 +86,7 @@ export default function useStore() {
             children.treeType = 'item';
             children.pm = initChecked(children, 'pm', 'pmTemplateId', 'pmEnabledFlag');
             children.email = initChecked(children, 'email', 'emailTemplateId', 'emailEnabledFlag');
+            children.dt = initChecked(children, 'dt', 'dtTemplateId', 'dtEnabledFlag');
           } else {
             children.key = `${projectId}-${sequenceId}`;
             children.sourceId = `${projectId}`;
