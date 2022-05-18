@@ -11,9 +11,10 @@ const MsgDetail = (props) => {
     msgDetailDs,
     msgEmailDs,
     mainStore,
+    isOrgLev,
   } = useMsgDetailStore();
 
-  const renderEmail = () => msgEmailDs.map((record) => record.get('receiverAddress')).join('，');
+  const renderEmail = () => msgEmailDs.map((record) => (isOrgLev ? record.get('realName') : record.get('receiverAddress'))).join('，');
 
   function loadMoreEmails() {
     msgEmailDs.query(msgEmailDs.currentPage + 1);
@@ -23,7 +24,7 @@ const MsgDetail = (props) => {
     <div className={prefixCls}>
       <div className={`${prefixCls}-item`}>
         <span>
-          接收者邮箱
+          {isOrgLev ? '接收者' : '接收者邮箱'}
         </span>
         <div className={`${prefixCls}-item-email`}>
           {renderEmail()}

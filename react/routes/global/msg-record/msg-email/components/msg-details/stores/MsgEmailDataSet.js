@@ -9,7 +9,7 @@ export default (({
   pageSize: 10,
   transport: {
     read: ({ dataSet }) => (msgId ? {
-      url: isOrgLev ? `/hmsg/v1/${organizationId}/messages/${msgId}/receivers?tenantId=${organizationId}` : `/hmsg/v1/messages/${msgId}/receivers?tenantId=${organizationId}`,
+      url: isOrgLev ? `/hmsg/choerodon/v1/mails/records/ding_talk/${organizationId}/messages/${msgId}/receivers` : `/hmsg/v1/messages/${msgId}/receivers?tenantId=${organizationId}`,
       method: 'get',
       transformResponse: (response) => {
         try {
