@@ -37,6 +37,7 @@ export default class Editor extends Component {
     this.urlFocusInput = React.createRef();
     this.onQuillChange = this.onQuillChange.bind(this);
     this.state = {
+      htmlModalVisible: false,
       htmlString: null,
       isShowModal: false,
       previewUrl: null, // 网络上传预览图片url
@@ -59,14 +60,17 @@ export default class Editor extends Component {
 
   // 点击code按钮
   changeToHtml = () => {
-    ProModal.open({
-      title: 'html代码编辑器',
-      children: '切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？',
-      onOk: () => {
-        this.props.onChange(this.originValue);
-        this.setState({ isCode: true });
-      },
+    this.setState({
+      htmlModalVisible: true,
     });
+    // ProModal.open({
+    //   title: 'html代码编辑器',
+    //   children: '切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？',
+    //   onOk: () => {
+    //     this.props.onChange(this.originValue);
+    //     this.setState({ isCode: true });
+    //   },
+    // });
   }
 
   initEditor = () => {
@@ -387,6 +391,19 @@ export default class Editor extends Component {
               {this.renderLocal()}
             </TabPane>
           </Tabs>
+        </Modal>
+        <Modal
+          visible={this.state.htmlModalVisible}
+          title="html代码编辑器"
+          onOk={
+                () => {
+                  this.props.onChange(this.originValue);
+                  this.setState({ isCode: true });
+                }
+              }
+        >
+
+          <div style={{ paddingTop: 20, paddingBottom: 20 }}>切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？</div>
         </Modal>
       </div>
     );
