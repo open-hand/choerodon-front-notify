@@ -401,6 +401,7 @@ export default class Editor extends Component {
                   this.setState({ isCode: true });
                 }
               }
+          onCancel={() => this.setState({ htmlModalVisible: false })}
         >
 
           <div style={{ paddingTop: 20, paddingBottom: 20 }}>切换编辑器后将无法切换回现有编辑器，且现有编辑内容将会丢失，是否继续？</div>
