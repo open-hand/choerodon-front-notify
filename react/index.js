@@ -20,7 +20,7 @@ function LowCodeIndex() {
   const IntlProviderAsync = asyncLocaleProvider(language, () => import(`./locale/${language}`));
   return (
     <IntlProviderAsync>
-      <>
+      <div className="c7ncd-notify-root">
         <Switch>
           <PermissionRoute
             path={`${match.url}/msg-log`}
@@ -55,7 +55,7 @@ function LowCodeIndex() {
           <Route path="*" component={nomatch} />
         </Switch>
         <ModalContainer />
-      </>
+      </div>
     </IntlProviderAsync>
   );
 }
