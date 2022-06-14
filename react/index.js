@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useRouteMatch } from 'react-router';
 import {
-  asyncLocaleProvider, asyncRouter, nomatch, PermissionRoute, useCurrentLanguage,
+  asyncLocaleProvider, asyncRouter, nomatch, PermissionRoute, useCurrentLanguage, C7NLocaleProvider,
 } from '@choerodon/master';
 import { ModalContainer } from 'choerodon-ui/pro';
 
@@ -18,8 +18,13 @@ function LowCodeIndex() {
   const language = useCurrentLanguage();
   const match = useRouteMatch();
   const IntlProviderAsync = asyncLocaleProvider(language, () => import(`./locale/${language}`));
+  const handleImport = useCallback(
+    (currentLanguage) => import(/* webpackInclude: /\index.(ts|js)$/ */ `./locale/${currentLanguage}`),
+    [],
+  );
   return (
-    <IntlProviderAsync>
+    <C7NLocaleProvider importer={handleImport}>
+      {/* <IntlProviderAsync> */}
       <div className="c7ncd-notify-root">
         <Switch>
           <PermissionRoute
@@ -56,7 +61,8 @@ function LowCodeIndex() {
         </Switch>
         <ModalContainer />
       </div>
-    </IntlProviderAsync>
+      {/* </IntlProviderAsync> */}
+    </C7NLocaleProvider>
   );
 }
 
