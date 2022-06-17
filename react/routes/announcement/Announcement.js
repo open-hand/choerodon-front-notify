@@ -181,7 +181,7 @@ export default class Announcement extends Component {
     ProModal.open({
       key: ProModal.key(),
       title: intl.formatMessage({ id: 'announcement.delete.title' }, { name: record.title }),
-      content: intl.formatMessage({ id: `announcement.delete.content${record.status === 'COMPLETED' ? '.send' : ''}` }),
+      children: intl.formatMessage({ id: `announcement.delete.content${record.status === 'COMPLETED' ? '.send' : ''}` }),
       onOk: () => AnnouncementStore.deleteAnnouncementById(record.id).then(({ failed, message }) => {
         if (failed) {
           Choerodon.prompt(message);
@@ -190,6 +190,7 @@ export default class Announcement extends Component {
           this.handleRefresh();
         }
       }),
+      okText:'删除',
     });
   };
 
