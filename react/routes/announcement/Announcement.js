@@ -351,7 +351,8 @@ export default class Announcement extends Component {
     if (!endDate || !sendDate) {
       return false;
     }
-    return endDate.valueOf() <= sendDate.valueOf();
+    return moment(moment(endDate).format('YYYY-MM-DD')).isBefore(moment(moment(sendDate).format('YYYY-MM-DD')));
+    // return endDate.valueOf() <= sendDate.valueOf();
   };
 
   range = (start, end) => {
